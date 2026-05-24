@@ -5,7 +5,7 @@ This is an Astro 6 SSR app using React 19 islands, TypeScript, Tailwind 4, Supab
 ## Critical Rules & Commands
 
 - Use Node `22.14.0` from @.nvmrc and install with `npm ci` when reproducing CI.
-- Run `npm run lint` and `npm run build` before handing off; CI runs `npx astro sync`, then those two commands on `master` pushes and PRs.
+- Run `npm run lint` and `npm run build` before handing off; CI runs `npx astro sync`, then those two commands on `main` pushes and PRs.
 - Keep secrets out of client code: `SUPABASE_URL` and `SUPABASE_KEY` are declared as server-only Astro env fields in @astro.config.mjs. Local Cloudflare secrets belong in `.dev.vars`; Node/Supabase local values belong in `.env`.
 - API routes must be server-rendered and use uppercase handler exports such as `GET`/`POST`; auth examples live in @src/pages/api/auth/.
 
@@ -35,4 +35,4 @@ This is an Astro 6 SSR app using React 19 islands, TypeScript, Tailwind 4, Supab
 
 - No test runner is configured in @package.json; do not invent `npm test`. Use lint and build as the verification gate until tests are added.
 - Recent history uses Conventional Commit-style subjects (`feat: ...`) plus an initial `Init ...`; keep new commits in that style.
-- PRs target `master` and must pass the GitHub Actions workflow in @.github/workflows/ci.yml.
+- PRs target `main` and must pass the GitHub Actions workflow in @.github/workflows/ci.yml.
