@@ -327,15 +327,15 @@ This is the first product-data migration, so no existing garden records need bac
 
 #### Automated
 
-- [x] 2.1 `src/lib/garden-beds.ts` exports the domain types, weed-level constants, and validation helper.
-- [x] 2.2 Validation rejects empty names, unknown weed levels, zero or negative area, negative numeric values, zero or negative estimated minutes, and invalid dates.
-- [x] 2.3 `npx astro sync` succeeds after adding the module.
-- [x] 2.4 `npm run lint` succeeds for the new module.
+- [x] 2.1 `src/lib/garden-beds.ts` exports the domain types, weed-level constants, and validation helper. — 88daa71
+- [x] 2.2 Validation rejects empty names, unknown weed levels, zero or negative area, negative numeric values, zero or negative estimated minutes, and invalid dates. — 88daa71
+- [x] 2.3 `npx astro sync` succeeds after adding the module. — 88daa71
+- [x] 2.4 `npm run lint` succeeds for the new module. — 88daa71
 
 #### Manual
 
-- [x] 2.5 Reviewer can compare `src/lib/garden-beds.ts` against the migration and confirm the fields align.
-- [x] 2.6 Reviewer confirms the client cannot choose or override `user_id` through the create payload.
+- [x] 2.5 Reviewer can compare `src/lib/garden-beds.ts` against the migration and confirm the fields align. — 88daa71
+- [x] 2.6 Reviewer confirms the client cannot choose or override `user_id` through the create payload. — 88daa71
 
 ### Phase 3: Minimal Protected API Smoke Endpoint
 
