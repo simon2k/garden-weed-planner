@@ -312,16 +312,16 @@ This is the first product-data migration, so no existing garden records need bac
 
 #### Automated
 
-- [ ] 1.1 Supabase migration file exists under `supabase/migrations/` and contains the `garden_beds` table definition.
-- [ ] 1.2 Migration defines ownership constraints, positive-value checks, weed-level check, RLS enablement, and authenticated select/insert policies.
-- [ ] 1.3 Migration can be applied locally or reviewed with Supabase CLI without SQL syntax errors.
+- [x] 1.1 Supabase migration file exists under `supabase/migrations/` and contains the `garden_beds` table definition.
+- [x] 1.2 Migration defines ownership constraints, positive-value checks, weed-level check, RLS enablement, and authenticated select/insert policies.
+- [x] 1.3 Migration can be applied locally or reviewed with Supabase CLI without SQL syntax errors.
 
 #### Manual
 
-- [ ] 1.4 SQL/RLS smoke test confirms user A can insert and select their own bed.
-- [ ] 1.5 SQL/RLS smoke test confirms user B cannot select user A's bed.
-- [ ] 1.6 SQL/RLS smoke test confirms unauthenticated access cannot read from or insert into `garden_beds`.
-- [ ] 1.7 Exact SQL/RLS smoke commands or checklist results are recorded in the change notes before handoff.
+- [x] 1.4 SQL/RLS smoke test confirms user A can insert and select their own bed.
+- [x] 1.5 SQL/RLS smoke test confirms user B cannot select user A's bed.
+- [x] 1.6 SQL/RLS smoke test confirms unauthenticated access cannot read from or insert into `garden_beds`.
+- [x] 1.7 Exact SQL/RLS smoke commands or checklist results are recorded in the change notes before handoff.
 
 ### Phase 2: Application Domain Contract
 
