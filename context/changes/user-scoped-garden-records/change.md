@@ -31,3 +31,16 @@ Recommended command path used/provided for auditability:
 Result reported by reviewer:
 - Schema alignment approved by comparing `src/lib/garden-beds.ts` with `supabase/migrations/20260601120000_create_garden_beds.sql`.
 - Client ownership override check confirmed by code review: `validateCreateGardenBedInput` does not accept/read `user_id`, and `toGardenBedInsertPayload(input, userId)` requires the authenticated server-provided user id.
+
+### Phase 3 manual API smoke results — 2026-06-01
+
+Result reported by reviewer: Phase 3 manual checks passed.
+
+Checklist covered:
+- Anonymous `GET /api/garden/beds` returns 401 JSON.
+- Logged-in user can `POST /api/garden/beds` with valid JSON and receive a 201 created bed.
+- Logged-in user can `GET /api/garden/beds` and see their own created bed.
+- A second logged-in user does not see the first user's bed.
+- Malformed JSON and non-object JSON sent to `POST /api/garden/beds` return 400 JSON.
+
+Implementation note: initial remote smoke test failed with `Could not find the table 'public.garden_beds' in the schema cache`; after applying the migration to the target Supabase database, the Phase 3 API smoke checks passed.

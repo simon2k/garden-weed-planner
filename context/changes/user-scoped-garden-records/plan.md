@@ -341,20 +341,20 @@ This is the first product-data migration, so no existing garden records need bac
 
 #### Automated
 
-- [ ] 3.1 `src/pages/api/garden/beds.ts` exists and exports `GET` and `POST`.
-- [ ] 3.2 API handlers require authenticated user context before database access.
-- [ ] 3.3 POST validates input before calling Supabase.
-- [ ] 3.4 API handlers return 503 JSON when Supabase is not configured.
-- [ ] 3.5 `npx astro sync` succeeds.
-- [ ] 3.6 `npm run lint` succeeds.
+- [x] 3.1 `src/pages/api/garden/beds.ts` exists and exports `GET` and `POST`.
+- [x] 3.2 API handlers require authenticated user context before database access.
+- [x] 3.3 POST validates input before calling Supabase.
+- [x] 3.4 API handlers return 503 JSON when Supabase is not configured.
+- [x] 3.5 `npx astro sync` succeeds.
+- [x] 3.6 `npm run lint` succeeds.
 
 #### Manual
 
-- [ ] 3.7 Anonymous `GET /api/garden/beds` returns 401 JSON.
-- [ ] 3.8 Logged-in user can `POST /api/garden/beds` with valid JSON and receive a 201 created bed.
-- [ ] 3.9 Logged-in user can `GET /api/garden/beds` and see their own created bed.
-- [ ] 3.10 A second logged-in user does not see the first user's bed.
-- [ ] 3.11 Malformed JSON and non-object JSON sent to `POST /api/garden/beds` return 400 JSON.
+- [x] 3.7 Anonymous `GET /api/garden/beds` returns 401 JSON.
+- [x] 3.8 Logged-in user can `POST /api/garden/beds` with valid JSON and receive a 201 created bed.
+- [x] 3.9 Logged-in user can `GET /api/garden/beds` and see their own created bed.
+- [x] 3.10 A second logged-in user does not see the first user's bed.
+- [x] 3.11 Malformed JSON and non-object JSON sent to `POST /api/garden/beds` return 400 JSON.
 
 ### Phase 4: Verification and Handoff
 
