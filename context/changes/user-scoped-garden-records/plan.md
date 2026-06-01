@@ -360,14 +360,14 @@ This is the first product-data migration, so no existing garden records need bac
 
 #### Automated
 
-- [ ] 4.1 `npx astro sync` succeeds.
-- [ ] 4.2 `npm run lint` succeeds.
-- [ ] 4.3 `npm run build` succeeds.
-- [ ] 4.4 `context/changes/user-scoped-garden-records/plan.md` and `plan-brief.md` both exist.
+- [x] 4.1 `npx astro sync` succeeds.
+- [x] 4.2 `npm run lint` succeeds.
+- [x] 4.3 `npm run build` succeeds.
+- [x] 4.4 `context/changes/user-scoped-garden-records/plan.md` and `plan-brief.md` both exist.
 
 #### Manual
 
-- [ ] 4.5 SQL/RLS verification checklist has been run for two users and the exact commands or checklist results are recorded in the change notes.
-- [ ] 4.6 API smoke checklist has been run for anonymous, user A, and user B scenarios.
-- [ ] 4.7 Reviewer confirms no S-01 UI, priority algorithm, weed observations, plant list, or weeding-history scope slipped into F-01.
-- [ ] 4.8 Reviewer confirms the rollback posture is documented: before real user data exists, rollback may drop `public.garden_beds`; after user data exists, prefer forward-fix or temporarily disabling API writes over dropping user-entered records.
+- [x] 4.5 SQL/RLS verification checklist has been run for two users and the exact commands or checklist results are recorded in the change notes.
+- [x] 4.6 API smoke checklist has been run for anonymous, user A, and user B scenarios.
+- [x] 4.7 Reviewer confirms no S-01 UI, priority algorithm, weed observations, plant list, or weeding-history scope slipped into F-01.
+- [x] 4.8 Reviewer confirms the rollback posture is documented: before real user data exists, rollback may drop `public.garden_beds`; after user data exists, prefer forward-fix or temporarily disabling API writes over dropping user-entered records.
