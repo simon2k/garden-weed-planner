@@ -25,3 +25,9 @@ Recommended command path used/provided for auditability:
 - Connect with `psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres"`.
 - Simulate authenticated users with `set local role authenticated` and distinct `request.jwt.claim.sub` values.
 - Simulate anonymous access with `set local role anon`.
+
+### Phase 2 manual domain contract review — 2026-06-01
+
+Result reported by reviewer:
+- Schema alignment approved by comparing `src/lib/garden-beds.ts` with `supabase/migrations/20260601120000_create_garden_beds.sql`.
+- Client ownership override check confirmed by code review: `validateCreateGardenBedInput` does not accept/read `user_id`, and `toGardenBedInsertPayload(input, userId)` requires the authenticated server-provided user id.
