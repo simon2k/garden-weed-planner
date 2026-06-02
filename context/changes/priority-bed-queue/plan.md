@@ -376,17 +376,17 @@ No database migration is planned for S-01. Priority, score, confidence, and sugg
 
 #### Automated
 
-- [ ] 1.1 `src/lib/garden-beds.ts` exports queue priority types/constants and a decorated queue response type.
-- [ ] 1.2 Suggested-date helper returns fixed intervals by weed level and `null` when `last_weeded_at` is missing.
-- [ ] 1.3 Priority helper produces `ok`, `soon`, and `urgent` outputs from representative low/medium/high inputs.
-- [ ] 1.4 Queue sorting helper implements priority, suggested date, weed level, and created date tie-breaks.
-- [ ] 1.5 `npx astro sync` succeeds.
-- [ ] 1.6 `npm run lint` succeeds.
+- [x] 1.1 `src/lib/garden-beds.ts` exports queue priority types/constants and a decorated queue response type.
+- [x] 1.2 Suggested-date helper returns fixed intervals by weed level and `null` when `last_weeded_at` is missing.
+- [x] 1.3 Priority helper produces `ok`, `soon`, and `urgent` outputs from representative low/medium/high inputs.
+- [x] 1.4 Queue sorting helper implements priority, suggested date, weed level, and created date tie-breaks.
+- [x] 1.5 `npx astro sync` succeeds.
+- [x] 1.6 `npm run lint` succeeds.
 
 #### Manual
 
-- [ ] 1.7 Reviewer confirms the interval table and scoring thresholds are documented clearly enough to adjust later.
-- [ ] 1.8 Reviewer confirms incomplete optional fields degrade confidence instead of blocking queue display.
+- [x] 1.7 Reviewer confirms the interval table and scoring thresholds are documented clearly enough to adjust later.
+- [x] 1.8 Reviewer confirms incomplete optional fields degrade confidence instead of blocking queue display.
 
 ### Phase 2: Decorated Garden Beds API
 

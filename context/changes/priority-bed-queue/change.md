@@ -1,7 +1,7 @@
 ---
 change_id: priority-bed-queue
 title: Priority Bed Queue
-status: plan_reviewed
+status: implementing
 created: 2026-06-02
 updated: 2026-06-02
 archived_at: null
@@ -12,6 +12,7 @@ archived_at: null
 S-01 from `context/foundation/roadmap.md`: user can add garden beds with basic data and see a queue sorted by urgency with a suggested next-weeding date.
 
 Planning decisions captured 2026-06-02:
+
 - Priority uses a rule-based score.
 - Suggested next-weeding date uses fixed intervals by weed level.
 - Incomplete optional inputs are allowed, but queue output marks degraded confidence.
