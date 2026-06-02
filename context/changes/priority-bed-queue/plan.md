@@ -408,36 +408,36 @@ No database migration is planned for S-01. Priority, score, confidence, and sugg
 
 #### Automated
 
-- [x] 3.1 `src/pages/garden.astro` exists and imports/mounts the garden queue React island.
-- [x] 3.2 `src/middleware.ts` protects `/garden` as well as `/dashboard`.
-- [x] 3.3 `src/components/Topbar.astro` exposes a signed-in navigation path to `/garden`.
-- [x] 3.4 `npx astro sync` succeeds.
-- [x] 3.5 `npm run lint` succeeds.
+- [x] 3.1 `src/pages/garden.astro` exists and imports/mounts the garden queue React island. — 0549585
+- [x] 3.2 `src/middleware.ts` protects `/garden` as well as `/dashboard`. — 0549585
+- [x] 3.3 `src/components/Topbar.astro` exposes a signed-in navigation path to `/garden`. — 0549585
+- [x] 3.4 `npx astro sync` succeeds. — 0549585
+- [x] 3.5 `npm run lint` succeeds. — 0549585
 
 #### Manual
 
-- [x] 3.6 Anonymous browser navigation to `/garden` redirects to `/auth/signin`.
-- [x] 3.7 Logged-in browser navigation to `/garden` renders the page shell.
-- [x] 3.8 Signed-in navigation shows a working link to `/garden` without breaking dashboard/sign-out links.
+- [x] 3.6 Anonymous browser navigation to `/garden` redirects to `/auth/signin`. — 0549585
+- [x] 3.7 Logged-in browser navigation to `/garden` renders the page shell. — 0549585
+- [x] 3.8 Signed-in navigation shows a working link to `/garden` without breaking dashboard/sign-out links. — 0549585
 
 ### Phase 4: React Add Form and Queue Island
 
 #### Automated
 
-- [ ] 4.1 Garden React island fetches from `GET /api/garden/beds` and submits JSON to `POST /api/garden/beds`.
-- [ ] 4.2 Numeric form fields are converted to numbers or `null`, not sent as strings.
-- [ ] 4.3 Empty optional fields do not block submission.
-- [ ] 4.4 Queue UI handles loading, empty, error, and successful-created states.
-- [ ] 4.5 `npx astro sync` succeeds.
-- [ ] 4.6 `npm run lint` succeeds.
+- [x] 4.1 Garden React island fetches from `GET /api/garden/beds` and submits JSON to `POST /api/garden/beds`.
+- [x] 4.2 Numeric form fields are converted to numbers or `null`, not sent as strings.
+- [x] 4.3 Empty optional fields do not block submission.
+- [x] 4.4 Queue UI handles loading, empty, error, and successful-created states.
+- [x] 4.5 `npx astro sync` succeeds.
+- [x] 4.6 `npm run lint` succeeds.
 
 #### Manual
 
-- [ ] 4.7 Logged-in user sees an empty-state message before adding beds.
-- [ ] 4.8 Logged-in user can add three beds with low, medium, and high weed levels.
-- [ ] 4.9 Queue updates after creation without requiring manual browser refresh.
-- [ ] 4.10 Queue cards show priority label, suggested date or missing-date message, and confidence state.
-- [ ] 4.11 Invalid required input shows a useful client-side or server-backed error.
+- [x] 4.7 Logged-in user sees an empty-state message before adding beds.
+- [x] 4.8 Logged-in user can add three beds with low, medium, and high weed levels.
+- [x] 4.9 Queue updates after creation without requiring manual browser refresh.
+- [x] 4.10 Queue cards show priority label, suggested date or missing-date message, and confidence state.
+- [x] 4.11 Invalid required input shows a useful client-side or server-backed error.
 
 ### Phase 5: Verification and Handoff
 
