@@ -34,7 +34,7 @@
 - **Location**: src/components/garden/GardenQueue.tsx:113
 - **Detail**: `handleSubmit` does not early-return when `isSubmitting` is already true. The submit button is disabled, but rapid double submit / Enter during an in-flight request can still create duplicate beds.
 - **Fix**: Add `if (isSubmitting) return;` at the start of `handleSubmit`.
-- **Decision**: PENDING
+- **Decision**: FIXED — Added an early `isSubmitting` guard to `handleSubmit`.
 
 ### F2 — Out-of-order GET responses can overwrite fresher queue state
 
@@ -53,7 +53,7 @@
   - Tradeoff: Less robust if multiple loads are triggered from different paths.
   - Confidence: MEDIUM.
   - Blind spot: Still weaker than sequencing.
-- **Decision**: PENDING
+- **Decision**: SKIPPED — Accepted for now during triage.
 
 ### F3 — UI duplicates shared API/domain types
 
@@ -63,7 +63,7 @@
 - **Location**: src/components/garden/GardenQueue.tsx:7
 - **Detail**: `GardenQueue.tsx` redeclares `WeedLevel`, priority, confidence, and queue item types already exported from `src/lib/garden-beds.ts`.
 - **Fix**: Import `GardenBedQueueItem` and `WeedLevel` types from `@/lib/garden-beds`.
-- **Decision**: PENDING
+- **Decision**: SKIPPED — Accepted for now during triage.
 
 ### F4 — Future `last_weeded_at` dates are accepted
 
@@ -82,7 +82,7 @@
   - Tradeoff: Adds policy not specified in S-01 plan.
   - Confidence: MEDIUM.
   - Blind spot: Could block legitimate pre-scheduled/imported data if introduced later.
-- **Decision**: PENDING
+- **Decision**: ACCEPTED-AS-RULE: Validate date direction semantics — existing lesson covers this; code fix not applied now.
 
 ## Workspace Note
 

@@ -112,6 +112,7 @@ export function GardenQueue() {
 
   async function handleSubmit(event: { preventDefault: () => void }) {
     event.preventDefault();
+    if (isSubmitting) return;
     setError(null);
     setSuccessMessage(null);
 
