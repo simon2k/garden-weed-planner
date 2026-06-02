@@ -392,33 +392,33 @@ No database migration is planned for S-01. Priority, score, confidence, and sugg
 
 #### Automated
 
-- [x] 2.1 `GET /api/garden/beds` returns decorated queue items rather than raw-only `GardenBedResponse` objects.
-- [x] 2.2 `POST /api/garden/beds` returns a decorated created bed while preserving existing validation and auth checks.
-- [x] 2.3 API code imports queue helpers from `src/lib/garden-beds.ts` rather than duplicating priority logic.
-- [x] 2.4 `npx astro sync` succeeds.
-- [x] 2.5 `npm run lint` succeeds.
+- [x] 2.1 `GET /api/garden/beds` returns decorated queue items rather than raw-only `GardenBedResponse` objects. — cca721d
+- [x] 2.2 `POST /api/garden/beds` returns a decorated created bed while preserving existing validation and auth checks. — cca721d
+- [x] 2.3 API code imports queue helpers from `src/lib/garden-beds.ts` rather than duplicating priority logic. — cca721d
+- [x] 2.4 `npx astro sync` succeeds. — cca721d
+- [x] 2.5 `npm run lint` succeeds. — cca721d
 
 #### Manual
 
-- [x] 2.6 Logged-in API smoke request creates a bed and receives computed priority/date/confidence fields.
-- [x] 2.7 Logged-in API smoke request lists beds in the same queue order expected by the helper.
-- [x] 2.8 Anonymous `GET` and `POST` requests still return 401 JSON.
+- [x] 2.6 Logged-in API smoke request creates a bed and receives computed priority/date/confidence fields. — cca721d
+- [x] 2.7 Logged-in API smoke request lists beds in the same queue order expected by the helper. — cca721d
+- [x] 2.8 Anonymous `GET` and `POST` requests still return 401 JSON. — cca721d
 
 ### Phase 3: Protected `/garden` Page Shell
 
 #### Automated
 
-- [ ] 3.1 `src/pages/garden.astro` exists and imports/mounts the garden queue React island.
-- [ ] 3.2 `src/middleware.ts` protects `/garden` as well as `/dashboard`.
-- [ ] 3.3 `src/components/Topbar.astro` exposes a signed-in navigation path to `/garden`.
-- [ ] 3.4 `npx astro sync` succeeds.
-- [ ] 3.5 `npm run lint` succeeds.
+- [x] 3.1 `src/pages/garden.astro` exists and imports/mounts the garden queue React island.
+- [x] 3.2 `src/middleware.ts` protects `/garden` as well as `/dashboard`.
+- [x] 3.3 `src/components/Topbar.astro` exposes a signed-in navigation path to `/garden`.
+- [x] 3.4 `npx astro sync` succeeds.
+- [x] 3.5 `npm run lint` succeeds.
 
 #### Manual
 
-- [ ] 3.6 Anonymous browser navigation to `/garden` redirects to `/auth/signin`.
-- [ ] 3.7 Logged-in browser navigation to `/garden` renders the page shell.
-- [ ] 3.8 Signed-in navigation shows a working link to `/garden` without breaking dashboard/sign-out links.
+- [x] 3.6 Anonymous browser navigation to `/garden` redirects to `/auth/signin`.
+- [x] 3.7 Logged-in browser navigation to `/garden` renders the page shell.
+- [x] 3.8 Signed-in navigation shows a working link to `/garden` without breaking dashboard/sign-out links.
 
 ### Phase 4: React Add Form and Queue Island
 
