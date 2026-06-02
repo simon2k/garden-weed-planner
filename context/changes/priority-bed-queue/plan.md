@@ -424,35 +424,35 @@ No database migration is planned for S-01. Priority, score, confidence, and sugg
 
 #### Automated
 
-- [x] 4.1 Garden React island fetches from `GET /api/garden/beds` and submits JSON to `POST /api/garden/beds`.
-- [x] 4.2 Numeric form fields are converted to numbers or `null`, not sent as strings.
-- [x] 4.3 Empty optional fields do not block submission.
-- [x] 4.4 Queue UI handles loading, empty, error, and successful-created states.
-- [x] 4.5 `npx astro sync` succeeds.
-- [x] 4.6 `npm run lint` succeeds.
+- [x] 4.1 Garden React island fetches from `GET /api/garden/beds` and submits JSON to `POST /api/garden/beds`. — 1aa5274
+- [x] 4.2 Numeric form fields are converted to numbers or `null`, not sent as strings. — 1aa5274
+- [x] 4.3 Empty optional fields do not block submission. — 1aa5274
+- [x] 4.4 Queue UI handles loading, empty, error, and successful-created states. — 1aa5274
+- [x] 4.5 `npx astro sync` succeeds. — 1aa5274
+- [x] 4.6 `npm run lint` succeeds. — 1aa5274
 
 #### Manual
 
-- [x] 4.7 Logged-in user sees an empty-state message before adding beds.
-- [x] 4.8 Logged-in user can add three beds with low, medium, and high weed levels.
-- [x] 4.9 Queue updates after creation without requiring manual browser refresh.
-- [x] 4.10 Queue cards show priority label, suggested date or missing-date message, and confidence state.
-- [x] 4.11 Invalid required input shows a useful client-side or server-backed error.
+- [x] 4.7 Logged-in user sees an empty-state message before adding beds. — 1aa5274
+- [x] 4.8 Logged-in user can add three beds with low, medium, and high weed levels. — 1aa5274
+- [x] 4.9 Queue updates after creation without requiring manual browser refresh. — 1aa5274
+- [x] 4.10 Queue cards show priority label, suggested date or missing-date message, and confidence state. — 1aa5274
+- [x] 4.11 Invalid required input shows a useful client-side or server-backed error. — 1aa5274
 
 ### Phase 5: Verification and Handoff
 
 #### Automated
 
-- [ ] 5.1 `npx astro sync` succeeds.
-- [ ] 5.2 `npm run lint` succeeds.
-- [ ] 5.3 `npm run build` succeeds.
-- [ ] 5.4 `context/changes/priority-bed-queue/plan.md` and `plan-brief.md` both exist.
+- [x] 5.1 `npx astro sync` succeeds.
+- [x] 5.2 `npm run lint` succeeds.
+- [x] 5.3 `npm run build` succeeds.
+- [x] 5.4 `context/changes/priority-bed-queue/plan.md` and `plan-brief.md` both exist.
 
 #### Manual
 
-- [ ] 5.5 Anonymous `/garden` request redirects to `/auth/signin`.
-- [ ] 5.6 Logged-in user A can add low, medium, and high weed-level beds and see them sorted by priority.
-- [ ] 5.7 Suggested dates follow the fixed interval table for each weed level.
-- [ ] 5.8 A bed with missing optional inputs remains visible with degraded confidence.
-- [ ] 5.9 Logged-in user B does not see user A's beds.
-- [ ] 5.10 Reviewer confirms no S-02 plant list, S-03 weed observations, S-04 weeding-history, or update/delete scope slipped into S-01.
+- [x] 5.5 Anonymous `/garden` request redirects to `/auth/signin`.
+- [x] 5.6 Logged-in user A can add low, medium, and high weed-level beds and see them sorted by priority.
+- [x] 5.7 Suggested dates follow the fixed interval table for each weed level.
+- [x] 5.8 A bed with missing optional inputs remains visible with degraded confidence.
+- [x] 5.9 Logged-in user B does not see user A's beds.
+- [x] 5.10 Reviewer confirms no S-02 plant list, S-03 weed observations, S-04 weeding-history, or update/delete scope slipped into S-01.
