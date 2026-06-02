@@ -1,9 +1,9 @@
 import type { APIRoute } from "astro";
 import {
   toGardenBedInsertPayload,
-  toGardenBedResponse,
+  toGardenBedQueueItem,
+  toSortedGardenBedQueue,
   validateCreateGardenBedInput,
-  type GardenBedRow,
 } from "@/lib/garden-beds";
 import { createClient } from "@/lib/supabase";
 
@@ -31,7 +31,7 @@ export const GET: APIRoute = async (context) => {
     return json({ error: "Unable to list garden beds." }, 500);
   }
 
-  const beds = (data as GardenBedRow[]).map(toGardenBedResponse);
+  const beds = toSortedGardenBedQueue(data);
   return json({ beds });
 };
 
@@ -63,7 +63,7 @@ export const POST: APIRoute = async (context) => {
     return json({ error: "Unable to create garden bed." }, 500);
   }
 
-  return json({ bed: toGardenBedResponse(data) }, 201);
+  return json({ bed: toGardenBedQueueItem(data) }, 201);
 };
 
 function json(body: unknown, status = 200): Response {

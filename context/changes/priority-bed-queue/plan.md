@@ -376,33 +376,33 @@ No database migration is planned for S-01. Priority, score, confidence, and sugg
 
 #### Automated
 
-- [x] 1.1 `src/lib/garden-beds.ts` exports queue priority types/constants and a decorated queue response type.
-- [x] 1.2 Suggested-date helper returns fixed intervals by weed level and `null` when `last_weeded_at` is missing.
-- [x] 1.3 Priority helper produces `ok`, `soon`, and `urgent` outputs from representative low/medium/high inputs.
-- [x] 1.4 Queue sorting helper implements priority, suggested date, weed level, and created date tie-breaks.
-- [x] 1.5 `npx astro sync` succeeds.
-- [x] 1.6 `npm run lint` succeeds.
+- [x] 1.1 `src/lib/garden-beds.ts` exports queue priority types/constants and a decorated queue response type. — bcad389
+- [x] 1.2 Suggested-date helper returns fixed intervals by weed level and `null` when `last_weeded_at` is missing. — bcad389
+- [x] 1.3 Priority helper produces `ok`, `soon`, and `urgent` outputs from representative low/medium/high inputs. — bcad389
+- [x] 1.4 Queue sorting helper implements priority, suggested date, weed level, and created date tie-breaks. — bcad389
+- [x] 1.5 `npx astro sync` succeeds. — bcad389
+- [x] 1.6 `npm run lint` succeeds. — bcad389
 
 #### Manual
 
-- [x] 1.7 Reviewer confirms the interval table and scoring thresholds are documented clearly enough to adjust later.
-- [x] 1.8 Reviewer confirms incomplete optional fields degrade confidence instead of blocking queue display.
+- [x] 1.7 Reviewer confirms the interval table and scoring thresholds are documented clearly enough to adjust later. — bcad389
+- [x] 1.8 Reviewer confirms incomplete optional fields degrade confidence instead of blocking queue display. — bcad389
 
 ### Phase 2: Decorated Garden Beds API
 
 #### Automated
 
-- [ ] 2.1 `GET /api/garden/beds` returns decorated queue items rather than raw-only `GardenBedResponse` objects.
-- [ ] 2.2 `POST /api/garden/beds` returns a decorated created bed while preserving existing validation and auth checks.
-- [ ] 2.3 API code imports queue helpers from `src/lib/garden-beds.ts` rather than duplicating priority logic.
-- [ ] 2.4 `npx astro sync` succeeds.
-- [ ] 2.5 `npm run lint` succeeds.
+- [x] 2.1 `GET /api/garden/beds` returns decorated queue items rather than raw-only `GardenBedResponse` objects.
+- [x] 2.2 `POST /api/garden/beds` returns a decorated created bed while preserving existing validation and auth checks.
+- [x] 2.3 API code imports queue helpers from `src/lib/garden-beds.ts` rather than duplicating priority logic.
+- [x] 2.4 `npx astro sync` succeeds.
+- [x] 2.5 `npm run lint` succeeds.
 
 #### Manual
 
-- [ ] 2.6 Logged-in API smoke request creates a bed and receives computed priority/date/confidence fields.
-- [ ] 2.7 Logged-in API smoke request lists beds in the same queue order expected by the helper.
-- [ ] 2.8 Anonymous `GET` and `POST` requests still return 401 JSON.
+- [x] 2.6 Logged-in API smoke request creates a bed and receives computed priority/date/confidence fields.
+- [x] 2.7 Logged-in API smoke request lists beds in the same queue order expected by the helper.
+- [x] 2.8 Anonymous `GET` and `POST` requests still return 401 JSON.
 
 ### Phase 3: Protected `/garden` Page Shell
 
