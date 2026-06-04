@@ -1,0 +1,32 @@
+---
+import Topbar from "@/components/Topbar.astro";
+import { GardenQueue } from "@/components/garden/GardenQueue";
+import Layout from "@/layouts/Layout.astro";
+
+const { user } = Astro.locals;
+---
+
+<Layout title="Garden Queue">
+  <main class="bg-cosmic min-h-screen p-4 text-white">
+    <div class="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col py-4">
+      <Topbar />
+
+      <section class="flex flex-1 flex-col justify-center gap-8 py-8">
+        <div class="max-w-3xl space-y-4">
+          <p class="text-sm font-semibold tracking-[0.35em] text-emerald-200/80 uppercase">Garden planner</p>
+          <h1
+            class="bg-gradient-to-r from-emerald-100 via-blue-100 to-purple-100 bg-clip-text text-4xl font-bold text-transparent md:text-5xl"
+          >
+            Priority bed queue
+          </h1>
+          <p class="max-w-2xl text-base leading-7 text-blue-100/75">
+            Welcome, <span class="font-semibold text-white">{user?.email}</span>. Add beds and review which areas need
+            weeding first based on weed level, timing, mulch, area, and estimated work.
+          </p>
+        </div>
+
+        <GardenQueue client:load />
+      </section>
+    </div>
+  </main>
+</Layout>
