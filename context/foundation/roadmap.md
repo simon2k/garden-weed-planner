@@ -83,7 +83,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** To najkrótsza ścieżka do wartości MVP; ryzykiem jest wciągnięcie zbyt wielu pól pobocznych zamiast utrzymania minimum potrzebnego do kolejki.
-- **Status:** proposed
+- **Status:** ready
 
 ### S-02: Lista roślin na rabacie
 
