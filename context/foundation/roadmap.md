@@ -69,7 +69,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sekwencjonowane przed pierwszą ścieżką, bo bez trwałych danych i izolacji użytkowników kolejka rabat nie jest bezpiecznie planowalna.
-- **Status:** ready
+- **Status:** finalized
 
 ## Slices
 
@@ -83,7 +83,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** To najkrótsza ścieżka do wartości MVP; ryzykiem jest wciągnięcie zbyt wielu pól pobocznych zamiast utrzymania minimum potrzebnego do kolejki.
-- **Status:** ready
+- **Status:** finalized
 
 ### S-02: Lista roślin na rabacie
 
@@ -95,7 +95,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Dodane po pierwszej kolejce, bo rośliny wzbogacają kontekst rabaty, ale nie są konieczne do pierwszego sprawdzenia pilności.
-- **Status:** proposed
+- **Status:** finalized
 
 ### S-03: Obserwacje chwastów wpływające na priorytet
 
