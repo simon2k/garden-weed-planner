@@ -402,34 +402,34 @@ This change adds a new child table and does not migrate existing data. During de
 
 #### Automated
 
-- [x] 3.1 `GET /api/garden/beds/[bedId]/plants` route exists and compiles.
-- [x] 3.2 `POST /api/garden/beds/[bedId]/plants` route exists and compiles.
-- [x] 3.3 API route returns `401` for unauthenticated requests and `503` when Supabase is not configured.
-- [x] 3.4 API route returns `400` for invalid JSON or invalid plant payloads.
-- [x] 3.5 `npm run lint` passes.
+- [x] 3.1 `GET /api/garden/beds/[bedId]/plants` route exists and compiles. — 680de63
+- [x] 3.2 `POST /api/garden/beds/[bedId]/plants` route exists and compiles. — 680de63
+- [x] 3.3 API route returns `401` for unauthenticated requests and `503` when Supabase is not configured. — 680de63
+- [x] 3.4 API route returns `400` for invalid JSON or invalid plant payloads. — 680de63
+- [x] 3.5 `npm run lint` passes. — 680de63
 
 #### Manual
 
-- [x] 3.6 Authenticated user can list an empty plant list for their own bed.
-- [x] 3.7 Authenticated user can add a plant with name and optional planted year, quantity, current height, and current width to their own bed.
-- [x] 3.8 Authenticated user receives not-found behavior for another user's bed ID.
-- [x] 3.9 Existing `GET/POST /api/garden/beds` responses remain backward compatible.
+- [x] 3.6 Authenticated user can list an empty plant list for their own bed. — 680de63
+- [x] 3.7 Authenticated user can add a plant with name and optional planted year, quantity, current height, and current width to their own bed. — 680de63
+- [x] 3.8 Authenticated user receives not-found behavior for another user's bed ID. — 680de63
+- [x] 3.9 Existing `GET/POST /api/garden/beds` responses remain backward compatible. — 680de63
 
 ### Phase 4: Expandable Plant UI
 
 #### Automated
 
-- [ ] 4.1 Plant UI compiles without TypeScript or JSX lint errors.
-- [ ] 4.2 Blank plant names and invalid optional details are rejected client-side before POST.
-- [ ] 4.3 `npm run lint` passes.
-- [ ] 4.4 `npm run build` passes.
+- [x] 4.1 Plant UI compiles without TypeScript or JSX lint errors.
+- [x] 4.2 Blank plant names and invalid optional details are rejected client-side before POST.
+- [x] 4.3 `npm run lint` passes.
+- [x] 4.4 `npm run build` passes.
 
 #### Manual
 
-- [ ] 4.5 User can expand a bed card, see empty plant state, add a plant with optional structured details, and see it listed.
-- [ ] 4.6 User can collapse and re-expand a bed without losing already loaded plant context unexpectedly.
-- [ ] 4.7 Adding a plant does not change the bed's priority label, priority score, suggested date, or queue position.
-- [ ] 4.8 Error states are visible when plant list loading or plant creation fails.
+- [x] 4.5 User can expand a bed card, see empty plant state, add a plant with optional structured details, and see it listed.
+- [x] 4.6 User can collapse and re-expand a bed without losing already loaded plant context unexpectedly.
+- [x] 4.7 Adding a plant does not change the bed's priority label, priority score, suggested date, or queue position.
+- [x] 4.8 Error states are visible when plant list loading or plant creation fails.
 
 ### Phase 5: Final Verification and Scope Guard
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertCircle, CalendarDays, Clock, Loader2, Map, Plus, Sprout } from "lucide-react";
+import { AlertCircle, CalendarDays, Clock, Leaf, Loader2, Map, Plus, Sprout } from "lucide-react";
 import { ServerError } from "@/components/auth/ServerError";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,18 @@ interface GardenBedQueueItem {
   priority_confidence: PriorityConfidence;
 }
 
+interface BedPlant {
+  id: string;
+  bed_id: string;
+  name: string;
+  planted_year: number | null;
+  quantity: number | null;
+  height_cm: number | null;
+  width_cm: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const weedLevelOptions: { value: WeedLevel; label: string; description: string }[] = [
   { value: "low", label: "Low", description: "Mostly under control" },
   { value: "medium", label: "Medium", description: "Needs attention soon" },
@@ -39,6 +51,14 @@ interface BedsResponse {
 
 interface BedResponse {
   bed: GardenBedQueueItem;
+}
+
+interface PlantsResponse {
+  plants: BedPlant[];
+}
+
+interface PlantResponse {
+  plant: BedPlant;
 }
 
 interface ErrorResponse {
@@ -54,6 +74,24 @@ interface FormState {
   mulch_depth_cm: string;
 }
 
+interface PlantFormState {
+  name: string;
+  planted_year: string;
+  quantity: string;
+  height_cm: string;
+  width_cm: string;
+}
+
+interface PlantBedState {
+  plants: BedPlant[];
+  isLoading: boolean;
+  isSubmitting: boolean;
+  error: string | null;
+  form: PlantFormState;
+  fieldErrors: Partial<Record<keyof PlantFormState, string>>;
+  hasLoaded: boolean;
+}
+
 const initialFormState: FormState = {
   name: "",
   weed_level: "medium",
@@ -63,6 +101,16 @@ const initialFormState: FormState = {
   mulch_depth_cm: "",
 };
 
+const initialPlantFormState: PlantFormState = {
+  name: "",
+  planted_year: "",
+  quantity: "",
+  height_cm: "",
+  width_cm: "",
+};
+
+const currentYear = new Date().getFullYear();
+
 export function GardenQueue() {
   const [beds, setBeds] = useState<GardenBedQueueItem[]>([]);
   const [form, setForm] = useState<FormState>(initialFormState);
@@ -71,6 +119,8 @@ export function GardenQueue() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [expandedBedIds, setExpandedBedIds] = useState<Set<string>>(new Set());
+  const [plantStateByBedId, setPlantStateByBedId] = useState<Record<string, PlantBedState>>({});
 
   useEffect(() => {
     void loadBeds();
@@ -141,6 +191,142 @@ export function GardenQueue() {
       setError(err instanceof Error ? err.message : "Unable to create garden bed.");
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function togglePlantSection(bedId: string) {
+    const willExpand = !expandedBedIds.has(bedId);
+    setExpandedBedIds((current) => {
+      const next = new Set(current);
+      if (willExpand) {
+        next.add(bedId);
+      } else {
+        next.delete(bedId);
+      }
+      return next;
+    });
+
+    if (willExpand && !getPlantState(plantStateByBedId, bedId).hasLoaded) {
+      await loadPlants(bedId);
+    }
+  }
+
+  async function loadPlants(bedId: string) {
+    setPlantStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getPlantState(current, bedId),
+        isLoading: true,
+        error: null,
+      },
+    }));
+
+    try {
+      const response = await fetch(`/api/garden/beds/${bedId}/plants`);
+      const payload = (await response.json()) as PlantsResponse & ErrorResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to load plants for this bed.");
+      }
+
+      setPlantStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getPlantState(current, bedId),
+          plants: payload.plants,
+          isLoading: false,
+          error: null,
+          hasLoaded: true,
+        },
+      }));
+    } catch (err) {
+      setPlantStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getPlantState(current, bedId),
+          isLoading: false,
+          error: err instanceof Error ? err.message : "Unable to load plants for this bed.",
+          hasLoaded: true,
+        },
+      }));
+    }
+  }
+
+  function updatePlantField(bedId: string, field: keyof PlantFormState, value: string) {
+    setPlantStateByBedId((current) => {
+      const bedState = getPlantState(current, bedId);
+      return {
+        ...current,
+        [bedId]: {
+          ...bedState,
+          form: { ...bedState.form, [field]: value },
+          fieldErrors: { ...bedState.fieldErrors, [field]: undefined },
+          error: null,
+        },
+      };
+    });
+  }
+
+  async function submitPlant(bedId: string, event: { preventDefault: () => void }) {
+    event.preventDefault();
+    const bedState = getPlantState(plantStateByBedId, bedId);
+    if (bedState.isSubmitting) return;
+
+    const validation = validatePlantForm(bedState.form);
+    setPlantStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getPlantState(current, bedId),
+        fieldErrors: validation.errors,
+        error: null,
+      },
+    }));
+    if (!validation.success) return;
+
+    setPlantStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getPlantState(current, bedId),
+        isSubmitting: true,
+      },
+    }));
+
+    try {
+      const response = await fetch(`/api/garden/beds/${bedId}/plants`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toCreatePlantPayload(bedState.form)),
+      });
+      const payload = (await response.json()) as PlantResponse & ErrorResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to add plant to this bed.");
+      }
+
+      setPlantStateByBedId((current) => {
+        const currentState = getPlantState(current, bedId);
+        return {
+          ...current,
+          [bedId]: {
+            ...currentState,
+            plants: [payload.plant, ...currentState.plants],
+            form: initialPlantFormState,
+            fieldErrors: {},
+            error: null,
+            isSubmitting: false,
+            hasLoaded: true,
+          },
+        };
+      });
+    } catch (err) {
+      setPlantStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getPlantState(current, bedId),
+          isSubmitting: false,
+          error: err instanceof Error ? err.message : "Unable to add plant to this bed.",
+        },
+      }));
     }
   }
 
@@ -301,7 +487,19 @@ export function GardenQueue() {
         ) : (
           <ol className="space-y-3">
             {beds.map((bed, index) => (
-              <QueueCard key={bed.id} bed={bed} position={index + 1} />
+              <QueueCard
+                key={bed.id}
+                bed={bed}
+                position={index + 1}
+                isExpanded={expandedBedIds.has(bed.id)}
+                plantState={getPlantState(plantStateByBedId, bed.id)}
+                onTogglePlants={() => void togglePlantSection(bed.id)}
+                onPlantFieldChange={(field, value) => {
+                  updatePlantField(bed.id, field, value);
+                }}
+                onPlantSubmit={(event) => void submitPlant(bed.id, event)}
+                onPlantRetry={() => void loadPlants(bed.id)}
+              />
             ))}
           </ol>
         )}
@@ -311,7 +509,7 @@ export function GardenQueue() {
 }
 
 interface TextFieldProps {
-  id: keyof FormState;
+  id: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -320,6 +518,7 @@ interface TextFieldProps {
   error?: string;
   required?: boolean;
   min?: string;
+  max?: string;
   step?: string;
 }
 
@@ -333,6 +532,7 @@ function TextField({
   error,
   required,
   min,
+  max,
   step,
 }: TextFieldProps) {
   return (
@@ -346,6 +546,7 @@ function TextField({
         type={type}
         value={value}
         min={min}
+        max={max}
         step={step}
         onChange={(event) => {
           onChange(event.target.value);
@@ -366,7 +567,25 @@ function TextField({
   );
 }
 
-function QueueCard({ bed, position }: { bed: GardenBedQueueItem; position: number }) {
+function QueueCard({
+  bed,
+  position,
+  isExpanded,
+  plantState,
+  onTogglePlants,
+  onPlantFieldChange,
+  onPlantSubmit,
+  onPlantRetry,
+}: {
+  bed: GardenBedQueueItem;
+  position: number;
+  isExpanded: boolean;
+  plantState: PlantBedState;
+  onTogglePlants: () => void;
+  onPlantFieldChange: (field: keyof PlantFormState, value: string) => void;
+  onPlantSubmit: (event: { preventDefault: () => void }) => void;
+  onPlantRetry: () => void;
+}) {
   const suggestedDateText = bed.suggested_weed_at
     ? `Suggested next weeding: ${formatDisplayDate(bed.suggested_weed_at)}`
     : "Add last weeded date for a suggested next-weeding date.";
@@ -410,8 +629,166 @@ function QueueCard({ bed, position }: { bed: GardenBedQueueItem; position: numbe
         <QueueMetric icon={<Sprout className="size-4" />} label="Mulch" value={mulch} />
       </dl>
 
-      <p className="mt-3 text-xs text-blue-100/50">Priority score: {bed.priority_score}</p>
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-blue-100/50">Priority score: {bed.priority_score}</p>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onTogglePlants}
+          className="border-emerald-300/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20 hover:text-white"
+          aria-expanded={isExpanded}
+        >
+          <Leaf className="size-4" />
+          {isExpanded ? "Hide plants" : "Show plants"}
+        </Button>
+      </div>
+
+      {isExpanded && (
+        <PlantSection
+          bedName={bed.name}
+          state={plantState}
+          onFieldChange={onPlantFieldChange}
+          onSubmit={onPlantSubmit}
+          onRetry={onPlantRetry}
+        />
+      )}
     </li>
+  );
+}
+
+function PlantSection({
+  bedName,
+  state,
+  onFieldChange,
+  onSubmit,
+  onRetry,
+}: {
+  bedName: string;
+  state: PlantBedState;
+  onFieldChange: (field: keyof PlantFormState, value: string) => void;
+  onSubmit: (event: { preventDefault: () => void }) => void;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="mt-4 rounded-xl border border-emerald-300/15 bg-emerald-950/20 p-4">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h4 className="font-semibold text-emerald-100">Plants in {bedName}</h4>
+          <p className="text-xs text-blue-100/60">
+            Current height and width are snapshots you enter now; they are not automatically updated.
+          </p>
+        </div>
+        {state.error && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onRetry}
+            className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+          >
+            Retry
+          </Button>
+        )}
+      </div>
+
+      {state.isLoading ? (
+        <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
+          <Loader2 className="size-4 animate-spin" />
+          Loading plants...
+        </div>
+      ) : state.error ? (
+        <ServerError message={state.error} />
+      ) : state.plants.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
+          No plants recorded for this bed yet.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {state.plants.map((plant) => (
+            <li key={plant.id} className="rounded-lg bg-white/5 p-3">
+              <p className="font-medium text-white">{plant.name}</p>
+              <p className="mt-1 text-xs text-blue-100/60">{formatPlantDetails(plant)}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
+        <TextField
+          id={`plant-name-${bedName}`}
+          label="Plant name"
+          value={state.form.name}
+          onChange={(value) => {
+            onFieldChange("name", value);
+          }}
+          placeholder="e.g. Lavender"
+          error={state.fieldErrors.name}
+          required
+        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <TextField
+            id={`plant-year-${bedName}`}
+            label="Planted year"
+            value={state.form.planted_year}
+            onChange={(value) => {
+              onFieldChange("planted_year", value);
+            }}
+            type="number"
+            min="1900"
+            max={String(currentYear)}
+            step="1"
+            placeholder={String(currentYear)}
+            error={state.fieldErrors.planted_year}
+          />
+          <TextField
+            id={`plant-quantity-${bedName}`}
+            label="Quantity"
+            value={state.form.quantity}
+            onChange={(value) => {
+              onFieldChange("quantity", value);
+            }}
+            type="number"
+            min="1"
+            step="1"
+            placeholder="3"
+            error={state.fieldErrors.quantity}
+          />
+          <TextField
+            id={`plant-height-${bedName}`}
+            label="Current height (cm)"
+            value={state.form.height_cm}
+            onChange={(value) => {
+              onFieldChange("height_cm", value);
+            }}
+            type="number"
+            min="0.1"
+            step="0.1"
+            placeholder="30"
+            error={state.fieldErrors.height_cm}
+          />
+          <TextField
+            id={`plant-width-${bedName}`}
+            label="Current width (cm)"
+            value={state.form.width_cm}
+            onChange={(value) => {
+              onFieldChange("width_cm", value);
+            }}
+            type="number"
+            min="0.1"
+            step="0.1"
+            placeholder="25"
+            error={state.fieldErrors.width_cm}
+          />
+        </div>
+        <Button
+          type="submit"
+          disabled={state.isSubmitting}
+          className="w-full bg-emerald-400 text-slate-950 hover:bg-emerald-300"
+        >
+          {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+          {state.isSubmitting ? "Adding plant..." : "Add plant"}
+        </Button>
+      </form>
+    </div>
   );
 }
 
@@ -424,6 +801,20 @@ function QueueMetric({ icon, label, value }: { icon: ReactNode; label: string; v
       </dt>
       <dd className="mt-1 font-medium text-white">{value}</dd>
     </div>
+  );
+}
+
+function getPlantState(source: Record<string, PlantBedState>, bedId: string): PlantBedState {
+  return (
+    source[bedId] ?? {
+      plants: [],
+      isLoading: false,
+      isSubmitting: false,
+      error: null,
+      form: initialPlantFormState,
+      fieldErrors: {},
+      hasLoaded: false,
+    }
   );
 }
 
@@ -440,6 +831,24 @@ function validateForm(form: FormState): { success: boolean; errors: Partial<Reco
   return { success: Object.keys(errors).length === 0, errors };
 }
 
+function validatePlantForm(form: PlantFormState): {
+  success: boolean;
+  errors: Partial<Record<keyof PlantFormState, string>>;
+} {
+  const errors: Partial<Record<keyof PlantFormState, string>> = {};
+
+  if (!form.name.trim()) errors.name = "Plant name is required.";
+  if (!isBlankOrIntegerInRange(form.planted_year, 1900, currentYear))
+    errors.planted_year = `Planted year must be from 1900 through ${currentYear}.`;
+  if (!isBlankOrInteger(form.quantity, 1)) errors.quantity = "Quantity must be a positive whole number.";
+  if (!isBlankOrNumber(form.height_cm, { min: 0, exclusiveMin: true }))
+    errors.height_cm = "Current height must be greater than 0.";
+  if (!isBlankOrNumber(form.width_cm, { min: 0, exclusiveMin: true }))
+    errors.width_cm = "Current width must be greater than 0.";
+
+  return { success: Object.keys(errors).length === 0, errors };
+}
+
 function toCreatePayload(form: FormState) {
   return {
     name: form.name.trim(),
@@ -448,6 +857,16 @@ function toCreatePayload(form: FormState) {
     last_weeded_at: form.last_weeded_at || null,
     estimated_minutes: toOptionalNumber(form.estimated_minutes),
     mulch_depth_cm: toOptionalNumber(form.mulch_depth_cm),
+  };
+}
+
+function toCreatePlantPayload(form: PlantFormState) {
+  return {
+    name: form.name.trim(),
+    planted_year: toOptionalNumber(form.planted_year),
+    quantity: toOptionalNumber(form.quantity),
+    height_cm: toOptionalNumber(form.height_cm),
+    width_cm: toOptionalNumber(form.width_cm),
   };
 }
 
@@ -469,6 +888,12 @@ function isBlankOrInteger(value: string, min: number): boolean {
   return Number.isInteger(number) && number >= min;
 }
 
+function isBlankOrIntegerInRange(value: string, min: number, max: number): boolean {
+  if (value.trim() === "") return true;
+  const number = Number(value);
+  return Number.isInteger(number) && number >= min && number <= max;
+}
+
 function priorityClassName(priority: GardenBedQueueItem["priority"]): string {
   if (priority === "urgent") return "bg-red-400/20 text-red-100 ring-1 ring-red-300/30";
   if (priority === "soon") return "bg-amber-400/20 text-amber-100 ring-1 ring-amber-300/30";
@@ -477,6 +902,17 @@ function priorityClassName(priority: GardenBedQueueItem["priority"]): string {
 
 function formatOptionalNumber(value: number | null, unit: string): string {
   return value === null ? "Not set" : `${value} ${unit}`;
+}
+
+function formatPlantDetails(plant: BedPlant): string {
+  const details = [
+    plant.planted_year ? `planted ${plant.planted_year}` : null,
+    plant.quantity ? `qty ${plant.quantity}` : null,
+    plant.height_cm ? `current height ${plant.height_cm} cm` : null,
+    plant.width_cm ? `current width ${plant.width_cm} cm` : null,
+  ].filter(Boolean);
+
+  return details.length > 0 ? details.join(" · ") : "No optional details set.";
 }
 
 function formatDisplayDate(value: string): string {
