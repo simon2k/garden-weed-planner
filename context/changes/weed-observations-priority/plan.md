@@ -425,30 +425,30 @@ This change adds a new child table and does not migrate existing data. Rollback 
 
 #### Automated
 
-- [x] 1.1 Migration file exists and defines `public.garden_bed_weed_observations` with required columns and constraints.
-- [x] 1.2 Migration includes authenticated select and insert RLS policies with parent bed ownership check.
-- [x] 1.3 Migration includes per-bed and user/bed indexes plus an `updated_at` trigger.
-- [x] 1.4 `npx astro sync` passes after the migration is added.
+- [x] 1.1 Migration file exists and defines `public.garden_bed_weed_observations` with required columns and constraints. — 4e26242
+- [x] 1.2 Migration includes authenticated select and insert RLS policies with parent bed ownership check. — 4e26242
+- [x] 1.3 Migration includes per-bed and user/bed indexes plus an `updated_at` trigger. — 4e26242
+- [x] 1.4 `npx astro sync` passes after the migration is added. — 4e26242
 
 #### Manual
 
-- [x] 1.5 Reviewer confirms no update/delete observation policies were added.
-- [x] 1.6 SQL/RLS smoke test confirms user A cannot list or insert observations for user B’s bed.
-- [x] 1.7 SQL/RLS smoke test confirms future `observed_at` is rejected.
+- [x] 1.5 Reviewer confirms no update/delete observation policies were added. — 4e26242
+- [x] 1.6 SQL/RLS smoke test confirms user A cannot list or insert observations for user B’s bed. — 4e26242
+- [x] 1.7 SQL/RLS smoke test confirms future `observed_at` is rejected. — 4e26242
 
 ### Phase 2: Observation Domain Model and Polish Catalog
 
 #### Automated
 
-- [ ] 2.1 `src/lib/weed-observations.ts` exports catalog, constants, domain types, validation, and mapping helpers.
-- [ ] 2.2 Validation rejects future observation dates, invalid enum values, invalid severity, non-object payloads, and empty optional strings when present.
-- [ ] 2.3 Validation accepts today’s date, past dates, catalog-based observations, and custom/free-text observations.
-- [ ] 2.4 `npm run lint` passes for the new module.
+- [x] 2.1 `src/lib/weed-observations.ts` exports catalog, constants, domain types, validation, and mapping helpers.
+- [x] 2.2 Validation rejects future observation dates, invalid enum values, invalid severity, non-object payloads, and empty optional strings when present.
+- [x] 2.3 Validation accepts today’s date, past dates, catalog-based observations, and custom/free-text observations.
+- [x] 2.4 `npm run lint` passes for the new module.
 
 #### Manual
 
-- [ ] 2.5 Reviewer confirms catalog labels and risk traits are Polish and understandable for a gardener.
-- [ ] 2.6 Reviewer confirms `coverage` is the simple enum `low | medium | high`, not percentage coverage.
+- [x] 2.5 Reviewer confirms catalog labels and risk traits are Polish and understandable for a gardener.
+- [x] 2.6 Reviewer confirms `coverage` is the simple enum `low | medium | high`, not percentage coverage.
 
 ### Phase 3: Observation-Aware Priority Algorithm
 
