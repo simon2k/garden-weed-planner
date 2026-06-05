@@ -486,32 +486,32 @@ This change adds a new child table and does not migrate existing data. Rollback 
 
 #### Automated
 
-- [x] 5.1 Observation UI compiles without TypeScript/JSX lint errors.
-- [x] 5.2 Client validation rejects future observed dates and invalid required fields before POST.
-- [x] 5.3 Adding observation code does not break existing add-bed or plant-list UI state.
-- [x] 5.4 `npm run lint` passes.
-- [x] 5.5 `npm run build` passes.
+- [x] 5.1 Observation UI compiles without TypeScript/JSX lint errors. — fed1334
+- [x] 5.2 Client validation rejects future observed dates and invalid required fields before POST. — fed1334
+- [x] 5.3 Adding observation code does not break existing add-bed or plant-list UI state. — fed1334
+- [x] 5.4 `npm run lint` passes. — fed1334
+- [x] 5.5 `npm run build` passes. — fed1334
 
 #### Manual
 
-- [x] 5.6 User can expand a bed’s weed observation section and see an empty state.
-- [x] 5.7 User can add an observation using a Polish catalog item and Polish risk checkboxes.
-- [x] 5.8 User can add a custom/unknown weed observation.
-- [x] 5.9 After adding a high-risk observation, the queue refreshes and shows updated priority/date plus short explanation.
-- [x] 5.10 Existing plant section still works.
+- [x] 5.6 User can expand a bed’s weed observation section and see an empty state. — fed1334
+- [x] 5.7 User can add an observation using a Polish catalog item and Polish risk checkboxes. — fed1334
+- [x] 5.8 User can add a custom/unknown weed observation. — fed1334
+- [x] 5.9 After adding a high-risk observation, the queue refreshes and shows updated priority/date plus short explanation. — fed1334
+- [x] 5.10 Existing plant section still works. — fed1334
 
 ### Phase 6: Final Verification and Scope Guard
 
 #### Automated
 
-- [ ] 6.1 `npx astro sync` passes.
-- [ ] 6.2 `npm run lint` passes.
-- [ ] 6.3 `npm run build` passes.
+- [x] 6.1 `npx astro sync` passes.
+- [x] 6.2 `npm run lint` passes.
+- [x] 6.3 `npm run build` passes.
 
 #### Manual
 
-- [ ] 6.4 Authenticated end-to-end observation add/list flow works from `/garden`.
-- [ ] 6.5 High-risk observation changes priority score, suggested date, reason label, and possibly queue position.
-- [ ] 6.6 Cross-user observation access is blocked by API/RLS smoke testing.
-- [ ] 6.7 Existing add-bed and plant-list flows still work.
-- [ ] 6.8 Reviewer confirms no S-04 scope was implemented.
+- [x] 6.4 Authenticated end-to-end observation add/list flow works from `/garden`.
+- [x] 6.5 High-risk observation changes priority score, suggested date, reason label, and possibly queue position.
+- [x] 6.6 Cross-user observation access is blocked by API/RLS smoke testing.
+- [x] 6.7 Existing add-bed and plant-list flows still work.
+- [x] 6.8 Reviewer confirms no S-04 scope was implemented.
