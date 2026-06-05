@@ -375,28 +375,28 @@ This change adds a new child table and does not migrate existing data. During de
 
 #### Automated
 
-- [x] 1.1 Supabase migration file exists and defines `public.garden_bed_plants` with required columns and constraints.
-- [x] 1.2 Migration includes RLS enabled plus authenticated select and insert policies.
-- [x] 1.3 Migration includes indexes for per-bed listing and ownership filtering.
-- [x] 1.4 `npx astro sync` completes after migration is added.
+- [x] 1.1 Supabase migration file exists and defines `public.garden_bed_plants` with required columns and constraints. — fb1dac9
+- [x] 1.2 Migration includes RLS enabled plus authenticated select and insert policies. — fb1dac9
+- [x] 1.3 Migration includes indexes for per-bed listing and ownership filtering. — fb1dac9
+- [x] 1.4 `npx astro sync` completes after migration is added. — fb1dac9
 
 #### Manual
 
-- [x] 1.5 SQL/RLS smoke test confirms an authenticated user cannot select or insert plants for another user's bed.
-- [x] 1.6 Reviewer confirms no update/delete plant policies were added in this phase.
+- [x] 1.5 SQL/RLS smoke test confirms an authenticated user cannot select or insert plants for another user's bed. — fb1dac9
+- [x] 1.6 Reviewer confirms no update/delete plant policies were added in this phase. — fb1dac9
 
 ### Phase 2: Plant Domain Helpers
 
 #### Automated
 
-- [ ] 2.1 `src/lib/bed-plants.ts` exports the plant contracts needed by the API route.
-- [ ] 2.2 Validation rejects missing, non-string, and whitespace-only names.
-- [ ] 2.3 Validation accepts duplicate names and optional structured plant details.
-- [ ] 2.4 `npm run lint` passes for the new module.
+- [x] 2.1 `src/lib/bed-plants.ts` exports the plant contracts needed by the API route.
+- [x] 2.2 Validation rejects missing, non-string, and whitespace-only names.
+- [x] 2.3 Validation accepts duplicate names and optional structured plant details.
+- [x] 2.4 `npm run lint` passes for the new module.
 
 #### Manual
 
-- [ ] 2.5 Reviewer confirms plant validation does not introduce plant priority or duplicate-blocking rules.
+- [x] 2.5 Reviewer confirms plant validation does not introduce plant priority or duplicate-blocking rules.
 
 ### Phase 3: Nested Plant API
 
