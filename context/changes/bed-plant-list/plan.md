@@ -419,29 +419,29 @@ This change adds a new child table and does not migrate existing data. During de
 
 #### Automated
 
-- [x] 4.1 Plant UI compiles without TypeScript or JSX lint errors.
-- [x] 4.2 Blank plant names and invalid optional details are rejected client-side before POST.
-- [x] 4.3 `npm run lint` passes.
-- [x] 4.4 `npm run build` passes.
+- [x] 4.1 Plant UI compiles without TypeScript or JSX lint errors. — 56a181f
+- [x] 4.2 Blank plant names and invalid optional details are rejected client-side before POST. — 56a181f
+- [x] 4.3 `npm run lint` passes. — 56a181f
+- [x] 4.4 `npm run build` passes. — 56a181f
 
 #### Manual
 
-- [x] 4.5 User can expand a bed card, see empty plant state, add a plant with optional structured details, and see it listed.
-- [x] 4.6 User can collapse and re-expand a bed without losing already loaded plant context unexpectedly.
-- [x] 4.7 Adding a plant does not change the bed's priority label, priority score, suggested date, or queue position.
-- [x] 4.8 Error states are visible when plant list loading or plant creation fails.
+- [x] 4.5 User can expand a bed card, see empty plant state, add a plant with optional structured details, and see it listed. — 56a181f
+- [x] 4.6 User can collapse and re-expand a bed without losing already loaded plant context unexpectedly. — 56a181f
+- [x] 4.7 Adding a plant does not change the bed's priority label, priority score, suggested date, or queue position. — 56a181f
+- [x] 4.8 Error states are visible when plant list loading or plant creation fails. — 56a181f
 
 ### Phase 5: Final Verification and Scope Guard
 
 #### Automated
 
-- [ ] 5.1 `npx astro sync` passes.
-- [ ] 5.2 `npm run lint` passes.
-- [ ] 5.3 `npm run build` passes.
+- [x] 5.1 `npx astro sync` passes.
+- [x] 5.2 `npm run lint` passes.
+- [x] 5.3 `npm run build` passes.
 
 #### Manual
 
-- [ ] 5.4 Authenticated add/list plant flow works from `/garden` for at least one bed.
-- [ ] 5.5 Cross-user plant access is blocked by API/RLS smoke testing.
-- [ ] 5.6 Existing add-bed and queue sorting flow still works.
-- [ ] 5.7 Reviewer confirms no S-03/S-04 scope or plant priority scoring was introduced.
+- [x] 5.4 Authenticated add/list plant flow works from `/garden` for at least one bed.
+- [x] 5.5 Cross-user plant access is blocked by API/RLS smoke testing.
+- [x] 5.6 Existing add-bed and queue sorting flow still works.
+- [x] 5.7 Reviewer confirms no S-03/S-04 scope or plant priority scoring was introduced.
