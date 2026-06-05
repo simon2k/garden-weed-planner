@@ -389,31 +389,31 @@ This change adds a new child table and does not migrate existing data. During de
 
 #### Automated
 
-- [x] 2.1 `src/lib/bed-plants.ts` exports the plant contracts needed by the API route.
-- [x] 2.2 Validation rejects missing, non-string, and whitespace-only names.
-- [x] 2.3 Validation accepts duplicate names and optional structured plant details.
-- [x] 2.4 `npm run lint` passes for the new module.
+- [x] 2.1 `src/lib/bed-plants.ts` exports the plant contracts needed by the API route. — 6a5b9e4
+- [x] 2.2 Validation rejects missing, non-string, and whitespace-only names. — 6a5b9e4
+- [x] 2.3 Validation accepts duplicate names and optional structured plant details. — 6a5b9e4
+- [x] 2.4 `npm run lint` passes for the new module. — 6a5b9e4
 
 #### Manual
 
-- [x] 2.5 Reviewer confirms plant validation does not introduce plant priority or duplicate-blocking rules.
+- [x] 2.5 Reviewer confirms plant validation does not introduce plant priority or duplicate-blocking rules. — 6a5b9e4
 
 ### Phase 3: Nested Plant API
 
 #### Automated
 
-- [ ] 3.1 `GET /api/garden/beds/[bedId]/plants` route exists and compiles.
-- [ ] 3.2 `POST /api/garden/beds/[bedId]/plants` route exists and compiles.
-- [ ] 3.3 API route returns `401` for unauthenticated requests and `503` when Supabase is not configured.
-- [ ] 3.4 API route returns `400` for invalid JSON or invalid plant payloads.
-- [ ] 3.5 `npm run lint` passes.
+- [x] 3.1 `GET /api/garden/beds/[bedId]/plants` route exists and compiles.
+- [x] 3.2 `POST /api/garden/beds/[bedId]/plants` route exists and compiles.
+- [x] 3.3 API route returns `401` for unauthenticated requests and `503` when Supabase is not configured.
+- [x] 3.4 API route returns `400` for invalid JSON or invalid plant payloads.
+- [x] 3.5 `npm run lint` passes.
 
 #### Manual
 
-- [ ] 3.6 Authenticated user can list an empty plant list for their own bed.
-- [ ] 3.7 Authenticated user can add a plant with name and optional planted year, quantity, current height, and current width to their own bed.
-- [ ] 3.8 Authenticated user receives not-found behavior for another user's bed ID.
-- [ ] 3.9 Existing `GET/POST /api/garden/beds` responses remain backward compatible.
+- [x] 3.6 Authenticated user can list an empty plant list for their own bed.
+- [x] 3.7 Authenticated user can add a plant with name and optional planted year, quantity, current height, and current width to their own bed.
+- [x] 3.8 Authenticated user receives not-found behavior for another user's bed ID.
+- [x] 3.9 Existing `GET/POST /api/garden/beds` responses remain backward compatible.
 
 ### Phase 4: Expandable Plant UI
 
