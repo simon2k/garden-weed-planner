@@ -1,14 +1,20 @@
 import type { APIRoute } from "astro";
 import {
+  summarizeGardenBedObservationPressure,
   toGardenBedInsertPayload,
   toGardenBedQueueItem,
   toSortedGardenBedQueue,
   validateCreateGardenBedInput,
+  type GardenBedObservationSummary,
+  type GardenBedRow,
+  type WeedObservationPriorityInput,
 } from "@/lib/garden-beds";
 import { createClient } from "@/lib/supabase";
 
 const gardenBedColumns =
   "id,user_id,name,area_m2,last_weeded_at,weed_level,estimated_minutes,mulch_depth_cm,created_at,updated_at";
+const weedObservationPriorityColumns =
+  "bed_id,observed_at,growth_stage,coverage,severity,spreads_by_rhizomes,spreads_by_stolons,spreads_by_tubers,regrows_from_root_fragments,prolific_seed_producer,fast_regrowth";
 
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -31,7 +37,25 @@ export const GET: APIRoute = async (context) => {
     return json({ error: "Unable to list garden beds." }, 500);
   }
 
-  const beds = toSortedGardenBedQueue(data);
+  const gardenBedRows = data as unknown as GardenBedRow[];
+
+  if (gardenBedRows.length === 0) {
+    return json({ beds: [] });
+  }
+
+  const bedIds = gardenBedRows.map((bed) => bed.id);
+  const { data: observations, error: observationsError } = await supabase
+    .from("garden_bed_weed_observations")
+    .select(weedObservationPriorityColumns)
+    .eq("user_id", user.id)
+    .in("bed_id", bedIds);
+
+  if (observationsError) {
+    return json({ error: "Unable to list garden bed weed observations." }, 500);
+  }
+
+  const observationSummaries = buildObservationSummaryMap(observations);
+  const beds = toSortedGardenBedQueue(gardenBedRows, observationSummaries);
   return json({ beds });
 };
 
@@ -83,4 +107,27 @@ async function readJson(request: Request): Promise<JsonReadResult> {
   } catch {
     return { success: false, error: "Request body must be valid JSON." };
   }
+}
+
+interface WeedObservationPriorityRow extends WeedObservationPriorityInput {
+  bed_id: string;
+}
+
+function buildObservationSummaryMap(
+  observations: readonly WeedObservationPriorityRow[],
+): ReadonlyMap<string, GardenBedObservationSummary> {
+  const observationsByBedId = new Map<string, WeedObservationPriorityInput[]>();
+
+  for (const observation of observations) {
+    const existing = observationsByBedId.get(observation.bed_id) ?? [];
+    existing.push(observation);
+    observationsByBedId.set(observation.bed_id, existing);
+  }
+
+  return new Map(
+    [...observationsByBedId.entries()].map(([bedId, bedObservations]) => [
+      bedId,
+      summarizeGardenBedObservationPressure(bedObservations),
+    ]),
+  );
 }
