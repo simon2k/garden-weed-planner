@@ -7,11 +7,8 @@ import {
 } from "@/lib/weed-observations";
 import { createClient } from "@/lib/supabase";
 
-const gardenBedColumns = "id";
 const weedObservationColumns =
   "id,bed_id,user_id,observed_at,weed_catalog_slug,weed_name,weed_category,growth_stage,coverage,severity,spreads_by_rhizomes,spreads_by_stolons,spreads_by_tubers,regrows_from_root_fragments,prolific_seed_producer,fast_regrowth,note,created_at,updated_at";
-
-type SupabaseClient = NonNullable<ReturnType<typeof createClient>>;
 
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -24,14 +21,9 @@ export const GET: APIRoute = async (context) => {
     return json({ error: "Authentication required." }, 401);
   }
 
-  const bedId = context.params.bedId;
-  if (!bedId || !isUuid(bedId)) {
-    return json({ error: "Garden bed not found." }, 404);
-  }
-
-  const ownsBed = await verifyBedOwnership(supabase, bedId, user.id);
-  if (!ownsBed.success) {
-    return json({ error: ownsBed.error }, ownsBed.status);
+  const bedId = getBedId(context);
+  if (!bedId) {
+    return json({ observations: [] });
   }
 
   const { data, error } = await supabase
@@ -60,14 +52,9 @@ export const POST: APIRoute = async (context) => {
     return json({ error: "Authentication required." }, 401);
   }
 
-  const bedId = context.params.bedId;
-  if (!bedId || !isUuid(bedId)) {
-    return json({ error: "Garden bed not found." }, 404);
-  }
-
-  const ownsBed = await verifyBedOwnership(supabase, bedId, user.id);
-  if (!ownsBed.success) {
-    return json({ error: ownsBed.error }, ownsBed.status);
+  const bedId = getBedId(context)?.trim();
+  if (!bedId) {
+    return json({ error: "Garden bed id is required." }, 400);
   }
 
   const body = await readJson(context.request);
@@ -113,27 +100,12 @@ async function readJson(request: Request): Promise<JsonReadResult> {
   }
 }
 
-type OwnershipResult = { success: true } | { success: false; status: 404 | 500; error: string };
+function getBedId(context: Parameters<APIRoute>[0]): string | undefined {
+  if (context.params.bedId) return context.params.bedId;
 
-async function verifyBedOwnership(supabase: SupabaseClient, bedId: string, userId: string): Promise<OwnershipResult> {
-  const { data, error } = await supabase
-    .from("garden_beds")
-    .select(gardenBedColumns)
-    .eq("id", bedId)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const segments = context.url.pathname.split("/").filter(Boolean);
+  const observationsIndex = segments.lastIndexOf("weed-observations");
+  if (observationsIndex <= 0) return undefined;
 
-  if (error) {
-    return { success: false, status: 500, error: "Unable to verify garden bed ownership." };
-  }
-
-  if (!data) {
-    return { success: false, status: 404, error: "Garden bed not found." };
-  }
-
-  return { success: true };
-}
-
-function isUuid(value: string): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i.test(value);
+  return segments[observationsIndex - 1];
 }

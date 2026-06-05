@@ -469,36 +469,36 @@ This change adds a new child table and does not migrate existing data. Rollback 
 
 #### Automated
 
-- [x] 4.1 `GET /api/garden/beds/[bedId]/weed-observations` route exists and compiles.
-- [x] 4.2 `POST /api/garden/beds/[bedId]/weed-observations` route exists and compiles.
-- [x] 4.3 Nested route returns 401 for unauthenticated requests, 503 when Supabase is not configured, 404 for invalid/non-owned bed IDs, and 400 for invalid payloads.
-- [x] 4.4 `GET /api/garden/beds` returns observation-aware queue fields without breaking existing bed fields.
-- [x] 4.5 `npm run lint` passes.
+- [x] 4.1 `GET /api/garden/beds/[bedId]/weed-observations` route exists and compiles. — 8f0a57b
+- [x] 4.2 `POST /api/garden/beds/[bedId]/weed-observations` route exists and compiles. — 8f0a57b
+- [x] 4.3 Nested route returns 401 for unauthenticated requests, 503 when Supabase is not configured, 404 for invalid/non-owned bed IDs, and 400 for invalid payloads. — 8f0a57b
+- [x] 4.4 `GET /api/garden/beds` returns observation-aware queue fields without breaking existing bed fields. — 8f0a57b
+- [x] 4.5 `npm run lint` passes. — 8f0a57b
 
 #### Manual
 
-- [x] 4.6 Authenticated user can list empty observations for their own bed.
-- [x] 4.7 Authenticated user can add an observation to their own bed.
-- [x] 4.8 Authenticated user receives not-found behavior for another user’s bed ID.
-- [x] 4.9 Main queue order/date/score changes after an observation affects pressure.
+- [x] 4.6 Authenticated user can list empty observations for their own bed. — 8f0a57b
+- [x] 4.7 Authenticated user can add an observation to their own bed. — 8f0a57b
+- [x] 4.8 Authenticated user receives not-found behavior for another user’s bed ID. — 8f0a57b
+- [x] 4.9 Main queue order/date/score changes after an observation affects pressure. — 8f0a57b
 
 ### Phase 5: Garden UI Integration
 
 #### Automated
 
-- [ ] 5.1 Observation UI compiles without TypeScript/JSX lint errors.
-- [ ] 5.2 Client validation rejects future observed dates and invalid required fields before POST.
-- [ ] 5.3 Adding observation code does not break existing add-bed or plant-list UI state.
-- [ ] 5.4 `npm run lint` passes.
-- [ ] 5.5 `npm run build` passes.
+- [x] 5.1 Observation UI compiles without TypeScript/JSX lint errors.
+- [x] 5.2 Client validation rejects future observed dates and invalid required fields before POST.
+- [x] 5.3 Adding observation code does not break existing add-bed or plant-list UI state.
+- [x] 5.4 `npm run lint` passes.
+- [x] 5.5 `npm run build` passes.
 
 #### Manual
 
-- [ ] 5.6 User can expand a bed’s weed observation section and see an empty state.
-- [ ] 5.7 User can add an observation using a Polish catalog item and Polish risk checkboxes.
-- [ ] 5.8 User can add a custom/unknown weed observation.
-- [ ] 5.9 After adding a high-risk observation, the queue refreshes and shows updated priority/date plus short explanation.
-- [ ] 5.10 Existing plant section still works.
+- [x] 5.6 User can expand a bed’s weed observation section and see an empty state.
+- [x] 5.7 User can add an observation using a Polish catalog item and Polish risk checkboxes.
+- [x] 5.8 User can add a custom/unknown weed observation.
+- [x] 5.9 After adding a high-risk observation, the queue refreshes and shows updated priority/date plus short explanation.
+- [x] 5.10 Existing plant section still works.
 
 ### Phase 6: Final Verification and Scope Guard
 

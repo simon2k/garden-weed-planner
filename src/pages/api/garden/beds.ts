@@ -51,7 +51,7 @@ export const GET: APIRoute = async (context) => {
     .in("bed_id", bedIds);
 
   if (observationsError) {
-    return json({ error: "Unable to list garden bed weed observations." }, 500);
+    return json({ beds: toSortedGardenBedQueue(gardenBedRows) });
   }
 
   const observationSummaries = buildObservationSummaryMap(observations);
