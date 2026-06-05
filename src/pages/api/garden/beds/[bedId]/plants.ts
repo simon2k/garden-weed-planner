@@ -24,7 +24,7 @@ export const GET: APIRoute = async (context) => {
   }
 
   const bedId = context.params.bedId;
-  if (!bedId) {
+  if (!bedId || !isUuid(bedId)) {
     return json({ error: "Garden bed not found." }, 404);
   }
 
@@ -59,7 +59,7 @@ export const POST: APIRoute = async (context) => {
   }
 
   const bedId = context.params.bedId;
-  if (!bedId) {
+  if (!bedId || !isUuid(bedId)) {
     return json({ error: "Garden bed not found." }, 404);
   }
 
@@ -130,4 +130,8 @@ async function verifyBedOwnership(supabase: SupabaseClient, bedId: string, userI
   }
 
   return { success: true };
+}
+
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
