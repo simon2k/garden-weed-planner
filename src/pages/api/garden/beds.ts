@@ -15,6 +15,7 @@ const gardenBedColumns =
   "id,user_id,name,area_m2,last_weeded_at,weed_level,estimated_minutes,mulch_depth_cm,created_at,updated_at";
 const weedObservationPriorityColumns =
   "bed_id,observed_at,growth_stage,coverage,severity,spreads_by_rhizomes,spreads_by_stolons,spreads_by_tubers,regrows_from_root_fragments,prolific_seed_producer,fast_regrowth";
+const observationDecayDays = 60;
 
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -44,14 +45,16 @@ export const GET: APIRoute = async (context) => {
   }
 
   const bedIds = gardenBedRows.map((bed) => bed.id);
+  const observationWindowStart = getObservationWindowStartDate();
   const { data: observations, error: observationsError } = await supabase
     .from("garden_bed_weed_observations")
     .select(weedObservationPriorityColumns)
     .eq("user_id", user.id)
-    .in("bed_id", bedIds);
+    .in("bed_id", bedIds)
+    .gte("observed_at", observationWindowStart);
 
   if (observationsError) {
-    return json({ beds: toSortedGardenBedQueue(gardenBedRows) });
+    return json({ error: "Unable to load weed observation priority data." }, 500);
   }
 
   const observationSummaries = buildObservationSummaryMap(observations);
@@ -130,4 +133,11 @@ function buildObservationSummaryMap(
       summarizeGardenBedObservationPressure(bedObservations),
     ]),
   );
+}
+
+function getObservationWindowStartDate(): string {
+  const now = new Date();
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  today.setUTCDate(today.getUTCDate() - observationDecayDays);
+  return today.toISOString().slice(0, 10);
 }

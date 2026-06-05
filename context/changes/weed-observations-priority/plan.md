@@ -10,7 +10,7 @@ The app already has a protected `/garden` queue where logged-in users can add be
 
 ## Desired End State
 
-A logged-in user can expand a garden bed, add a weed observation using a broad Polish weed catalog plus simple Polish risk-trait checkboxes, and see the full queue refresh with updated priority score, suggested next-weeding date, and a concise explanation such as “Przyspieszono: rozłogi, wysokie pokrycie, kwitnienie.” Observations are user-scoped by database RLS and app-level ownership checks, and only recent observations within a 60-day decay window affect the current queue.
+A logged-in user can expand a garden bed, add a weed observation using a broad Polish weed catalog plus simple Polish risk-trait checkboxes, and see the full queue refresh with updated priority score, suggested next-weeding date, and a concise explanation such as “Przyspieszono: rozłogi, wysokie pokrycie, kwitnienie.” Observations are user-scoped by database RLS; nested observation routes accept an RLS-first tradeoff where GET may return an empty list for inaccessible beds while POST is blocked by database constraints/RLS. Only recent observations within a 60-day decay window affect the current queue.
 
 ### Key Discoveries:
 
@@ -214,7 +214,7 @@ Expose authenticated nested observation endpoints and make the bed queue API obs
 
 **Intent**: Add a bed-scoped add/list surface for weed observations.
 
-**Contract**: Export uppercase `GET` and `POST` handlers. Both require configured Supabase and `context.locals.user`, validate `context.params.bedId` as UUID, verify parent bed ownership, and use safe JSON errors matching the plants route.
+**Contract**: Export uppercase `GET` and `POST` handlers. Both require configured Supabase and `context.locals.user`, require a present route `bedId`, and use safe JSON errors matching the plants route. Ownership is enforced RLS-first: GET filters by current `user.id` and may return an empty list for inaccessible beds; POST is blocked by database constraints/RLS if the bed is not writable by the user.
 
 #### 2. GET observations
 
@@ -246,7 +246,7 @@ Expose authenticated nested observation endpoints and make the bed queue API obs
 
 - `GET /api/garden/beds/[bedId]/weed-observations` route exists and compiles.
 - `POST /api/garden/beds/[bedId]/weed-observations` route exists and compiles.
-- Nested route returns 401 for unauthenticated requests, 503 when Supabase is not configured, 404 for invalid/non-owned bed IDs, and 400 for invalid payloads.
+- Nested route returns 401 for unauthenticated requests, 503 when Supabase is not configured, 400 for missing bed ID or invalid payloads, and relies on Supabase/RLS to block non-owned inserts.
 - `GET /api/garden/beds` returns observation-aware queue fields without breaking existing bed fields.
 - `npm run lint` passes.
 
@@ -254,7 +254,7 @@ Expose authenticated nested observation endpoints and make the bed queue API obs
 
 - Authenticated user can list empty observations for their own bed.
 - Authenticated user can add an observation to their own bed.
-- Authenticated user receives not-found behavior for another user’s bed ID.
+- Authenticated user cannot create observations for another user’s bed; listing an inaccessible bed may return an empty list by accepted RLS-first behavior.
 - Main queue order/date/score changes after an observation affects pressure.
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase.
@@ -377,7 +377,7 @@ Run project gates and manually verify the S-03 slice end to end without drifting
 ### Integration Tests:
 
 - API smoke tests for authenticated own-bed observation list/insert.
-- API smoke tests for non-owned bed access returning not-found behavior.
+- API smoke tests confirming non-owned bed inserts are blocked by Supabase/RLS and non-owned lists do not expose data.
 - Queue API smoke test confirming observation fields appear and score/date change after insert.
 - RLS smoke tests confirming users cannot select or insert observations for another user’s bed.
 
