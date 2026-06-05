@@ -504,14 +504,14 @@ This change adds a new child table and does not migrate existing data. Rollback 
 
 #### Automated
 
-- [x] 6.1 `npx astro sync` passes.
-- [x] 6.2 `npm run lint` passes.
-- [x] 6.3 `npm run build` passes.
+- [x] 6.1 `npx astro sync` passes. — 62b135e
+- [x] 6.2 `npm run lint` passes. — 62b135e
+- [x] 6.3 `npm run build` passes. — 62b135e
 
 #### Manual
 
-- [x] 6.4 Authenticated end-to-end observation add/list flow works from `/garden`.
-- [x] 6.5 High-risk observation changes priority score, suggested date, reason label, and possibly queue position.
-- [x] 6.6 Cross-user observation access is blocked by API/RLS smoke testing.
-- [x] 6.7 Existing add-bed and plant-list flows still work.
-- [x] 6.8 Reviewer confirms no S-04 scope was implemented.
+- [x] 6.4 Authenticated end-to-end observation add/list flow works from `/garden`. — 62b135e
+- [x] 6.5 High-risk observation changes priority score, suggested date, reason label, and possibly queue position. — 62b135e
+- [x] 6.6 Cross-user observation access is blocked by API/RLS smoke testing. — 62b135e
+- [x] 6.7 Existing add-bed and plant-list flows still work. — 62b135e
+- [x] 6.8 Reviewer confirms no S-04 scope was implemented. — 62b135e
