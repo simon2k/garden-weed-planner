@@ -1,3 +1,5 @@
+import type { GrowthStage, ObservationCoverage } from "@/lib/weed-observations";
+
 export const WEED_LEVELS = ["low", "medium", "high"] as const;
 
 export type WeedLevel = (typeof WEED_LEVELS)[number];
@@ -46,6 +48,10 @@ export interface GardenBedQueueItem extends GardenBedResponse {
   priority_score: number;
   suggested_weed_at: string | null;
   priority_confidence: PriorityConfidence;
+  observation_pressure_score: number;
+  observation_pressure_label: string;
+  observation_count: number;
+  observation_reasons: string[];
 }
 
 export interface GardenBedPriorityResult {
@@ -54,7 +60,34 @@ export interface GardenBedPriorityResult {
   priority_score: number;
   suggested_weed_at: string | null;
   priority_confidence: PriorityConfidence;
+  observation_pressure_score: number;
+  observation_pressure_label: string;
+  observation_count: number;
+  observation_reasons: string[];
 }
+
+export interface WeedObservationPriorityInput {
+  observed_at: string;
+  growth_stage: GrowthStage;
+  coverage: ObservationCoverage;
+  severity: number;
+  spreads_by_rhizomes: boolean;
+  spreads_by_stolons: boolean;
+  spreads_by_tubers: boolean;
+  regrows_from_root_fragments: boolean;
+  prolific_seed_producer: boolean;
+  fast_regrowth: boolean;
+}
+
+export interface GardenBedObservationSummary {
+  observation_pressure_score: number;
+  observation_pressure_label: string;
+  latest_observed_at: string | null;
+  observation_count: number;
+  observation_reasons: string[];
+}
+
+export type GardenBedObservationSummaryMap = ReadonlyMap<string, GardenBedObservationSummary>;
 
 export interface GardenBedInsertPayload extends CreateGardenBedInput {
   user_id: string;
@@ -103,6 +136,28 @@ const PRIORITY_SEVERITY: Record<BedQueuePriority, number> = {
 } as const;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const OBSERVATION_DECAY_DAYS = 60;
+const MAX_OBSERVATION_PRESSURE_SCORE = 80;
+const NO_OBSERVATION_SUMMARY: GardenBedObservationSummary = {
+  observation_pressure_score: 0,
+  observation_pressure_label: "brak presji z obserwacji",
+  latest_observed_at: null,
+  observation_count: 0,
+  observation_reasons: [],
+} as const;
+
+const COVERAGE_SCORE: Record<ObservationCoverage, number> = {
+  low: 0,
+  medium: 12,
+  high: 25,
+} as const;
+
+const GROWTH_STAGE_SCORE: Record<GrowthStage, number> = {
+  seedling: 0,
+  vegetative: 5,
+  flowering: 15,
+  seeding: 25,
+} as const;
 
 export function validateCreateGardenBedInput(value: unknown): GardenBedValidationResult {
   if (!isRecord(value)) {
@@ -175,51 +230,231 @@ export function toGardenBedResponse(row: GardenBedRow): GardenBedResponse {
   return response;
 }
 
-export function getSuggestedWeedAt(lastWeededAt: string | null, weedLevel: WeedLevel): string | null {
-  if (!lastWeededAt) return null;
+export function getSuggestedWeedAt(
+  lastWeededAt: string | null,
+  weedLevel: WeedLevel,
+  observationSummary: GardenBedObservationSummary = NO_OBSERVATION_SUMMARY,
+): string | null {
+  const pressure = observationSummary.observation_pressure_score;
+  const adjustedIntervalDays = adjustSuggestedIntervalDays(SUGGESTED_WEED_INTERVAL_DAYS[weedLevel], pressure);
 
-  const lastWeededDate = parseIsoDate(lastWeededAt);
-  if (!lastWeededDate) return null;
+  const candidates: string[] = [];
+  if (lastWeededAt) {
+    const lastWeededDate = parseIsoDate(lastWeededAt);
+    if (lastWeededDate) {
+      candidates.push(addDays(lastWeededDate, adjustedIntervalDays));
+    }
+  }
 
-  const suggestedDate = new Date(lastWeededDate.getTime());
-  suggestedDate.setUTCDate(suggestedDate.getUTCDate() + SUGGESTED_WEED_INTERVAL_DAYS[weedLevel]);
+  const responseWindow = getObservationResponseWindowDays(pressure);
+  if (responseWindow !== null && observationSummary.latest_observed_at) {
+    const latestObservedDate = parseIsoDate(observationSummary.latest_observed_at);
+    if (latestObservedDate) {
+      candidates.push(addDays(latestObservedDate, responseWindow));
+    }
+  }
 
-  return formatIsoDate(suggestedDate);
+  if (candidates.length === 0) return null;
+  return candidates.sort()[0] ?? null;
 }
 
-export function getGardenBedPriority(bed: GardenBedResponse | GardenBedRow): GardenBedPriorityResult {
-  const score = calculatePriorityScore(bed);
+export function getGardenBedPriority(
+  bed: GardenBedResponse | GardenBedRow,
+  observationSummary: GardenBedObservationSummary = NO_OBSERVATION_SUMMARY,
+): GardenBedPriorityResult {
+  const score = calculatePriorityScore(bed, observationSummary);
   const priority = getPriorityFromScore(score);
 
   return {
     priority,
     priority_label: BED_QUEUE_PRIORITY_LABELS[priority],
     priority_score: score,
-    suggested_weed_at: getSuggestedWeedAt(bed.last_weeded_at, bed.weed_level),
+    suggested_weed_at: getSuggestedWeedAt(bed.last_weeded_at, bed.weed_level, observationSummary),
     priority_confidence: hasCompletePriorityInputs(bed) ? "complete" : "partial",
+    observation_pressure_score: observationSummary.observation_pressure_score,
+    observation_pressure_label: observationSummary.observation_pressure_label,
+    observation_count: observationSummary.observation_count,
+    observation_reasons: observationSummary.observation_reasons,
   };
 }
 
-export function toGardenBedQueueItem(bed: GardenBedResponse | GardenBedRow): GardenBedQueueItem {
+export function toGardenBedQueueItem(
+  bed: GardenBedResponse | GardenBedRow,
+  observationSummary: GardenBedObservationSummary = NO_OBSERVATION_SUMMARY,
+): GardenBedQueueItem {
   return {
     ...toGardenBedResponseLike(bed),
-    ...getGardenBedPriority(bed),
+    ...getGardenBedPriority(bed, observationSummary),
   };
 }
 
-export function toSortedGardenBedQueue(beds: readonly (GardenBedResponse | GardenBedRow)[]): GardenBedQueueItem[] {
-  return beds.map(toGardenBedQueueItem).sort(compareGardenBedQueueItems);
+export function toSortedGardenBedQueue(
+  beds: readonly (GardenBedResponse | GardenBedRow)[],
+  observationSummaries?: GardenBedObservationSummaryMap,
+): GardenBedQueueItem[] {
+  return beds
+    .map((bed) => toGardenBedQueueItem(bed, observationSummaries?.get(bed.id) ?? NO_OBSERVATION_SUMMARY))
+    .sort(compareGardenBedQueueItems);
 }
 
-function calculatePriorityScore(bed: GardenBedResponse | GardenBedRow): number {
+export function summarizeGardenBedObservationPressure(
+  observations: readonly WeedObservationPriorityInput[],
+): GardenBedObservationSummary {
+  const today = startOfUtcToday();
+  const recentObservations = observations
+    .map((observation) => ({ observation, ageDays: getObservationAgeDays(observation.observed_at, today) }))
+    .filter(({ ageDays }) => ageDays !== null && ageDays >= 0 && ageDays <= OBSERVATION_DECAY_DAYS);
+
+  if (recentObservations.length === 0) return NO_OBSERVATION_SUMMARY;
+
+  let maxWeightedScore = 0;
+  let latestObservedAt: string | null = null;
+  const reasonScores = new Map<string, number>();
+
+  for (const { observation, ageDays } of recentObservations) {
+    const rawScore = getRawObservationScore(observation, reasonScores);
+    const recencyFactor = Math.max(0, 1 - ageDays / OBSERVATION_DECAY_DAYS);
+    maxWeightedScore = Math.max(maxWeightedScore, rawScore * recencyFactor);
+
+    if (latestObservedAt === null || observation.observed_at > latestObservedAt) {
+      latestObservedAt = observation.observed_at;
+    }
+  }
+
+  const repeatPressureBonus = Math.min(15, Math.max(0, recentObservations.length - 1) * 5);
+  const pressureScore = Math.min(MAX_OBSERVATION_PRESSURE_SCORE, Math.round(maxWeightedScore + repeatPressureBonus));
+
+  return {
+    observation_pressure_score: pressureScore,
+    observation_pressure_label: getObservationPressureLabel(pressureScore),
+    latest_observed_at: latestObservedAt,
+    observation_count: recentObservations.length,
+    observation_reasons: getTopObservationReasons(reasonScores, recentObservations.length),
+  };
+}
+
+function calculatePriorityScore(
+  bed: GardenBedResponse | GardenBedRow,
+  observationSummary: GardenBedObservationSummary = NO_OBSERVATION_SUMMARY,
+): number {
   let score = WEED_LEVEL_SCORE[bed.weed_level];
 
   score += getElapsedDaysScore(bed.last_weeded_at, bed.weed_level);
   score += getAreaScore(bed.area_m2);
   score += getEstimatedMinutesScore(bed.estimated_minutes);
   score += getMulchDepthScore(bed.mulch_depth_cm);
+  score += observationSummary.observation_pressure_score;
 
   return score;
+}
+
+function getRawObservationScore(observation: WeedObservationPriorityInput, reasonScores: Map<string, number>): number {
+  let score = observation.severity * 6;
+
+  score += addReasonScore(reasonScores, getCoverageReason(observation.coverage), COVERAGE_SCORE[observation.coverage]);
+  score += addReasonScore(
+    reasonScores,
+    getGrowthStageReason(observation.growth_stage),
+    GROWTH_STAGE_SCORE[observation.growth_stage],
+  );
+
+  if (observation.spreads_by_rhizomes) {
+    score += addReasonScore(reasonScores, "rozłogi lub kłącza", 20);
+  }
+  if (observation.spreads_by_stolons) {
+    score += addReasonScore(reasonScores, "płożące pędy", 20);
+  }
+  if (observation.spreads_by_tubers) {
+    score += addReasonScore(reasonScores, "bulwy lub rozmnóżki", 25);
+  }
+  if (observation.regrows_from_root_fragments) {
+    score += addReasonScore(reasonScores, "odrastanie z korzeni", 20);
+  }
+  if (observation.prolific_seed_producer) {
+    score += addReasonScore(reasonScores, "dużo nasion", 15);
+  }
+  if (observation.fast_regrowth) {
+    score += addReasonScore(reasonScores, "szybki odrost", 15);
+  }
+
+  score += addReasonScore(reasonScores, getSeverityReason(observation.severity), observation.severity * 6);
+
+  return score;
+}
+
+function addReasonScore(reasonScores: Map<string, number>, reason: string | null, score: number): number {
+  if (reason && score > 0) {
+    reasonScores.set(reason, (reasonScores.get(reason) ?? 0) + score);
+  }
+  return score;
+}
+
+function getSeverityReason(severity: number): string | null {
+  if (severity >= 5) return "bardzo wysokie nasilenie";
+  if (severity >= 4) return "wysokie nasilenie";
+  return null;
+}
+
+function getCoverageReason(coverage: ObservationCoverage): string | null {
+  if (coverage === "high") return "wysokie pokrycie";
+  if (coverage === "medium") return "średnie pokrycie";
+  return null;
+}
+
+function getGrowthStageReason(growthStage: GrowthStage): string | null {
+  if (growthStage === "seeding") return "rozsiewanie nasion";
+  if (growthStage === "flowering") return "kwitnienie";
+  if (growthStage === "vegetative") return "aktywny wzrost";
+  return null;
+}
+
+function getTopObservationReasons(reasonScores: Map<string, number>, observationCount: number): string[] {
+  const reasons = [...reasonScores.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "pl"))
+    .slice(0, 4)
+    .map(([reason]) => reason);
+
+  if (observationCount > 1) {
+    reasons.push("powtarzające się obserwacje");
+  }
+
+  return [...new Set(reasons)].slice(0, 4);
+}
+
+function getObservationPressureLabel(score: number): string {
+  if (score >= 70) return "bardzo wysoka presja z obserwacji";
+  if (score >= 50) return "wysoka presja z obserwacji";
+  if (score >= 30) return "średnia presja z obserwacji";
+  if (score >= 15) return "niska presja z obserwacji";
+  return "brak istotnej presji z obserwacji";
+}
+
+function adjustSuggestedIntervalDays(baseDays: number, pressure: number): number {
+  if (pressure >= 70) return Math.max(1, Math.round(baseDays * 0.35));
+  if (pressure >= 50) return Math.max(2, Math.round(baseDays * 0.5));
+  if (pressure >= 30) return Math.max(3, Math.round(baseDays * 0.65));
+  if (pressure >= 15) return Math.max(5, Math.round(baseDays * 0.8));
+  return baseDays;
+}
+
+function getObservationResponseWindowDays(pressure: number): number | null {
+  if (pressure >= 70) return 1;
+  if (pressure >= 50) return 3;
+  if (pressure >= 30) return 7;
+  if (pressure >= 15) return 14;
+  return null;
+}
+
+function getObservationAgeDays(observedAt: string, today: Date): number | null {
+  const observedDate = parseIsoDate(observedAt);
+  if (!observedDate) return null;
+  return Math.floor((today.getTime() - observedDate.getTime()) / DAY_MS);
+}
+
+function addDays(date: Date, days: number): string {
+  const nextDate = new Date(date.getTime());
+  nextDate.setUTCDate(nextDate.getUTCDate() + days);
+  return formatIsoDate(nextDate);
 }
 
 function getPriorityFromScore(score: number): BedQueuePriority {

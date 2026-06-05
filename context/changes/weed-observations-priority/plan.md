@@ -440,30 +440,30 @@ This change adds a new child table and does not migrate existing data. Rollback 
 
 #### Automated
 
-- [x] 2.1 `src/lib/weed-observations.ts` exports catalog, constants, domain types, validation, and mapping helpers.
-- [x] 2.2 Validation rejects future observation dates, invalid enum values, invalid severity, non-object payloads, and empty optional strings when present.
-- [x] 2.3 Validation accepts today’s date, past dates, catalog-based observations, and custom/free-text observations.
-- [x] 2.4 `npm run lint` passes for the new module.
+- [x] 2.1 `src/lib/weed-observations.ts` exports catalog, constants, domain types, validation, and mapping helpers. — 66747c0
+- [x] 2.2 Validation rejects future observation dates, invalid enum values, invalid severity, non-object payloads, and empty optional strings when present. — 66747c0
+- [x] 2.3 Validation accepts today’s date, past dates, catalog-based observations, and custom/free-text observations. — 66747c0
+- [x] 2.4 `npm run lint` passes for the new module. — 66747c0
 
 #### Manual
 
-- [x] 2.5 Reviewer confirms catalog labels and risk traits are Polish and understandable for a gardener.
-- [x] 2.6 Reviewer confirms `coverage` is the simple enum `low | medium | high`, not percentage coverage.
+- [x] 2.5 Reviewer confirms catalog labels and risk traits are Polish and understandable for a gardener. — 66747c0
+- [x] 2.6 Reviewer confirms `coverage` is the simple enum `low | medium | high`, not percentage coverage. — 66747c0
 
 ### Phase 3: Observation-Aware Priority Algorithm
 
 #### Automated
 
-- [ ] 3.1 Existing bed queue decoration still works when no observations are supplied.
-- [ ] 3.2 Observation pressure increases `priority_score` and can change `priority` from OK to soon/urgent.
-- [ ] 3.3 Observation pressure can make `suggested_weed_at` earlier than the base fixed interval.
-- [ ] 3.4 Observations older than 60 days no longer affect pressure.
-- [ ] 3.5 `npm run lint` passes.
+- [x] 3.1 Existing bed queue decoration still works when no observations are supplied.
+- [x] 3.2 Observation pressure increases `priority_score` and can change `priority` from OK to soon/urgent.
+- [x] 3.3 Observation pressure can make `suggested_weed_at` earlier than the base fixed interval.
+- [x] 3.4 Observations older than 60 days no longer affect pressure.
+- [x] 3.5 `npm run lint` passes.
 
 #### Manual
 
-- [ ] 3.6 Reviewer confirms reason labels explain the main factors in Polish.
-- [ ] 3.7 Reviewer confirms an observation today can make a recently weeded bed urgent when traits are severe enough.
+- [x] 3.6 Reviewer confirms reason labels explain the main factors in Polish.
+- [x] 3.7 Reviewer confirms an observation today can make a recently weeded bed urgent when traits are severe enough.
 
 ### Phase 4: API Integration
 
