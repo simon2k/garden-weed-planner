@@ -432,9 +432,9 @@ This change adds a new child table and does not migrate existing data. Rollback 
 
 #### Manual
 
-- [ ] 1.5 Reviewer confirms no update/delete observation policies were added.
-- [ ] 1.6 SQL/RLS smoke test confirms user A cannot list or insert observations for user B’s bed.
-- [ ] 1.7 SQL/RLS smoke test confirms future `observed_at` is rejected.
+- [x] 1.5 Reviewer confirms no update/delete observation policies were added.
+- [x] 1.6 SQL/RLS smoke test confirms user A cannot list or insert observations for user B’s bed.
+- [x] 1.7 SQL/RLS smoke test confirms future `observed_at` is rejected.
 
 ### Phase 2: Observation Domain Model and Polish Catalog
 
