@@ -435,13 +435,13 @@ This change adds a new child table and does not migrate existing data. During de
 
 #### Automated
 
-- [x] 5.1 `npx astro sync` passes.
-- [x] 5.2 `npm run lint` passes.
-- [x] 5.3 `npm run build` passes.
+- [x] 5.1 `npx astro sync` passes. — 790ca2d
+- [x] 5.2 `npm run lint` passes. — 790ca2d
+- [x] 5.3 `npm run build` passes. — 790ca2d
 
 #### Manual
 
-- [x] 5.4 Authenticated add/list plant flow works from `/garden` for at least one bed.
-- [x] 5.5 Cross-user plant access is blocked by API/RLS smoke testing.
-- [x] 5.6 Existing add-bed and queue sorting flow still works.
-- [x] 5.7 Reviewer confirms no S-03/S-04 scope or plant priority scoring was introduced.
+- [x] 5.4 Authenticated add/list plant flow works from `/garden` for at least one bed. — 790ca2d
+- [x] 5.5 Cross-user plant access is blocked by API/RLS smoke testing. — 790ca2d
+- [x] 5.6 Existing add-bed and queue sorting flow still works. — 790ca2d
+- [x] 5.7 Reviewer confirms no S-03/S-04 scope or plant priority scoring was introduced. — 790ca2d
