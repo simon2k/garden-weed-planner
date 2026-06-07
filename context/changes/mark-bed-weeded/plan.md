@@ -454,10 +454,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [ ] 1.1 Supabase migration file exists and defines `public.garden_bed_weeding_events` with required columns and constraints.
-- [ ] 1.2 Migration enables RLS and includes select/insert policies scoped to the authenticated owner.
-- [ ] 1.3 Migration adds an owned-bed update policy for `public.garden_beds`.
-- [ ] 1.4 Migration includes indexes for per-bed history listing and ownership filtering.
+- [x] 1.1 Supabase migration file exists and defines `public.garden_bed_weeding_events` with required columns and constraints.
+- [x] 1.2 Migration enables RLS and includes select/insert policies scoped to the authenticated owner.
+- [x] 1.3 Migration adds an owned-bed update policy for `public.garden_beds`.
+- [x] 1.4 Migration includes indexes for per-bed history listing and ownership filtering.
 
 #### Manual
 
