@@ -2,6 +2,19 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertCircle, CalendarDays, Clock, Leaf, Loader2, Map, Plus, Sprout } from "lucide-react";
 import { ServerError } from "@/components/auth/ServerError";
 import { Button } from "@/components/ui/button";
+import {
+  GROWTH_STAGE_LABELS,
+  OBSERVATION_COVERAGE_LABELS,
+  POLISH_WEED_CATALOG,
+  WEED_CATEGORIES,
+  WEED_CATEGORY_LABELS,
+  WEED_RISK_TRAIT_LABELS,
+  WEED_RISK_TRAITS,
+  type GrowthStage,
+  type ObservationCoverage,
+  type WeedCategory,
+  type WeedRiskTrait,
+} from "@/lib/weed-observations";
 import { cn } from "@/lib/utils";
 
 type WeedLevel = "low" | "medium" | "high";
@@ -25,6 +38,10 @@ interface GardenBedQueueItem {
   priority_score: number;
   suggested_weed_at: string | null;
   priority_confidence: PriorityConfidence;
+  observation_pressure_score: number;
+  observation_pressure_label: string;
+  observation_count: number;
+  observation_reasons: string[];
 }
 
 interface BedPlant {
@@ -35,6 +52,27 @@ interface BedPlant {
   quantity: number | null;
   height_cm: number | null;
   width_cm: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface WeedObservation {
+  id: string;
+  bed_id: string;
+  observed_at: string;
+  weed_catalog_slug: string | null;
+  weed_name: string | null;
+  weed_category: WeedCategory;
+  growth_stage: GrowthStage;
+  coverage: ObservationCoverage;
+  severity: number;
+  spreads_by_rhizomes: boolean;
+  spreads_by_stolons: boolean;
+  spreads_by_tubers: boolean;
+  regrows_from_root_fragments: boolean;
+  prolific_seed_producer: boolean;
+  fast_regrowth: boolean;
+  note: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -59,6 +97,14 @@ interface PlantsResponse {
 
 interface PlantResponse {
   plant: BedPlant;
+}
+
+interface WeedObservationsResponse {
+  observations: WeedObservation[];
+}
+
+interface WeedObservationResponse {
+  observation: WeedObservation;
 }
 
 interface ErrorResponse {
@@ -92,6 +138,34 @@ interface PlantBedState {
   hasLoaded: boolean;
 }
 
+interface WeedObservationFormState {
+  weed_catalog_slug: string;
+  weed_name: string;
+  observed_at: string;
+  weed_category: WeedCategory;
+  growth_stage: GrowthStage;
+  coverage: ObservationCoverage;
+  severity: string;
+  spreads_by_rhizomes: boolean;
+  spreads_by_stolons: boolean;
+  spreads_by_tubers: boolean;
+  regrows_from_root_fragments: boolean;
+  prolific_seed_producer: boolean;
+  fast_regrowth: boolean;
+  note: string;
+}
+
+interface ObservationBedState {
+  observations: WeedObservation[];
+  isLoading: boolean;
+  isSubmitting: boolean;
+  error: string | null;
+  successMessage: string | null;
+  form: WeedObservationFormState;
+  fieldErrors: Partial<Record<keyof WeedObservationFormState, string>>;
+  hasLoaded: boolean;
+}
+
 const initialFormState: FormState = {
   name: "",
   weed_level: "medium",
@@ -109,6 +183,30 @@ const initialPlantFormState: PlantFormState = {
   width_cm: "",
 };
 
+const initialObservationFormState: WeedObservationFormState = {
+  weed_catalog_slug: "",
+  weed_name: "",
+  observed_at: getTodayIsoDate(),
+  weed_category: "unknown",
+  growth_stage: "vegetative",
+  coverage: "low",
+  severity: "3",
+  spreads_by_rhizomes: false,
+  spreads_by_stolons: false,
+  spreads_by_tubers: false,
+  regrows_from_root_fragments: false,
+  prolific_seed_producer: false,
+  fast_regrowth: false,
+  note: "",
+};
+
+const growthStageOptions = Object.entries(GROWTH_STAGE_LABELS) as [GrowthStage, string][];
+const coverageOptions = Object.entries(OBSERVATION_COVERAGE_LABELS) as [ObservationCoverage, string][];
+const weedCategoryOptions = WEED_CATEGORIES.map((category) => ({
+  value: category,
+  label: WEED_CATEGORY_LABELS[category],
+}));
+
 const currentYear = new Date().getFullYear();
 
 export function GardenQueue() {
@@ -120,7 +218,9 @@ export function GardenQueue() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [expandedBedIds, setExpandedBedIds] = useState<Set<string>>(new Set());
+  const [expandedObservationBedIds, setExpandedObservationBedIds] = useState<Set<string>>(new Set());
   const [plantStateByBedId, setPlantStateByBedId] = useState<Record<string, PlantBedState>>({});
+  const [observationStateByBedId, setObservationStateByBedId] = useState<Record<string, ObservationBedState>>({});
 
   useEffect(() => {
     void loadBeds();
@@ -330,6 +430,177 @@ export function GardenQueue() {
     }
   }
 
+  async function toggleObservationSection(bedId: string) {
+    const willExpand = !expandedObservationBedIds.has(bedId);
+    setExpandedObservationBedIds((current) => {
+      const next = new Set(current);
+      if (willExpand) {
+        next.add(bedId);
+      } else {
+        next.delete(bedId);
+      }
+      return next;
+    });
+
+    if (willExpand && !getObservationState(observationStateByBedId, bedId).hasLoaded) {
+      await loadObservations(bedId);
+    }
+  }
+
+  async function loadObservations(bedId: string) {
+    setObservationStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getObservationState(current, bedId),
+        isLoading: true,
+        error: null,
+        successMessage: null,
+      },
+    }));
+
+    try {
+      const response = await fetch(`/api/garden/beds/${bedId}/weed-observations`);
+      const payload = (await response.json()) as WeedObservationsResponse & ErrorResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to load weed observations for this bed.");
+      }
+
+      setObservationStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getObservationState(current, bedId),
+          observations: payload.observations,
+          isLoading: false,
+          error: null,
+          hasLoaded: true,
+        },
+      }));
+    } catch (err) {
+      setObservationStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getObservationState(current, bedId),
+          isLoading: false,
+          error: err instanceof Error ? err.message : "Unable to load weed observations for this bed.",
+          hasLoaded: true,
+        },
+      }));
+    }
+  }
+
+  function updateObservationField<K extends keyof WeedObservationFormState>(
+    bedId: string,
+    field: K,
+    value: WeedObservationFormState[K],
+  ) {
+    setObservationStateByBedId((current) => {
+      const bedState = getObservationState(current, bedId);
+      return {
+        ...current,
+        [bedId]: {
+          ...bedState,
+          form: { ...bedState.form, [field]: value },
+          fieldErrors: { ...bedState.fieldErrors, [field]: undefined },
+          error: null,
+          successMessage: null,
+        },
+      };
+    });
+  }
+
+  function selectWeedCatalogEntry(bedId: string, slug: string) {
+    const entry = POLISH_WEED_CATALOG.find((item) => item.slug === slug);
+    setObservationStateByBedId((current) => {
+      const bedState = getObservationState(current, bedId);
+      const traitDefaults = Object.fromEntries(
+        WEED_RISK_TRAITS.map((trait) => [trait, entry?.default_risk_traits.includes(trait) ?? false]),
+      ) as Record<WeedRiskTrait, boolean>;
+      return {
+        ...current,
+        [bedId]: {
+          ...bedState,
+          form: {
+            ...bedState.form,
+            ...traitDefaults,
+            weed_catalog_slug: slug,
+            weed_name: entry?.name ?? bedState.form.weed_name,
+            weed_category: entry?.category ?? bedState.form.weed_category,
+          },
+          fieldErrors: { ...bedState.fieldErrors, weed_catalog_slug: undefined, weed_name: undefined },
+          error: null,
+          successMessage: null,
+        },
+      };
+    });
+  }
+
+  async function submitObservation(bedId: string, event: { preventDefault: () => void }) {
+    event.preventDefault();
+    const bedState = getObservationState(observationStateByBedId, bedId);
+    if (bedState.isSubmitting) return;
+
+    const validation = validateObservationForm(bedState.form);
+    setObservationStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getObservationState(current, bedId),
+        fieldErrors: validation.errors,
+        error: null,
+        successMessage: null,
+      },
+    }));
+    if (!validation.success) return;
+
+    setObservationStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getObservationState(current, bedId),
+        isSubmitting: true,
+      },
+    }));
+
+    try {
+      const response = await fetch(`/api/garden/beds/${bedId}/weed-observations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toCreateObservationPayload(bedState.form)),
+      });
+      const payload = (await response.json()) as WeedObservationResponse & ErrorResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to add weed observation to this bed.");
+      }
+
+      setObservationStateByBedId((current) => {
+        const currentState = getObservationState(current, bedId);
+        return {
+          ...current,
+          [bedId]: {
+            ...currentState,
+            observations: [payload.observation, ...currentState.observations],
+            form: { ...initialObservationFormState, observed_at: getTodayIsoDate() },
+            fieldErrors: {},
+            error: null,
+            successMessage: "Obserwacja dodana — kolejka została odświeżona.",
+            isSubmitting: false,
+            hasLoaded: true,
+          },
+        };
+      });
+      await loadBeds();
+    } catch (err) {
+      setObservationStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getObservationState(current, bedId),
+          isSubmitting: false,
+          error: err instanceof Error ? err.message : "Unable to add weed observation to this bed.",
+        },
+      }));
+    }
+  }
+
   return (
     <section className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       <form
@@ -491,14 +762,25 @@ export function GardenQueue() {
                 key={bed.id}
                 bed={bed}
                 position={index + 1}
-                isExpanded={expandedBedIds.has(bed.id)}
+                isPlantExpanded={expandedBedIds.has(bed.id)}
+                isObservationExpanded={expandedObservationBedIds.has(bed.id)}
                 plantState={getPlantState(plantStateByBedId, bed.id)}
+                observationState={getObservationState(observationStateByBedId, bed.id)}
                 onTogglePlants={() => void togglePlantSection(bed.id)}
+                onToggleObservations={() => void toggleObservationSection(bed.id)}
                 onPlantFieldChange={(field, value) => {
                   updatePlantField(bed.id, field, value);
                 }}
                 onPlantSubmit={(event) => void submitPlant(bed.id, event)}
                 onPlantRetry={() => void loadPlants(bed.id)}
+                onObservationFieldChange={(field, value) => {
+                  updateObservationField(bed.id, field, value);
+                }}
+                onObservationCatalogSelect={(slug) => {
+                  selectWeedCatalogEntry(bed.id, slug);
+                }}
+                onObservationSubmit={(event) => void submitObservation(bed.id, event)}
+                onObservationRetry={() => void loadObservations(bed.id)}
               />
             ))}
           </ol>
@@ -567,24 +849,93 @@ function TextField({
   );
 }
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+function SelectField({
+  id,
+  label,
+  value,
+  options,
+  onChange,
+  error,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  options: SelectOption[];
+  onChange: (value: string) => void;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1 block text-sm text-blue-100/80">
+        {label} <span className="text-emerald-200">*</span>
+      </label>
+      <select
+        id={id}
+        value={value}
+        onChange={(event) => {
+          onChange(event.target.value);
+        }}
+        className={cn(
+          "w-full rounded-lg border bg-slate-950/80 px-3 py-2 text-white transition-colors outline-none focus:ring-2",
+          error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400",
+        )}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {error && (
+        <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+          <AlertCircle className="size-3" />
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function QueueCard({
   bed,
   position,
-  isExpanded,
+  isPlantExpanded,
+  isObservationExpanded,
   plantState,
+  observationState,
   onTogglePlants,
+  onToggleObservations,
   onPlantFieldChange,
   onPlantSubmit,
   onPlantRetry,
+  onObservationFieldChange,
+  onObservationCatalogSelect,
+  onObservationSubmit,
+  onObservationRetry,
 }: {
   bed: GardenBedQueueItem;
   position: number;
-  isExpanded: boolean;
+  isPlantExpanded: boolean;
+  isObservationExpanded: boolean;
   plantState: PlantBedState;
+  observationState: ObservationBedState;
   onTogglePlants: () => void;
+  onToggleObservations: () => void;
   onPlantFieldChange: (field: keyof PlantFormState, value: string) => void;
   onPlantSubmit: (event: { preventDefault: () => void }) => void;
   onPlantRetry: () => void;
+  onObservationFieldChange: <K extends keyof WeedObservationFormState>(
+    field: K,
+    value: WeedObservationFormState[K],
+  ) => void;
+  onObservationCatalogSelect: (slug: string) => void;
+  onObservationSubmit: (event: { preventDefault: () => void }) => void;
+  onObservationRetry: () => void;
 }) {
   const suggestedDateText = bed.suggested_weed_at
     ? `Suggested next weeding: ${formatDisplayDate(bed.suggested_weed_at)}`
@@ -630,20 +981,56 @@ function QueueCard({
       </dl>
 
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-blue-100/50">Priority score: {bed.priority_score}</p>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onTogglePlants}
-          className="border-emerald-300/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20 hover:text-white"
-          aria-expanded={isExpanded}
-        >
-          <Leaf className="size-4" />
-          {isExpanded ? "Hide plants" : "Show plants"}
-        </Button>
+        <div className="space-y-1 text-xs text-blue-100/60">
+          <p>Priority score: {bed.priority_score}</p>
+          {bed.observation_count > 0 && (
+            <p>
+              Obserwacje chwastów: {bed.observation_pressure_label} (+{bed.observation_pressure_score})
+            </p>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2 sm:justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onToggleObservations}
+            className="border-amber-300/30 bg-amber-400/10 text-amber-100 hover:bg-amber-400/20 hover:text-white"
+            aria-expanded={isObservationExpanded}
+          >
+            <Sprout className="size-4" />
+            {isObservationExpanded ? "Ukryj obserwacje chwastów" : "Pokaż obserwacje chwastów"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onTogglePlants}
+            className="border-emerald-300/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20 hover:text-white"
+            aria-expanded={isPlantExpanded}
+          >
+            <Leaf className="size-4" />
+            {isPlantExpanded ? "Hide plants" : "Show plants"}
+          </Button>
+        </div>
       </div>
 
-      {isExpanded && (
+      {bed.observation_reasons.length > 0 && (
+        <p className="mt-3 rounded-lg border border-amber-300/20 bg-amber-950/20 p-3 text-sm text-amber-50">
+          Przyspieszono: {bed.observation_reasons.join(", ")}.
+        </p>
+      )}
+
+      {isObservationExpanded && (
+        <ObservationSection
+          bedName={bed.name}
+          state={observationState}
+          onFieldChange={onObservationFieldChange}
+          onCatalogSelect={onObservationCatalogSelect}
+          onSubmit={onObservationSubmit}
+          onRetry={onObservationRetry}
+        />
+      )}
+
+      {isPlantExpanded && (
         <PlantSection
           bedName={bed.name}
           state={plantState}
@@ -653,6 +1040,211 @@ function QueueCard({
         />
       )}
     </li>
+  );
+}
+
+function ObservationSection({
+  bedName,
+  state,
+  onFieldChange,
+  onCatalogSelect,
+  onSubmit,
+  onRetry,
+}: {
+  bedName: string;
+  state: ObservationBedState;
+  onFieldChange: <K extends keyof WeedObservationFormState>(field: K, value: WeedObservationFormState[K]) => void;
+  onCatalogSelect: (slug: string) => void;
+  onSubmit: (event: { preventDefault: () => void }) => void;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="mt-4 rounded-xl border border-amber-300/15 bg-amber-950/20 p-4">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h4 className="font-semibold text-amber-100">Obserwacje chwastów w rabacie {bedName}</h4>
+          <p className="text-xs text-blue-100/60">
+            Ostatnie obserwacje mogą przyspieszyć sugerowany termin pielenia i kolejność w kolejce.
+          </p>
+        </div>
+        {state.error && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onRetry}
+            className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+          >
+            Retry
+          </Button>
+        )}
+      </div>
+
+      {state.isLoading ? (
+        <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
+          <Loader2 className="size-4 animate-spin" />
+          Loading weed observations...
+        </div>
+      ) : state.error ? (
+        <ServerError message={state.error} />
+      ) : state.observations.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
+          Brak obserwacji chwastów dla tej rabaty.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {state.observations.map((observation) => (
+            <li key={observation.id} className="rounded-lg bg-white/5 p-3">
+              <p className="font-medium text-white">
+                {observation.weed_name ?? WEED_CATEGORY_LABELS[observation.weed_category]} ·{" "}
+                {formatDisplayDate(observation.observed_at)}
+              </p>
+              <p className="mt-1 text-xs text-blue-100/60">{formatObservationDetails(observation)}</p>
+              {observation.note && <p className="mt-2 text-xs text-blue-100/70">{observation.note}</p>}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {state.successMessage && (
+        <p className="mt-3 rounded-lg border border-emerald-400/30 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-100">
+          {state.successMessage}
+        </p>
+      )}
+
+      <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
+        <div>
+          <label htmlFor={`weed-catalog-${bedName}`} className="mb-1 block text-sm text-blue-100/80">
+            Katalog chwastów
+          </label>
+          <select
+            id={`weed-catalog-${bedName}`}
+            value={state.form.weed_catalog_slug}
+            onChange={(event) => {
+              onCatalogSelect(event.target.value);
+            }}
+            className="w-full rounded-lg border border-white/20 bg-slate-950/80 px-3 py-2 text-white transition-colors outline-none focus:ring-2 focus:ring-purple-400"
+          >
+            <option value="">Własny / wybierz z listy</option>
+            {POLISH_WEED_CATALOG.map((entry) => (
+              <option key={entry.slug} value={entry.slug}>
+                {entry.name} — {entry.helper_text}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <TextField
+            id={`weed-name-${bedName}`}
+            label="Nazwa chwastu"
+            value={state.form.weed_name}
+            onChange={(value) => {
+              onFieldChange("weed_name", value);
+            }}
+            placeholder="np. perz albo nie wiem"
+            error={state.fieldErrors.weed_name}
+          />
+          <TextField
+            id={`weed-observed-${bedName}`}
+            label="Data obserwacji"
+            value={state.form.observed_at}
+            onChange={(value) => {
+              onFieldChange("observed_at", value);
+            }}
+            type="date"
+            max={getTodayIsoDate()}
+            error={state.fieldErrors.observed_at}
+            required
+          />
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <SelectField
+            id={`weed-category-${bedName}`}
+            label="Kategoria"
+            value={state.form.weed_category}
+            options={weedCategoryOptions}
+            onChange={(value) => {
+              onFieldChange("weed_category", value as WeedCategory);
+            }}
+            error={state.fieldErrors.weed_category}
+          />
+          <SelectField
+            id={`weed-stage-${bedName}`}
+            label="Faza wzrostu"
+            value={state.form.growth_stage}
+            options={growthStageOptions.map(([value, label]) => ({ value, label }))}
+            onChange={(value) => {
+              onFieldChange("growth_stage", value as GrowthStage);
+            }}
+            error={state.fieldErrors.growth_stage}
+          />
+          <SelectField
+            id={`weed-coverage-${bedName}`}
+            label="Pokrycie"
+            value={state.form.coverage}
+            options={coverageOptions.map(([value, label]) => ({ value, label }))}
+            onChange={(value) => {
+              onFieldChange("coverage", value as ObservationCoverage);
+            }}
+            error={state.fieldErrors.coverage}
+          />
+          <TextField
+            id={`weed-severity-${bedName}`}
+            label="Nasilenie 1-5"
+            value={state.form.severity}
+            onChange={(value) => {
+              onFieldChange("severity", value);
+            }}
+            type="number"
+            min="1"
+            max="5"
+            step="1"
+            error={state.fieldErrors.severity}
+            required
+          />
+        </div>
+
+        <fieldset className="rounded-lg border border-white/15 p-3">
+          <legend className="px-1 text-sm text-blue-100/80">Cechy ryzyka</legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            {WEED_RISK_TRAITS.map((trait) => (
+              <label key={trait} className="flex items-start gap-2 text-sm text-blue-100/75">
+                <input
+                  type="checkbox"
+                  checked={state.form[trait]}
+                  onChange={(event) => {
+                    onFieldChange(trait, event.target.checked);
+                  }}
+                  className="mt-1"
+                />
+                {WEED_RISK_TRAIT_LABELS[trait]}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <TextField
+          id={`weed-note-${bedName}`}
+          label="Notatka"
+          value={state.form.note}
+          onChange={(value) => {
+            onFieldChange("note", value);
+          }}
+          placeholder="opcjonalnie"
+          error={state.fieldErrors.note}
+        />
+
+        <Button
+          type="submit"
+          disabled={state.isSubmitting}
+          className="w-full bg-amber-300 text-slate-950 hover:bg-amber-200"
+        >
+          {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+          {state.isSubmitting ? "Dodawanie obserwacji..." : "Dodaj obserwację chwastu"}
+        </Button>
+      </form>
+    </div>
   );
 }
 
@@ -818,6 +1410,21 @@ function getPlantState(source: Record<string, PlantBedState>, bedId: string): Pl
   );
 }
 
+function getObservationState(source: Record<string, ObservationBedState>, bedId: string): ObservationBedState {
+  return (
+    source[bedId] ?? {
+      observations: [],
+      isLoading: false,
+      isSubmitting: false,
+      error: null,
+      successMessage: null,
+      form: { ...initialObservationFormState, observed_at: getTodayIsoDate() },
+      fieldErrors: {},
+      hasLoaded: false,
+    }
+  );
+}
+
 function validateForm(form: FormState): { success: boolean; errors: Partial<Record<keyof FormState, string>> } {
   const errors: Partial<Record<keyof FormState, string>> = {};
 
@@ -849,6 +1456,25 @@ function validatePlantForm(form: PlantFormState): {
   return { success: Object.keys(errors).length === 0, errors };
 }
 
+function validateObservationForm(form: WeedObservationFormState): {
+  success: boolean;
+  errors: Partial<Record<keyof WeedObservationFormState, string>>;
+} {
+  const errors: Partial<Record<keyof WeedObservationFormState, string>> = {};
+
+  if (!isPastOrTodayDate(form.observed_at)) {
+    errors.observed_at = "Data obserwacji musi być dzisiejsza albo z przeszłości.";
+  }
+  if (!WEED_CATEGORIES.includes(form.weed_category)) errors.weed_category = "Wybierz kategorię chwastu.";
+  if (!growthStageOptions.some(([value]) => value === form.growth_stage)) errors.growth_stage = "Wybierz fazę wzrostu.";
+  if (!coverageOptions.some(([value]) => value === form.coverage)) errors.coverage = "Wybierz pokrycie.";
+  if (!isRequiredIntegerInRange(form.severity, 1, 5)) errors.severity = "Nasilenie musi być liczbą od 1 do 5.";
+  if (form.weed_name.length > 0 && !form.weed_name.trim()) errors.weed_name = "Nazwa nie może być pusta.";
+  if (form.note.length > 0 && !form.note.trim()) errors.note = "Notatka nie może być pusta.";
+
+  return { success: Object.keys(errors).length === 0, errors };
+}
+
 function toCreatePayload(form: FormState) {
   return {
     name: form.name.trim(),
@@ -867,6 +1493,25 @@ function toCreatePlantPayload(form: PlantFormState) {
     quantity: toOptionalNumber(form.quantity),
     height_cm: toOptionalNumber(form.height_cm),
     width_cm: toOptionalNumber(form.width_cm),
+  };
+}
+
+function toCreateObservationPayload(form: WeedObservationFormState) {
+  return {
+    observed_at: form.observed_at,
+    weed_catalog_slug: form.weed_catalog_slug || null,
+    weed_name: form.weed_name.trim() || null,
+    weed_category: form.weed_category,
+    growth_stage: form.growth_stage,
+    coverage: form.coverage,
+    severity: Number(form.severity),
+    spreads_by_rhizomes: form.spreads_by_rhizomes,
+    spreads_by_stolons: form.spreads_by_stolons,
+    spreads_by_tubers: form.spreads_by_tubers,
+    regrows_from_root_fragments: form.regrows_from_root_fragments,
+    prolific_seed_producer: form.prolific_seed_producer,
+    fast_regrowth: form.fast_regrowth,
+    note: form.note.trim() || null,
   };
 }
 
@@ -894,6 +1539,19 @@ function isBlankOrIntegerInRange(value: string, min: number, max: number): boole
   return Number.isInteger(number) && number >= min && number <= max;
 }
 
+function isRequiredIntegerInRange(value: string, min: number, max: number): boolean {
+  if (value.trim() === "") return false;
+  const number = Number(value);
+  return Number.isInteger(number) && number >= min && number <= max;
+}
+
+function isPastOrTodayDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(date.getTime()) || value !== date.toISOString().slice(0, 10)) return false;
+  return value <= getTodayIsoDate();
+}
+
 function priorityClassName(priority: GardenBedQueueItem["priority"]): string {
   if (priority === "urgent") return "bg-red-400/20 text-red-100 ring-1 ring-red-300/30";
   if (priority === "soon") return "bg-amber-400/20 text-amber-100 ring-1 ring-amber-300/30";
@@ -915,8 +1573,25 @@ function formatPlantDetails(plant: BedPlant): string {
   return details.length > 0 ? details.join(" · ") : "No optional details set.";
 }
 
+function formatObservationDetails(observation: WeedObservation): string {
+  const traits = WEED_RISK_TRAITS.filter((trait) => observation[trait]).map((trait) => WEED_RISK_TRAIT_LABELS[trait]);
+  const details = [
+    WEED_CATEGORY_LABELS[observation.weed_category],
+    GROWTH_STAGE_LABELS[observation.growth_stage],
+    OBSERVATION_COVERAGE_LABELS[observation.coverage],
+    `nasilenie ${observation.severity}/5`,
+    ...traits,
+  ];
+
+  return details.join(" · ");
+}
+
 function formatDisplayDate(value: string): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(`${value}T00:00:00Z`));
+}
+
+function getTodayIsoDate(): string {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function capitalize(value: string): string {
