@@ -1,11 +1,16 @@
 import type { APIRoute } from "astro";
 import { toGardenBedQueueItem } from "@/lib/garden-beds";
 import { createClient } from "@/lib/supabase";
-import { toWeedingEventInsertPayload, toWeedingEventResponse, validateMarkBedWeededInput } from "@/lib/weeding-events";
+import { toWeedingEventResponse, validateMarkBedWeededInput, type WeedingEventRow } from "@/lib/weeding-events";
 
 const gardenBedColumns =
   "id,user_id,name,area_m2,last_weeded_at,weed_level,estimated_minutes,mulch_depth_cm,created_at,updated_at";
 const weedingEventColumns = "id,bed_id,user_id,weeded_at,duration_minutes,note,created_at,updated_at";
+
+interface MarkGardenBedWeededResult {
+  event_id: string;
+  bed_id: string;
+}
 
 export const PATCH: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -33,27 +38,25 @@ export const PATCH: APIRoute = async (context) => {
     return json({ error: validation.error }, 400);
   }
 
-  const insertPayload = toWeedingEventInsertPayload(validation.data, bedId, user.id);
-  const { data: eventData, error: eventError } = await supabase
-    .from("garden_bed_weeding_events")
-    .insert(insertPayload)
-    .select(weedingEventColumns)
-    .single();
+  const rpcResponse = (await supabase.rpc("mark_garden_bed_weeded", {
+    p_bed_id: bedId,
+    p_weeded_at: validation.data.weeded_at,
+    p_duration_minutes: validation.data.duration_minutes,
+    p_note: validation.data.note ?? null,
+  })) as { data: unknown; error: unknown };
 
-  if (eventError) {
+  const result = readMarkGardenBedWeededResult(rpcResponse.data);
+  if (rpcResponse.error || !result) {
     return json({ error: "Unable to record weeding event for this garden bed." }, 500);
   }
 
-  const { data: bedData, error: bedError } = await supabase
-    .from("garden_beds")
-    .update({ last_weeded_at: validation.data.weeded_at, weed_level: "low" })
-    .eq("id", bedId)
-    .eq("user_id", user.id)
-    .select(gardenBedColumns)
-    .maybeSingle();
+  const [bedData, eventData] = await Promise.all([
+    fetchOwnedGardenBed(supabase, result.bed_id, user.id),
+    fetchOwnedWeedingEvent(supabase, result.event_id, user.id),
+  ]);
 
-  if (bedError || !bedData) {
-    return json({ error: "Unable to update this garden bed after recording the weeding event." }, 500);
+  if (!bedData || !eventData) {
+    return json({ error: "Unable to load this garden bed after recording the weeding event." }, 500);
   }
 
   return json({
@@ -79,6 +82,51 @@ async function readJson(request: Request): Promise<JsonReadResult> {
   } catch {
     return { success: false, error: "Request body must be valid JSON." };
   }
+}
+
+function readMarkGardenBedWeededResult(value: unknown): MarkGardenBedWeededResult | null {
+  if (!Array.isArray(value) || value.length === 0) return null;
+  const items: readonly unknown[] = value;
+  const first = items[0];
+  if (!isRecord(first)) return null;
+  if (typeof first.event_id !== "string" || typeof first.bed_id !== "string") return null;
+  return { event_id: first.event_id, bed_id: first.bed_id };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+async function fetchOwnedGardenBed(
+  supabase: NonNullable<ReturnType<typeof createClient>>,
+  bedId: string,
+  userId: string,
+) {
+  const { data, error } = await supabase
+    .from("garden_beds")
+    .select(gardenBedColumns)
+    .eq("id", bedId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) return null;
+  return data;
+}
+
+async function fetchOwnedWeedingEvent(
+  supabase: NonNullable<ReturnType<typeof createClient>>,
+  eventId: string,
+  userId: string,
+): Promise<WeedingEventRow | null> {
+  const { data, error } = await supabase
+    .from("garden_bed_weeding_events")
+    .select(weedingEventColumns)
+    .eq("id", eventId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data;
 }
 
 function getBedId(context: Parameters<APIRoute>[0]): string | undefined {
