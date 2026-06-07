@@ -454,10 +454,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [x] 1.1 Supabase migration file exists and defines `public.garden_bed_weeding_events` with required columns and constraints.
-- [x] 1.2 Migration enables RLS and includes select/insert policies scoped to the authenticated owner.
-- [x] 1.3 Migration adds an owned-bed update policy for `public.garden_beds`.
-- [x] 1.4 Migration includes indexes for per-bed history listing and ownership filtering.
+- [x] 1.1 Supabase migration file exists and defines `public.garden_bed_weeding_events` with required columns and constraints. — 6c390f8
+- [x] 1.2 Migration enables RLS and includes select/insert policies scoped to the authenticated owner. — 6c390f8
+- [x] 1.3 Migration adds an owned-bed update policy for `public.garden_beds`. — 6c390f8
+- [x] 1.4 Migration includes indexes for per-bed history listing and ownership filtering. — 6c390f8
 
 #### Manual
 
@@ -469,10 +469,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [ ] 2.1 `src/lib/weeding-events.ts` exports the contracts needed by API routes.
-- [ ] 2.2 Validation accepts a valid past/today date with positive duration and optional note.
-- [ ] 2.3 Validation rejects future dates, malformed dates, zero/negative/non-integer duration, non-object payloads, invalid JSON-derived shapes, and whitespace-only notes.
-- [ ] 2.4 `npm run lint` passes after the module is added.
+- [x] 2.1 `src/lib/weeding-events.ts` exports the contracts needed by API routes.
+- [x] 2.2 Validation accepts a valid past/today date with positive duration and optional note.
+- [x] 2.3 Validation rejects future dates, malformed dates, zero/negative/non-integer duration, non-object payloads, invalid JSON-derived shapes, and whitespace-only notes.
+- [x] 2.4 `npm run lint` passes after the module is added.
 
 #### Manual
 
