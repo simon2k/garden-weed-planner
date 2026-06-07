@@ -469,10 +469,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [x] 2.1 `src/lib/weeding-events.ts` exports the contracts needed by API routes.
-- [x] 2.2 Validation accepts a valid past/today date with positive duration and optional note.
-- [x] 2.3 Validation rejects future dates, malformed dates, zero/negative/non-integer duration, non-object payloads, invalid JSON-derived shapes, and whitespace-only notes.
-- [x] 2.4 `npm run lint` passes after the module is added.
+- [x] 2.1 `src/lib/weeding-events.ts` exports the contracts needed by API routes. — b941dd8
+- [x] 2.2 Validation accepts a valid past/today date with positive duration and optional note. — b941dd8
+- [x] 2.3 Validation rejects future dates, malformed dates, zero/negative/non-integer duration, non-object payloads, invalid JSON-derived shapes, and whitespace-only notes. — b941dd8
+- [x] 2.4 `npm run lint` passes after the module is added. — b941dd8
 
 #### Manual
 
@@ -482,10 +482,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [ ] 3.1 `PATCH /api/garden/beds/[bedId]/mark-weeded` route exists and compiles.
-- [ ] 3.2 `GET /api/garden/beds/[bedId]/weeding-events` route exists and compiles.
-- [ ] 3.3 API routes import validation/mapping from `src/lib/weeding-events.ts` rather than duplicating validation logic.
-- [ ] 3.4 `npm run lint` passes after route additions.
+- [x] 3.1 `PATCH /api/garden/beds/[bedId]/mark-weeded` route exists and compiles.
+- [x] 3.2 `GET /api/garden/beds/[bedId]/weeding-events` route exists and compiles.
+- [x] 3.3 API routes import validation/mapping from `src/lib/weeding-events.ts` rather than duplicating validation logic.
+- [x] 3.4 `npm run lint` passes after route additions.
 
 #### Manual
 
