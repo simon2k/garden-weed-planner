@@ -499,10 +499,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [x] 4.1 `GET /api/garden/beds` still returns decorated queue items. — d2266fc — d2266fc
-- [x] 4.2 Observation summaries exclude observations dated on or before a bed's `last_weeded_at`. — d2266fc — d2266fc
-- [x] 4.3 Existing no-observation and no-last-weeded cases still work. — d2266fc — d2266fc
-- [x] 4.4 `npm run lint` passes after priority filtering changes. — d2266fc — d2266fc
+- [x] 4.1 `GET /api/garden/beds` still returns decorated queue items. — d2266fc
+- [x] 4.2 Observation summaries exclude observations dated on or before a bed's `last_weeded_at`. — d2266fc
+- [x] 4.3 Existing no-observation and no-last-weeded cases still work. — d2266fc
+- [x] 4.4 `npm run lint` passes after priority filtering changes. — d2266fc
 
 #### Manual
 
@@ -514,10 +514,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [x] 5.1 Garden React island compiles with the new event and form types. — f09ded6 — f09ded6
-- [x] 5.2 Client validation rejects future dates, blank/malformed dates, missing duration, zero/negative/non-integer duration, and whitespace-only notes. — f09ded6 — f09ded6
-- [x] 5.3 UI fetches `PATCH /api/garden/beds/${bed.id}/mark-weeded` and `GET /api/garden/beds/${bed.id}/weeding-events` with expected payload/response shapes. — f09ded6 — f09ded6
-- [x] 5.4 `npm run lint` passes after UI changes. — f09ded6 — f09ded6
+- [x] 5.1 Garden React island compiles with the new event and form types. — f09ded6
+- [x] 5.2 Client validation rejects future dates, blank/malformed dates, missing duration, zero/negative/non-integer duration, and whitespace-only notes. — f09ded6
+- [x] 5.3 UI fetches `PATCH /api/garden/beds/${bed.id}/mark-weeded` and `GET /api/garden/beds/${bed.id}/weeding-events` with expected payload/response shapes. — f09ded6
+- [x] 5.4 `npm run lint` passes after UI changes. — f09ded6
 
 #### Manual
 
