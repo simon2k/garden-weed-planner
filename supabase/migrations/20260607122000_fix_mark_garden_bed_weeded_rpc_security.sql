@@ -1,4 +1,4 @@
-create function public.mark_garden_bed_weeded(
+create or replace function public.mark_garden_bed_weeded(
   p_bed_id uuid,
   p_weeded_at date,
   p_duration_minutes integer,
