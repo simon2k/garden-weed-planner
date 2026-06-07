@@ -514,10 +514,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [x] 5.1 Garden React island compiles with the new event and form types.
-- [x] 5.2 Client validation rejects future dates, blank/malformed dates, missing duration, zero/negative/non-integer duration, and whitespace-only notes.
-- [x] 5.3 UI fetches `PATCH /api/garden/beds/${bed.id}/mark-weeded` and `GET /api/garden/beds/${bed.id}/weeding-events` with expected payload/response shapes.
-- [x] 5.4 `npm run lint` passes after UI changes.
+- [x] 5.1 Garden React island compiles with the new event and form types. — f09ded6 — f09ded6
+- [x] 5.2 Client validation rejects future dates, blank/malformed dates, missing duration, zero/negative/non-integer duration, and whitespace-only notes. — f09ded6 — f09ded6
+- [x] 5.3 UI fetches `PATCH /api/garden/beds/${bed.id}/mark-weeded` and `GET /api/garden/beds/${bed.id}/weeding-events` with expected payload/response shapes. — f09ded6 — f09ded6
+- [x] 5.4 `npm run lint` passes after UI changes. — f09ded6 — f09ded6
 
 #### Manual
 
@@ -531,10 +531,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [ ] 6.1 `npx astro sync` completes successfully.
-- [ ] 6.2 `npm run lint` completes successfully.
-- [ ] 6.3 `npm run build` completes successfully.
-- [ ] 6.4 `context/changes/mark-bed-weeded/plan.md` and `plan-brief.md` both exist.
+- [x] 6.1 `npx astro sync` completes successfully.
+- [x] 6.2 `npm run lint` completes successfully.
+- [x] 6.3 `npm run build` completes successfully.
+- [x] 6.4 `context/changes/mark-bed-weeded/plan.md` and `plan-brief.md` both exist.
 
 #### Manual
 
