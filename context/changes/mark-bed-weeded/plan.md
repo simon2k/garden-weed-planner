@@ -461,9 +461,9 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Manual
 
-- [ ] 1.5 SQL/RLS smoke test confirms a user cannot select or insert weeding events for another user's bed.
-- [ ] 1.6 SQL/RLS smoke test confirms future `weeded_at`, zero duration, and blank notes are rejected.
-- [ ] 1.7 SQL/RLS smoke test confirms an authenticated user can update their own bed but not another user's bed.
+- [x] 1.5 SQL/RLS smoke test confirms a user cannot select or insert weeding events for another user's bed.
+- [x] 1.6 SQL/RLS smoke test confirms future `weeded_at`, zero duration, and blank notes are rejected.
+- [x] 1.7 SQL/RLS smoke test confirms an authenticated user can update their own bed but not another user's bed.
 
 ### Phase 2: Domain Helpers and Contracts
 
@@ -476,7 +476,7 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Manual
 
-- [ ] 2.5 Reviewer confirms date-direction semantics match `last_weeded_at`: past and today are valid; future is invalid.
+- [x] 2.5 Reviewer confirms date-direction semantics match `last_weeded_at`: past and today are valid; future is invalid.
 
 ### Phase 3: Mark-Weeded and History APIs
 
@@ -489,11 +489,11 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Manual
 
-- [ ] 3.5 Authenticated user can mark their own bed weeded with date, duration, and note.
-- [ ] 3.6 Marking a bed inserts an event and updates `garden_beds.last_weeded_at` plus `weed_level = low`.
-- [ ] 3.7 Authenticated user can load weeding history for their own bed.
-- [ ] 3.8 Authenticated user cannot mark or load history for another user's bed.
-- [ ] 3.9 Invalid payloads return safe errors: future date, missing duration, zero duration, malformed JSON.
+- [x] 3.5 Authenticated user can mark their own bed weeded with date, duration, and note.
+- [x] 3.6 Marking a bed inserts an event and updates `garden_beds.last_weeded_at` plus `weed_level = low`.
+- [x] 3.7 Authenticated user can load weeding history for their own bed.
+- [x] 3.8 Authenticated user cannot mark or load history for another user's bed.
+- [x] 3.9 Invalid payloads return safe errors: future date, missing duration, zero duration, malformed JSON.
 
 ### Phase 4: Priority Reset Semantics
 
@@ -506,9 +506,9 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Manual
 
-- [ ] 4.5 A bed with a severe observation before the weeding date drops in priority after being marked weeded.
-- [ ] 4.6 A weed observation added after the latest weeding date still affects priority.
-- [ ] 4.7 Existing plant and observation sections still load and display historical data.
+- [x] 4.5 A bed with a severe observation before the weeding date drops in priority after being marked weeded.
+- [x] 4.6 A weed observation added after the latest weeding date still affects priority.
+- [x] 4.7 Existing plant and observation sections still load and display historical data.
 
 ### Phase 5: Garden Queue UI
 
@@ -521,11 +521,11 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Manual
 
-- [ ] 5.5 User can mark a bed weeded from its queue card with today's default date, required duration, and optional note.
-- [ ] 5.6 After save, the queue reloads and the bed shows lower priority behavior.
-- [ ] 5.7 User can expand “Weeding history” and see the recorded event.
-- [ ] 5.8 User can collapse and re-expand history without losing already loaded events unexpectedly.
-- [ ] 5.9 Existing add-bed, plant-list, and weed-observation flows still work.
+- [x] 5.5 User can mark a bed weeded from its queue card with today's default date, required duration, and optional note.
+- [x] 5.6 After save, the queue reloads and the bed shows lower priority behavior.
+- [x] 5.7 User can expand “Weeding history” and see the recorded event.
+- [x] 5.8 User can collapse and re-expand history without losing already loaded events unexpectedly.
+- [x] 5.9 Existing add-bed, plant-list, and weed-observation flows still work.
 
 ### Phase 6: Final Verification and Workflow Artifacts
 
@@ -538,8 +538,8 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Manual
 
-- [ ] 6.5 Authenticated end-to-end mark-weeding flow works from `/garden`.
-- [ ] 6.6 Weeding history loads for a bed and includes duration and note.
-- [ ] 6.7 Priority drops after marking weeded, and pre-weeding observations no longer affect current priority.
-- [ ] 6.8 Another user's bed cannot be marked or viewed through the history endpoint.
-- [ ] 6.9 Existing add-bed, plant-list, and weed-observation flows still work.
+- [x] 6.5 Authenticated end-to-end mark-weeding flow works from `/garden`.
+- [x] 6.6 Weeding history loads for a bed and includes duration and note.
+- [x] 6.7 Priority drops after marking weeded, and pre-weeding observations no longer affect current priority.
+- [x] 6.8 Another user's bed cannot be marked or viewed through the history endpoint.
+- [x] 6.9 Existing add-bed, plant-list, and weed-observation flows still work.
