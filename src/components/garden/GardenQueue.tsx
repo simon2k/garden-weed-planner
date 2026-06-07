@@ -77,6 +77,16 @@ interface WeedObservation {
   updated_at: string;
 }
 
+interface WeedingEvent {
+  id: string;
+  bed_id: string;
+  weeded_at: string;
+  duration_minutes: number;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const weedLevelOptions: { value: WeedLevel; label: string; description: string }[] = [
   { value: "low", label: "Low", description: "Mostly under control" },
   { value: "medium", label: "Medium", description: "Needs attention soon" },
@@ -105,6 +115,15 @@ interface WeedObservationsResponse {
 
 interface WeedObservationResponse {
   observation: WeedObservation;
+}
+
+interface WeedingEventsResponse {
+  events: WeedingEvent[];
+}
+
+interface MarkWeededResponse {
+  bed: GardenBedQueueItem;
+  event: WeedingEvent;
 }
 
 interface ErrorResponse {
@@ -166,6 +185,23 @@ interface ObservationBedState {
   hasLoaded: boolean;
 }
 
+interface WeedingFormState {
+  weeded_at: string;
+  duration_minutes: string;
+  note: string;
+}
+
+interface WeedingBedState {
+  events: WeedingEvent[];
+  isLoading: boolean;
+  isSubmitting: boolean;
+  error: string | null;
+  successMessage: string | null;
+  form: WeedingFormState;
+  fieldErrors: Partial<Record<keyof WeedingFormState, string>>;
+  hasLoaded: boolean;
+}
+
 const initialFormState: FormState = {
   name: "",
   weed_level: "medium",
@@ -200,6 +236,12 @@ const initialObservationFormState: WeedObservationFormState = {
   note: "",
 };
 
+const initialWeedingFormState: WeedingFormState = {
+  weeded_at: getTodayIsoDate(),
+  duration_minutes: "",
+  note: "",
+};
+
 const growthStageOptions = Object.entries(GROWTH_STAGE_LABELS) as [GrowthStage, string][];
 const coverageOptions = Object.entries(OBSERVATION_COVERAGE_LABELS) as [ObservationCoverage, string][];
 const weedCategoryOptions = WEED_CATEGORIES.map((category) => ({
@@ -219,8 +261,10 @@ export function GardenQueue() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [expandedBedIds, setExpandedBedIds] = useState<Set<string>>(new Set());
   const [expandedObservationBedIds, setExpandedObservationBedIds] = useState<Set<string>>(new Set());
+  const [expandedWeedingHistoryBedIds, setExpandedWeedingHistoryBedIds] = useState<Set<string>>(new Set());
   const [plantStateByBedId, setPlantStateByBedId] = useState<Record<string, PlantBedState>>({});
   const [observationStateByBedId, setObservationStateByBedId] = useState<Record<string, ObservationBedState>>({});
+  const [weedingStateByBedId, setWeedingStateByBedId] = useState<Record<string, WeedingBedState>>({});
 
   useEffect(() => {
     void loadBeds();
@@ -601,6 +645,147 @@ export function GardenQueue() {
     }
   }
 
+  async function toggleWeedingHistorySection(bedId: string) {
+    const willExpand = !expandedWeedingHistoryBedIds.has(bedId);
+    setExpandedWeedingHistoryBedIds((current) => {
+      const next = new Set(current);
+      if (willExpand) {
+        next.add(bedId);
+      } else {
+        next.delete(bedId);
+      }
+      return next;
+    });
+
+    if (willExpand && !getWeedingState(weedingStateByBedId, bedId).hasLoaded) {
+      await loadWeedingEvents(bedId);
+    }
+  }
+
+  async function loadWeedingEvents(bedId: string) {
+    setWeedingStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getWeedingState(current, bedId),
+        isLoading: true,
+        error: null,
+      },
+    }));
+
+    try {
+      const response = await fetch(`/api/garden/beds/${bedId}/weeding-events`);
+      const payload = (await response.json()) as WeedingEventsResponse & ErrorResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to load weeding history for this bed.");
+      }
+
+      setWeedingStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getWeedingState(current, bedId),
+          events: payload.events,
+          isLoading: false,
+          error: null,
+          hasLoaded: true,
+        },
+      }));
+    } catch (err) {
+      setWeedingStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getWeedingState(current, bedId),
+          isLoading: false,
+          error: err instanceof Error ? err.message : "Unable to load weeding history for this bed.",
+          hasLoaded: true,
+        },
+      }));
+    }
+  }
+
+  function updateWeedingField<K extends keyof WeedingFormState>(bedId: string, field: K, value: WeedingFormState[K]) {
+    setWeedingStateByBedId((current) => {
+      const bedState = getWeedingState(current, bedId);
+      return {
+        ...current,
+        [bedId]: {
+          ...bedState,
+          form: { ...bedState.form, [field]: value },
+          fieldErrors: { ...bedState.fieldErrors, [field]: undefined },
+          error: null,
+          successMessage: null,
+        },
+      };
+    });
+  }
+
+  async function submitMarkWeeded(bedId: string, event: { preventDefault: () => void }) {
+    event.preventDefault();
+    const bedState = getWeedingState(weedingStateByBedId, bedId);
+    if (bedState.isSubmitting) return;
+
+    const validation = validateWeedingForm(bedState.form);
+    setWeedingStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getWeedingState(current, bedId),
+        fieldErrors: validation.errors,
+        error: null,
+        successMessage: null,
+      },
+    }));
+    if (!validation.success) return;
+
+    setWeedingStateByBedId((current) => ({
+      ...current,
+      [bedId]: {
+        ...getWeedingState(current, bedId),
+        isSubmitting: true,
+      },
+    }));
+
+    try {
+      const response = await fetch(`/api/garden/beds/${bedId}/mark-weeded`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toMarkWeededPayload(bedState.form)),
+      });
+      const payload = (await response.json()) as MarkWeededResponse & ErrorResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to record weeding for this bed.");
+      }
+
+      setWeedingStateByBedId((current) => {
+        const currentState = getWeedingState(current, bedId);
+        const events = currentState.hasLoaded ? [payload.event, ...currentState.events] : [payload.event];
+        return {
+          ...current,
+          [bedId]: {
+            ...currentState,
+            events,
+            form: { ...initialWeedingFormState, weeded_at: getTodayIsoDate() },
+            fieldErrors: {},
+            error: null,
+            successMessage: "Weeding recorded — queue refreshed.",
+            isSubmitting: false,
+            hasLoaded: currentState.hasLoaded,
+          },
+        };
+      });
+      await loadBeds();
+    } catch (err) {
+      setWeedingStateByBedId((current) => ({
+        ...current,
+        [bedId]: {
+          ...getWeedingState(current, bedId),
+          isSubmitting: false,
+          error: err instanceof Error ? err.message : "Unable to record weeding for this bed.",
+        },
+      }));
+    }
+  }
+
   return (
     <section className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       <form
@@ -764,10 +949,13 @@ export function GardenQueue() {
                 position={index + 1}
                 isPlantExpanded={expandedBedIds.has(bed.id)}
                 isObservationExpanded={expandedObservationBedIds.has(bed.id)}
+                isWeedingHistoryExpanded={expandedWeedingHistoryBedIds.has(bed.id)}
                 plantState={getPlantState(plantStateByBedId, bed.id)}
                 observationState={getObservationState(observationStateByBedId, bed.id)}
+                weedingState={getWeedingState(weedingStateByBedId, bed.id)}
                 onTogglePlants={() => void togglePlantSection(bed.id)}
                 onToggleObservations={() => void toggleObservationSection(bed.id)}
+                onToggleWeedingHistory={() => void toggleWeedingHistorySection(bed.id)}
                 onPlantFieldChange={(field, value) => {
                   updatePlantField(bed.id, field, value);
                 }}
@@ -781,6 +969,11 @@ export function GardenQueue() {
                 }}
                 onObservationSubmit={(event) => void submitObservation(bed.id, event)}
                 onObservationRetry={() => void loadObservations(bed.id)}
+                onWeedingFieldChange={(field, value) => {
+                  updateWeedingField(bed.id, field, value);
+                }}
+                onWeedingSubmit={(event) => void submitMarkWeeded(bed.id, event)}
+                onWeedingRetry={() => void loadWeedingEvents(bed.id)}
               />
             ))}
           </ol>
@@ -906,10 +1099,13 @@ function QueueCard({
   position,
   isPlantExpanded,
   isObservationExpanded,
+  isWeedingHistoryExpanded,
   plantState,
   observationState,
+  weedingState,
   onTogglePlants,
   onToggleObservations,
+  onToggleWeedingHistory,
   onPlantFieldChange,
   onPlantSubmit,
   onPlantRetry,
@@ -917,15 +1113,21 @@ function QueueCard({
   onObservationCatalogSelect,
   onObservationSubmit,
   onObservationRetry,
+  onWeedingFieldChange,
+  onWeedingSubmit,
+  onWeedingRetry,
 }: {
   bed: GardenBedQueueItem;
   position: number;
   isPlantExpanded: boolean;
   isObservationExpanded: boolean;
+  isWeedingHistoryExpanded: boolean;
   plantState: PlantBedState;
   observationState: ObservationBedState;
+  weedingState: WeedingBedState;
   onTogglePlants: () => void;
   onToggleObservations: () => void;
+  onToggleWeedingHistory: () => void;
   onPlantFieldChange: (field: keyof PlantFormState, value: string) => void;
   onPlantSubmit: (event: { preventDefault: () => void }) => void;
   onPlantRetry: () => void;
@@ -936,6 +1138,9 @@ function QueueCard({
   onObservationCatalogSelect: (slug: string) => void;
   onObservationSubmit: (event: { preventDefault: () => void }) => void;
   onObservationRetry: () => void;
+  onWeedingFieldChange: <K extends keyof WeedingFormState>(field: K, value: WeedingFormState[K]) => void;
+  onWeedingSubmit: (event: { preventDefault: () => void }) => void;
+  onWeedingRetry: () => void;
 }) {
   const suggestedDateText = bed.suggested_weed_at
     ? `Suggested next weeding: ${formatDisplayDate(bed.suggested_weed_at)}`
@@ -1003,6 +1208,16 @@ function QueueCard({
           <Button
             type="button"
             variant="outline"
+            onClick={onToggleWeedingHistory}
+            className="border-blue-300/30 bg-blue-400/10 text-blue-100 hover:bg-blue-400/20 hover:text-white"
+            aria-expanded={isWeedingHistoryExpanded}
+          >
+            <Clock className="size-4" />
+            {isWeedingHistoryExpanded ? "Hide weeding history" : "Weeding history"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
             onClick={onTogglePlants}
             className="border-emerald-300/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20 hover:text-white"
             aria-expanded={isPlantExpanded}
@@ -1013,10 +1228,21 @@ function QueueCard({
         </div>
       </div>
 
+      <WeedingForm
+        bedName={bed.name}
+        state={weedingState}
+        onFieldChange={onWeedingFieldChange}
+        onSubmit={onWeedingSubmit}
+      />
+
       {bed.observation_reasons.length > 0 && (
         <p className="mt-3 rounded-lg border border-amber-300/20 bg-amber-950/20 p-3 text-sm text-amber-50">
           Przyspieszono: {bed.observation_reasons.join(", ")}.
         </p>
+      )}
+
+      {isWeedingHistoryExpanded && (
+        <WeedingHistorySection bedName={bed.name} state={weedingState} onRetry={onWeedingRetry} />
       )}
 
       {isObservationExpanded && (
@@ -1040,6 +1266,136 @@ function QueueCard({
         />
       )}
     </li>
+  );
+}
+
+function WeedingForm({
+  bedName,
+  state,
+  onFieldChange,
+  onSubmit,
+}: {
+  bedName: string;
+  state: WeedingBedState;
+  onFieldChange: <K extends keyof WeedingFormState>(field: K, value: WeedingFormState[K]) => void;
+  onSubmit: (event: { preventDefault: () => void }) => void;
+}) {
+  return (
+    <form onSubmit={onSubmit} className="mt-4 rounded-xl border border-blue-300/15 bg-blue-950/20 p-4" noValidate>
+      <div className="mb-3">
+        <h4 className="font-semibold text-blue-100">Record completed weeding</h4>
+        <p className="text-xs text-blue-100/60">
+          Save when {bedName} was weeded, how long it took, and an optional note.
+        </p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <TextField
+          id={`weeding-date-${bedName}`}
+          label="Weeded date"
+          value={state.form.weeded_at}
+          onChange={(value) => {
+            onFieldChange("weeded_at", value);
+          }}
+          type="date"
+          max={getTodayIsoDate()}
+          error={state.fieldErrors.weeded_at}
+          required
+        />
+        <TextField
+          id={`weeding-duration-${bedName}`}
+          label="Duration minutes"
+          value={state.form.duration_minutes}
+          onChange={(value) => {
+            onFieldChange("duration_minutes", value);
+          }}
+          type="number"
+          min="1"
+          step="1"
+          placeholder="30"
+          error={state.fieldErrors.duration_minutes}
+          required
+        />
+        <TextField
+          id={`weeding-note-${bedName}`}
+          label="Note"
+          value={state.form.note}
+          onChange={(value) => {
+            onFieldChange("note", value);
+          }}
+          placeholder="optional"
+          error={state.fieldErrors.note}
+        />
+      </div>
+      <ServerError message={state.error} />
+      {state.successMessage && (
+        <p className="mt-3 rounded-lg border border-emerald-400/30 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-100">
+          {state.successMessage}
+        </p>
+      )}
+      <Button
+        type="submit"
+        disabled={state.isSubmitting}
+        className="mt-3 w-full bg-blue-300 text-slate-950 hover:bg-blue-200"
+      >
+        {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Clock className="size-4" />}
+        {state.isSubmitting ? "Recording weeding..." : "Mark bed weeded"}
+      </Button>
+    </form>
+  );
+}
+
+function WeedingHistorySection({
+  bedName,
+  state,
+  onRetry,
+}: {
+  bedName: string;
+  state: WeedingBedState;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="mt-4 rounded-xl border border-blue-300/15 bg-blue-950/20 p-4">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h4 className="font-semibold text-blue-100">Weeding history for {bedName}</h4>
+          <p className="text-xs text-blue-100/60">Completion events are loaded on demand for this bed.</p>
+        </div>
+        {state.error && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onRetry}
+            className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+          >
+            Retry
+          </Button>
+        )}
+      </div>
+
+      {state.isLoading ? (
+        <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
+          <Loader2 className="size-4 animate-spin" />
+          Loading weeding history...
+        </div>
+      ) : state.error ? (
+        <ServerError message={state.error} />
+      ) : state.events.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
+          No weeding sessions recorded for this bed yet.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {state.events.map((event) => (
+            <li key={event.id} className="rounded-lg bg-white/5 p-3">
+              <p className="font-medium text-white">
+                {formatDisplayDate(event.weeded_at)} · {event.duration_minutes} min
+              </p>
+              {event.note && <p className="mt-2 text-xs text-blue-100/70">{event.note}</p>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -1425,6 +1781,21 @@ function getObservationState(source: Record<string, ObservationBedState>, bedId:
   );
 }
 
+function getWeedingState(source: Record<string, WeedingBedState>, bedId: string): WeedingBedState {
+  return (
+    source[bedId] ?? {
+      events: [],
+      isLoading: false,
+      isSubmitting: false,
+      error: null,
+      successMessage: null,
+      form: { ...initialWeedingFormState, weeded_at: getTodayIsoDate() },
+      fieldErrors: {},
+      hasLoaded: false,
+    }
+  );
+}
+
 function validateForm(form: FormState): { success: boolean; errors: Partial<Record<keyof FormState, string>> } {
   const errors: Partial<Record<keyof FormState, string>> = {};
 
@@ -1452,6 +1823,25 @@ function validatePlantForm(form: PlantFormState): {
     errors.height_cm = "Current height must be greater than 0.";
   if (!isBlankOrNumber(form.width_cm, { min: 0, exclusiveMin: true }))
     errors.width_cm = "Current width must be greater than 0.";
+
+  return { success: Object.keys(errors).length === 0, errors };
+}
+
+function validateWeedingForm(form: WeedingFormState): {
+  success: boolean;
+  errors: Partial<Record<keyof WeedingFormState, string>>;
+} {
+  const errors: Partial<Record<keyof WeedingFormState, string>> = {};
+
+  if (!isPastOrTodayDate(form.weeded_at)) {
+    errors.weeded_at = "Weeding date must be today or in the past.";
+  }
+  if (!isRequiredInteger(form.duration_minutes, 1)) {
+    errors.duration_minutes = "Duration must be a positive whole number.";
+  }
+  if (form.note.length > 0 && !form.note.trim()) {
+    errors.note = "Note cannot be empty.";
+  }
 
   return { success: Object.keys(errors).length === 0, errors };
 }
@@ -1496,6 +1886,14 @@ function toCreatePlantPayload(form: PlantFormState) {
   };
 }
 
+function toMarkWeededPayload(form: WeedingFormState) {
+  return {
+    weeded_at: form.weeded_at,
+    duration_minutes: Number(form.duration_minutes),
+    note: form.note.trim() || null,
+  };
+}
+
 function toCreateObservationPayload(form: WeedObservationFormState) {
   return {
     observed_at: form.observed_at,
@@ -1537,6 +1935,12 @@ function isBlankOrIntegerInRange(value: string, min: number, max: number): boole
   if (value.trim() === "") return true;
   const number = Number(value);
   return Number.isInteger(number) && number >= min && number <= max;
+}
+
+function isRequiredInteger(value: string, min: number): boolean {
+  if (value.trim() === "") return false;
+  const number = Number(value);
+  return Number.isInteger(number) && number >= min;
 }
 
 function isRequiredIntegerInRange(value: string, min: number, max: number): boolean {
