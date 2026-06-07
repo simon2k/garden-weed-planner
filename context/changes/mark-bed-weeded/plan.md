@@ -531,10 +531,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [x] 6.1 `npx astro sync` completes successfully.
-- [x] 6.2 `npm run lint` completes successfully.
-- [x] 6.3 `npm run build` completes successfully.
-- [x] 6.4 `context/changes/mark-bed-weeded/plan.md` and `plan-brief.md` both exist.
+- [x] 6.1 `npx astro sync` completes successfully. — 59f117d
+- [x] 6.2 `npm run lint` completes successfully. — 59f117d
+- [x] 6.3 `npm run build` completes successfully. — 59f117d
+- [x] 6.4 `context/changes/mark-bed-weeded/plan.md` and `plan-brief.md` both exist. — 59f117d
 
 #### Manual
 
