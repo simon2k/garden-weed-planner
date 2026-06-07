@@ -47,11 +47,6 @@ export const PATCH: APIRoute = async (context) => {
 
   const result = readMarkGardenBedWeededResult(rpcResponse.data);
   if (rpcResponse.error || !result) {
-    console.error("mark_garden_bed_weeded RPC failed", {
-      bedId,
-      error: rpcResponse.error,
-      hasResult: Boolean(result),
-    });
     return json({ error: "Unable to record weeding event for this garden bed." }, 500);
   }
 
@@ -61,12 +56,6 @@ export const PATCH: APIRoute = async (context) => {
   ]);
 
   if (!bedData || !eventData) {
-    console.error("Unable to load mark-weeding response data", {
-      bedId: result.bed_id,
-      eventId: result.event_id,
-      hasBed: Boolean(bedData),
-      hasEvent: Boolean(eventData),
-    });
     return json({ error: "Unable to load this garden bed after recording the weeding event." }, 500);
   }
 
