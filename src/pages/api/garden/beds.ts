@@ -57,7 +57,7 @@ export const GET: APIRoute = async (context) => {
     return json({ error: "Unable to load weed observation priority data." }, 500);
   }
 
-  const observationSummaries = buildObservationSummaryMap(observations);
+  const observationSummaries = buildObservationSummaryMap(observations, gardenBedRows);
   const beds = toSortedGardenBedQueue(gardenBedRows, observationSummaries);
   return json({ beds });
 };
@@ -118,10 +118,17 @@ interface WeedObservationPriorityRow extends WeedObservationPriorityInput {
 
 function buildObservationSummaryMap(
   observations: readonly WeedObservationPriorityRow[],
+  beds: readonly GardenBedRow[],
 ): ReadonlyMap<string, GardenBedObservationSummary> {
+  const lastWeededByBedId = new Map(beds.map((bed) => [bed.id, bed.last_weeded_at]));
   const observationsByBedId = new Map<string, WeedObservationPriorityInput[]>();
 
   for (const observation of observations) {
+    const lastWeededAt = lastWeededByBedId.get(observation.bed_id) ?? null;
+    if (lastWeededAt && observation.observed_at <= lastWeededAt) {
+      continue;
+    }
+
     const existing = observationsByBedId.get(observation.bed_id) ?? [];
     existing.push(observation);
     observationsByBedId.set(observation.bed_id, existing);

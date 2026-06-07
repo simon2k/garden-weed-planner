@@ -482,10 +482,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [x] 3.1 `PATCH /api/garden/beds/[bedId]/mark-weeded` route exists and compiles.
-- [x] 3.2 `GET /api/garden/beds/[bedId]/weeding-events` route exists and compiles.
-- [x] 3.3 API routes import validation/mapping from `src/lib/weeding-events.ts` rather than duplicating validation logic.
-- [x] 3.4 `npm run lint` passes after route additions.
+- [x] 3.1 `PATCH /api/garden/beds/[bedId]/mark-weeded` route exists and compiles. — f5cf072
+- [x] 3.2 `GET /api/garden/beds/[bedId]/weeding-events` route exists and compiles. — f5cf072
+- [x] 3.3 API routes import validation/mapping from `src/lib/weeding-events.ts` rather than duplicating validation logic. — f5cf072
+- [x] 3.4 `npm run lint` passes after route additions. — f5cf072
 
 #### Manual
 
@@ -499,10 +499,10 @@ This change adds a new child table and an update policy on `garden_beds`. During
 
 #### Automated
 
-- [ ] 4.1 `GET /api/garden/beds` still returns decorated queue items.
-- [ ] 4.2 Observation summaries exclude observations dated on or before a bed's `last_weeded_at`.
-- [ ] 4.3 Existing no-observation and no-last-weeded cases still work.
-- [ ] 4.4 `npm run lint` passes after priority filtering changes.
+- [x] 4.1 `GET /api/garden/beds` still returns decorated queue items.
+- [x] 4.2 Observation summaries exclude observations dated on or before a bed's `last_weeded_at`.
+- [x] 4.3 Existing no-observation and no-last-weeded cases still work.
+- [x] 4.4 `npm run lint` passes after priority filtering changes.
 
 #### Manual
 
