@@ -758,7 +758,9 @@ export function GardenQueue() {
 
       setWeedingStateByBedId((current) => {
         const currentState = getWeedingState(current, bedId);
-        const events = currentState.hasLoaded ? [payload.event, ...currentState.events] : [payload.event];
+        const events = sortWeedingEvents(
+          currentState.hasLoaded ? [payload.event, ...currentState.events] : [payload.event],
+        );
         return {
           ...current,
           [bedId]: {
@@ -856,6 +858,7 @@ export function GardenQueue() {
                 updateField("last_weeded_at", value);
               }}
               type="date"
+              max={getTodayIsoDate()}
               error={fieldErrors.last_weeded_at}
             />
             <TextField
@@ -1805,6 +1808,9 @@ function validateForm(form: FormState): { success: boolean; errors: Partial<Reco
   if (!isBlankOrInteger(form.estimated_minutes, 1))
     errors.estimated_minutes = "Estimated minutes must be a positive whole number.";
   if (!isBlankOrNumber(form.mulch_depth_cm, { min: 0 })) errors.mulch_depth_cm = "Mulch depth cannot be negative.";
+  if (form.last_weeded_at && !isPastOrTodayDate(form.last_weeded_at)) {
+    errors.last_weeded_at = "Last weeded date must be today or in the past.";
+  }
 
   return { success: Object.keys(errors).length === 0, errors };
 }
@@ -1975,6 +1981,25 @@ function formatPlantDetails(plant: BedPlant): string {
   ].filter(Boolean);
 
   return details.length > 0 ? details.join(" · ") : "No optional details set.";
+}
+
+function sortWeedingEvents(events: readonly WeedingEvent[]): WeedingEvent[] {
+  return [...events].sort((a, b) => {
+    const weededAtOrder = b.weeded_at.localeCompare(a.weeded_at);
+    if (weededAtOrder !== 0) return weededAtOrder;
+    return compareIsoDateTimeDescending(a.created_at, b.created_at);
+  });
+}
+
+function compareIsoDateTimeDescending(a: string, b: string): number {
+  const aTime = Date.parse(a);
+  const bTime = Date.parse(b);
+
+  if (Number.isNaN(aTime) || Number.isNaN(bTime)) {
+    return b.localeCompare(a);
+  }
+
+  return bTime - aTime;
 }
 
 function formatObservationDetails(observation: WeedObservation): string {

@@ -195,8 +195,8 @@ export function validateCreateGardenBedInput(value: unknown): GardenBedValidatio
 
   const lastWeededAt = value.last_weeded_at;
   if (lastWeededAt !== undefined && lastWeededAt !== null) {
-    if (typeof lastWeededAt !== "string" || !isValidIsoDate(lastWeededAt)) {
-      return { success: false, error: "Last weeded date must be a valid YYYY-MM-DD date." };
+    if (typeof lastWeededAt !== "string" || !isValidPastOrTodayIsoDate(lastWeededAt)) {
+      return { success: false, error: "Last weeded date must be a valid YYYY-MM-DD date that is not in the future." };
     }
   }
 
@@ -585,8 +585,10 @@ function isNonNegativeNumber(value: number): boolean {
   return value >= 0;
 }
 
-function isValidIsoDate(value: string): boolean {
-  return parseIsoDate(value) !== null;
+function isValidPastOrTodayIsoDate(value: string): boolean {
+  const date = parseIsoDate(value);
+  if (!date) return false;
+  return date.getTime() <= startOfUtcToday().getTime();
 }
 
 function parseIsoDate(value: string): Date | null {
