@@ -5,7 +5,7 @@ Garden Weed Planner is an Astro 6 SSR app on Cloudflare Workers with React 19 is
 ## Critical Rules & Commands
 
 - Use Node `22.14.0` from @.nvmrc and npm; CI installs with `npm ci`.
-- Run `npx astro sync`, `npm run lint`, and `npm run build` before handing off changes that touch app code or config; GitHub Actions runs the same gate on `main` PRs.
+- Run `npx astro sync`, `npm run lint`, `npm run test`, and `npm run build` before handing off changes that touch app code or config; GitHub Actions runs the same gate on `main` PRs.
 - Keep `SUPABASE_URL` and `SUPABASE_KEY` server-only. Declare env access through @astro.config.mjs and store local Cloudflare secrets in `.dev.vars`, not committed files.
 - Do not add protected pages without updating `PROTECTED_ROUTES` in @src/middleware.ts.
 
@@ -30,7 +30,11 @@ Use the `@/*` import alias from @tsconfig.json for `src` imports. Prefer Astro c
 
 ## Testing & CI
 
-No automated test runner is configured yet; do not invent `npm test`. For now, rely on lint, build, and manual auth-route smoke tests. CI deploys to Cloudflare Workers only on pushes to `main`; PRs validate without deploying.
+`npm run test` runs the Vitest domain-unit suite for `src/lib/*.test.ts`; keep tests deterministic and free of Supabase secrets or `.dev.vars` content. CI runs Astro sync, lint, test, and build for PRs; deploys to Cloudflare Workers only happen on pushes to `main`.
+
+## Local Git Hooks
+
+Husky pre-commit runs `npx lint-staged` for staged lint/format, then `npm run test:related:staged` for related Vitest tests on staged `src/**/*.{ts,tsx}` files. Husky pre-push runs `npm run test:pre-push`, which currently delegates to the unit suite via `npm run test`. If a hook fails, run the named npm script directly to debug it.
 
 ## Commits & PRs
 
@@ -50,12 +54,12 @@ Review AI-generated code before merge with the **implementation review chain**:
 
 ### Task Router - Where to start
 
-| Skill | Use it when |
-| --- | --- |
-| **Code review (lesson focus)** | |
+| Skill                          | Use it when                                                                                                                                                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Code review (lesson focus)** |                                                                                                                                                                                                                                         |
 | `/10x-impl-review <change-id>` | You have implemented code and want a structured review before merge. The skill checks plan adherence, scope discipline, safety and quality, architecture, pattern consistency, and success criteria, then presents findings for triage. |
-| **Recurring lesson outcome** | |
-| `/10x-lesson` | A finding reveals a recurring project rule or agent failure pattern. Record it in `context/foundation/lessons.md` instead of treating it as a one-off note. |
+| **Recurring lesson outcome**   |                                                                                                                                                                                                                                         |
+| `/10x-lesson`                  | A finding reveals a recurring project rule or agent failure pattern. Record it in `context/foundation/lessons.md` instead of treating it as a one-off note.                                                                             |
 
 ### Triage discipline
 
