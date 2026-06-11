@@ -5,7 +5,7 @@ Garden Weed Planner is an Astro 6 SSR app on Cloudflare Workers with React 19 is
 ## Critical Rules & Commands
 
 - Use Node `22.14.0` from @.nvmrc and npm; CI installs with `npm ci`.
-- Run `npx astro sync`, `npm run lint`, and `npm run build` before handing off changes that touch app code or config; GitHub Actions runs the same gate on `main` PRs.
+- Run `npx astro sync`, `npm run lint`, `npm run test`, and `npm run build` before handing off changes that touch app code or config; GitHub Actions runs the same gate on `main` PRs.
 - Keep `SUPABASE_URL` and `SUPABASE_KEY` server-only. Declare env access through @astro.config.mjs and store local Cloudflare secrets in `.dev.vars`, not committed files.
 - Do not add protected pages without updating `PROTECTED_ROUTES` in @src/middleware.ts.
 
@@ -30,7 +30,7 @@ Use the `@/*` import alias from @tsconfig.json for `src` imports. Prefer Astro c
 
 ## Testing & CI
 
-No automated test runner is configured yet; do not invent `npm test`. For now, rely on lint, build, and manual auth-route smoke tests. CI deploys to Cloudflare Workers only on pushes to `main`; PRs validate without deploying.
+`npm run test` runs the Vitest domain-unit suite for `src/lib/*.test.ts`; keep tests deterministic and free of Supabase secrets or `.dev.vars` content. CI runs Astro sync, lint, test, and build for PRs; deploys to Cloudflare Workers only happen on pushes to `main`.
 
 ## Commits & PRs
 

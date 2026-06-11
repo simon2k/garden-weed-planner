@@ -254,28 +254,28 @@ No database or data migration is required. The only process migration is that `n
 
 #### Automated
 
-- [x] 2.1 `npm run test` passes with the new domain-unit suites.
-- [x] 2.2 `npm run lint` passes with explicit Vitest imports and no global test API assumptions.
-- [x] 2.3 `npm run build` still passes after adding tests/config.
+- [x] 2.1 `npm run test` passes with the new domain-unit suites. — cbfc834
+- [x] 2.2 `npm run lint` passes with explicit Vitest imports and no global test API assumptions. — cbfc834
+- [x] 2.3 `npm run build` still passes after adding tests/config. — cbfc834
 
 #### Manual
 
-- [x] 2.4 Review test names and fixtures to confirm they describe product scenarios, not copied implementation formulas.
-- [x] 2.5 Confirm every date-boundary test pins and restores time deterministically.
-- [x] 2.6 Confirm no test fixture contains real Supabase URLs, keys, cookies, or `.dev.vars` content.
+- [x] 2.4 Review test names and fixtures to confirm they describe product scenarios, not copied implementation formulas. — cbfc834
+- [x] 2.5 Confirm every date-boundary test pins and restores time deterministically. — cbfc834
+- [x] 2.6 Confirm no test fixture contains real Supabase URLs, keys, cookies, or `.dev.vars` content. — cbfc834
 
 ### Phase 3: Wire CI and Phase 1 Cookbook
 
 #### Automated
 
-- [ ] 3.1 `npx astro sync` passes.
-- [ ] 3.2 `npm run lint` passes.
-- [ ] 3.3 `npm run test` passes.
-- [ ] 3.4 `npm run build` passes.
-- [ ] 3.5 CI workflow syntax remains valid after adding the test step.
+- [x] 3.1 `npx astro sync` passes.
+- [x] 3.2 `npm run lint` passes.
+- [x] 3.3 `npm run test` passes.
+- [x] 3.4 `npm run build` passes.
+- [x] 3.5 CI workflow syntax remains valid after adding the test step.
 
 #### Manual
 
-- [ ] 3.6 Confirm `context/foundation/test-plan.md` updates only shipped Phase 1 patterns and leaves future API/UI cookbook sections scoped to later phases.
-- [ ] 3.7 Confirm `AGENTS.md` accurately describes the new test command without expanding scope into unbuilt API/UI tests.
-- [ ] 3.8 Confirm the final handoff command list is clear for future agents.
+- [x] 3.6 Confirm `context/foundation/test-plan.md` updates only shipped Phase 1 patterns and leaves future API/UI cookbook sections scoped to later phases.
+- [x] 3.7 Confirm `AGENTS.md` accurately describes the new test command without expanding scope into unbuilt API/UI tests.
+- [x] 3.8 Confirm the final handoff command list is clear for future agents.

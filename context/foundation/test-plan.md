@@ -123,11 +123,15 @@ rollout phase that must establish the pattern.
 
 ### 6.1 Adding a unit test for priority/date behavior
 
-TBD — see §3 Phase 1 for the priority queue and suggested-date oracle pattern.
+Place Phase 1 domain-unit tests next to the helper they protect as `src/lib/*.test.ts` and run them with `npm run test`. Import Vitest APIs explicitly (`describe`, `it`, `expect`, `vi`, `afterEach`) because globals are disabled in `vitest.config.ts`.
+
+For priority/date behavior, assert product scenarios rather than copying the scoring formula: representative beds should produce expected `ok` / `soon` / `urgent` labels, suggested dates, ordering, confidence, and observation-pressure outcomes. Date-boundary tests must pin time with fake timers and restore timers after the suite or test.
 
 ### 6.2 Adding an integration test for priority persistence/API exposure
 
-TBD — see §3 Phase 1 for the minimum integration layer around priority/date behavior.
+Phase 1 shipped function-level composition tests only: priority/date helpers in `src/lib/garden-beds.ts`, observation validation in `src/lib/weed-observations.ts`, and weeding-event validation in `src/lib/weeding-events.ts`. Do not add Worker, Supabase, browser, or secret-dependent setup to this layer.
+
+API persistence or route-exposure tests are still deferred to §3 Phase 2. Until that phase lands, keep new priority tests in `src/lib/*.test.ts` unless fresh research proves an API-level test is the cheapest truthful signal.
 
 ### 6.3 Adding an API ownership or validation test
 
@@ -143,7 +147,9 @@ TBD — see §3 Phase 4 for wiring new test commands into local handoff and CI w
 
 ### 6.6 Per-rollout-phase notes
 
-TBD — each completed rollout phase should append 2–3 lines here with the canonical pattern it shipped and any surprising constraint future agents must respect.
+- **Phase 1 shipped:** Vitest runs pure TypeScript domain tests in Node via `npm run test`, with test files colocated under `src/lib/*.test.ts`.
+- **Phase 1 constraint:** date-boundary tests must pin and restore time; priority assertions should encode product-oracle examples, not duplicate implementation formulas.
+- **Phase 1 CI gate:** `npm run test` belongs after lint and before build; tests must not require Supabase secrets, Worker runtime setup, browsers, or `.dev.vars`.
 
 ## 7. What We Deliberately Don't Test
 
