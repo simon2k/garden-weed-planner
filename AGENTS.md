@@ -32,6 +32,10 @@ Use the `@/*` import alias from @tsconfig.json for `src` imports. Prefer Astro c
 
 `npm run test` runs the Vitest domain-unit suite for `src/lib/*.test.ts`; keep tests deterministic and free of Supabase secrets or `.dev.vars` content. CI runs Astro sync, lint, test, and build for PRs; deploys to Cloudflare Workers only happen on pushes to `main`.
 
+## Local Git Hooks
+
+Husky pre-commit runs `npx lint-staged` for staged lint/format, then `npm run test:related:staged` for related Vitest tests on staged `src/**/*.{ts,tsx}` files. Husky pre-push runs `npm run test:pre-push`, which currently delegates to the unit suite via `npm run test`. If a hook fails, run the named npm script directly to debug it.
+
 ## Commits & PRs
 
 Recent history uses Conventional Commit-style prefixes (`feat:`, `docs:`, `chore:`). PRs should mention affected routes/components, list validation commands run, and call out Supabase schema, RLS, or secret changes explicitly.
@@ -50,12 +54,12 @@ Review AI-generated code before merge with the **implementation review chain**:
 
 ### Task Router - Where to start
 
-| Skill | Use it when |
-| --- | --- |
-| **Code review (lesson focus)** | |
+| Skill                          | Use it when                                                                                                                                                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Code review (lesson focus)** |                                                                                                                                                                                                                                         |
 | `/10x-impl-review <change-id>` | You have implemented code and want a structured review before merge. The skill checks plan adherence, scope discipline, safety and quality, architecture, pattern consistency, and success criteria, then presents findings for triage. |
-| **Recurring lesson outcome** | |
-| `/10x-lesson` | A finding reveals a recurring project rule or agent failure pattern. Record it in `context/foundation/lessons.md` instead of treating it as a one-off note. |
+| **Recurring lesson outcome**   |                                                                                                                                                                                                                                         |
+| `/10x-lesson`                  | A finding reveals a recurring project rule or agent failure pattern. Record it in `context/foundation/lessons.md` instead of treating it as a one-off note.                                                                             |
 
 ### Triage discipline
 

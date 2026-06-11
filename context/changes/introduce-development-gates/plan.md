@@ -248,29 +248,29 @@ This plan keeps Husky and lint-staged. No migration to Lefthook is performed. Ex
 
 #### Automated
 
-- [x] 2.1 `.husky/pre-commit` exists and runs `npx lint-staged` plus the staged related-test script.
-- [x] 2.2 `.husky/pre-push` exists and runs the pre-push unit-test script.
-- [x] 2.3 `npm run test:related:staged` passes in the current working tree.
-- [x] 2.4 `npm run test:pre-push` passes in the current working tree.
-- [x] 2.5 `npm run lint` passes after hook changes.
+- [x] 2.1 `.husky/pre-commit` exists and runs `npx lint-staged` plus the staged related-test script. — 5377d1d
+- [x] 2.2 `.husky/pre-push` exists and runs the pre-push unit-test script. — 5377d1d
+- [x] 2.3 `npm run test:related:staged` passes in the current working tree. — 5377d1d
+- [x] 2.4 `npm run test:pre-push` passes in the current working tree. — 5377d1d
+- [x] 2.5 `npm run lint` passes after hook changes. — 5377d1d
 
 #### Manual
 
-- [x] 2.6 Confirm a commit with no staged `src/**/*.ts` or `src/**/*.tsx` files does not run unrelated tests.
-- [x] 2.7 Confirm a commit with a staged source TypeScript file runs related tests before allowing commit.
-- [x] 2.8 Confirm `git push --dry-run` or an equivalent safe push check invokes the pre-push unit-test gate, if a remote is available.
+- [x] 2.6 Confirm a commit with no staged `src/**/*.ts` or `src/**/*.tsx` files does not run unrelated tests. — 5377d1d
+- [x] 2.7 Confirm a commit with a staged source TypeScript file runs related tests before allowing commit. — 5377d1d
+- [x] 2.8 Confirm `git push --dry-run` or an equivalent safe push check invokes the pre-push unit-test gate, if a remote is available. — 5377d1d
 
 ### Phase 3: Document Development Gates
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` passes after documentation changes.
-- [ ] 3.2 `npm run test` passes after documentation changes.
-- [ ] 3.3 `npx astro sync` passes after documentation changes.
-- [ ] 3.4 `npm run build` passes after documentation changes.
+- [x] 3.1 `npm run lint` passes after documentation changes.
+- [x] 3.2 `npm run test` passes after documentation changes.
+- [x] 3.3 `npx astro sync` passes after documentation changes.
+- [x] 3.4 `npm run build` passes after documentation changes.
 
 #### Manual
 
-- [ ] 3.5 Confirm `AGENTS.md` clearly distinguishes pre-commit, pre-push, manual handoff, and CI gates.
-- [ ] 3.6 Confirm `context/foundation/test-plan.md §6.5` describes only shipped gates and does not imply deferred API/UI/e2e/Stryker/typecheck gates are required.
-- [ ] 3.7 Confirm future agents can identify which command to run manually when a hook fails.
+- [x] 3.5 Confirm `AGENTS.md` clearly distinguishes pre-commit, pre-push, manual handoff, and CI gates.
+- [x] 3.6 Confirm `context/foundation/test-plan.md §6.5` describes only shipped gates and does not imply deferred API/UI/e2e/Stryker/typecheck gates are required.
+- [x] 3.7 Confirm future agents can identify which command to run manually when a hook fails.
