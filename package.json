@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:related:staged": "FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '^src/.*\\.(ts|tsx)$' || true); if [ -z \"$FILES\" ]; then echo \"No staged source TypeScript files; skipping related tests.\"; else npx vitest related $FILES --run; fi",
+    "test:related:staged": "node scripts/test-related-staged.mjs",
     "test:pre-push": "npm run test"
   },
   "dependencies": {
