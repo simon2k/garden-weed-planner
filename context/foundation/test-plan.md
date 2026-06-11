@@ -69,7 +69,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Test foundation + priority oracle | Bootstrap the runner and protect the priority/date core first. | #1, #4 | unit + minimal integration | not started | — |
+| 1 | Test foundation + priority oracle | Bootstrap the runner and protect the priority/date core first. | #1, #4 | unit + minimal integration | shipped | testing-priority-foundation |
 | 2 | Garden API ownership and validation | Protect nested API behavior, RLS/ownership, and error translation. | #2, #3, #4 | API integration + db/RLS where justified | not started | — |
 | 3 | Critical garden UI smoke | Prove the queue and forms do not drift from API behavior. | #1, #5 | component/integration or minimal e2e | not started | — |
 | 4 | Quality gates and cookbook | Wire the testing floor into local/CI workflows and document shipped patterns. | #6 + cross-cutting | CI gates + cookbook | not started | — |
