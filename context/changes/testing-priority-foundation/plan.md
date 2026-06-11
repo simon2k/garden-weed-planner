@@ -268,14 +268,14 @@ No database or data migration is required. The only process migration is that `n
 
 #### Automated
 
-- [x] 3.1 `npx astro sync` passes.
-- [x] 3.2 `npm run lint` passes.
-- [x] 3.3 `npm run test` passes.
-- [x] 3.4 `npm run build` passes.
-- [x] 3.5 CI workflow syntax remains valid after adding the test step.
+- [x] 3.1 `npx astro sync` passes. — ee2ce50
+- [x] 3.2 `npm run lint` passes. — ee2ce50
+- [x] 3.3 `npm run test` passes. — ee2ce50
+- [x] 3.4 `npm run build` passes. — ee2ce50
+- [x] 3.5 CI workflow syntax remains valid after adding the test step. — ee2ce50
 
 #### Manual
 
-- [x] 3.6 Confirm `context/foundation/test-plan.md` updates only shipped Phase 1 patterns and leaves future API/UI cookbook sections scoped to later phases.
-- [x] 3.7 Confirm `AGENTS.md` accurately describes the new test command without expanding scope into unbuilt API/UI tests.
-- [x] 3.8 Confirm the final handoff command list is clear for future agents.
+- [x] 3.6 Confirm `context/foundation/test-plan.md` updates only shipped Phase 1 patterns and leaves future API/UI cookbook sections scoped to later phases. — ee2ce50
+- [x] 3.7 Confirm `AGENTS.md` accurately describes the new test command without expanding scope into unbuilt API/UI tests. — ee2ce50
+- [x] 3.8 Confirm the final handoff command list is clear for future agents. — ee2ce50
