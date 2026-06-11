@@ -241,28 +241,28 @@ No database or data migration is required. The only process migration is that `n
 
 #### Automated
 
-- [x] 1.1 `npm install --save-dev vitest` or equivalent npm update completes and updates `package.json` plus `package-lock.json`.
-- [x] 1.2 `npm run test` executes successfully, even before substantive tests are added if the runner is checked after config creation.
-- [x] 1.3 `npm run lint` accepts the new config and package changes.
+- [x] 1.1 `npm install --save-dev vitest` or equivalent npm update completes and updates `package.json` plus `package-lock.json`. — 1a5d6d0
+- [x] 1.2 `npm run test` executes successfully, even before substantive tests are added if the runner is checked after config creation. — 1a5d6d0
+- [x] 1.3 `npm run lint` accepts the new config and package changes. — 1a5d6d0
 
 #### Manual
 
-- [x] 1.4 Confirm `package.json` exposes `test` and `test:watch` without removing existing scripts.
-- [x] 1.5 Confirm `vitest.config.ts` does not introduce Worker, browser, Supabase, or secret-dependent setup.
+- [x] 1.4 Confirm `package.json` exposes `test` and `test:watch` without removing existing scripts. — 1a5d6d0
+- [x] 1.5 Confirm `vitest.config.ts` does not introduce Worker, browser, Supabase, or secret-dependent setup. — 1a5d6d0
 
 ### Phase 2: Add Priority and Date Oracle Tests
 
 #### Automated
 
-- [ ] 2.1 `npm run test` passes with the new domain-unit suites.
-- [ ] 2.2 `npm run lint` passes with explicit Vitest imports and no global test API assumptions.
-- [ ] 2.3 `npm run build` still passes after adding tests/config.
+- [x] 2.1 `npm run test` passes with the new domain-unit suites.
+- [x] 2.2 `npm run lint` passes with explicit Vitest imports and no global test API assumptions.
+- [x] 2.3 `npm run build` still passes after adding tests/config.
 
 #### Manual
 
-- [ ] 2.4 Review test names and fixtures to confirm they describe product scenarios, not copied implementation formulas.
-- [ ] 2.5 Confirm every date-boundary test pins and restores time deterministically.
-- [ ] 2.6 Confirm no test fixture contains real Supabase URLs, keys, cookies, or `.dev.vars` content.
+- [x] 2.4 Review test names and fixtures to confirm they describe product scenarios, not copied implementation formulas.
+- [x] 2.5 Confirm every date-boundary test pins and restores time deterministically.
+- [x] 2.6 Confirm no test fixture contains real Supabase URLs, keys, cookies, or `.dev.vars` content.
 
 ### Phase 3: Wire CI and Phase 1 Cookbook
 
