@@ -235,30 +235,30 @@ This plan keeps Husky and lint-staged. No migration to Lefthook is performed. Ex
 
 #### Automated
 
-- [x] 1.1 `npm run test:related:staged` exits 0 when no staged source TypeScript/TSX files exist.
-- [x] 1.2 `npm run test:pre-push` runs the unit suite successfully.
-- [x] 1.3 `npm run lint` passes after package script changes.
+- [x] 1.1 `npm run test:related:staged` exits 0 when no staged source TypeScript/TSX files exist. — 709e1d3
+- [x] 1.2 `npm run test:pre-push` runs the unit suite successfully. — 709e1d3
+- [x] 1.3 `npm run lint` passes after package script changes. — 709e1d3
 
 #### Manual
 
-- [x] 1.4 Confirm the new package scripts are readable and runnable without needing to inspect Husky internals.
-- [x] 1.5 Confirm typecheck is not added to package scripts as a required hook gate.
+- [x] 1.4 Confirm the new package scripts are readable and runnable without needing to inspect Husky internals. — 709e1d3
+- [x] 1.5 Confirm typecheck is not added to package scripts as a required hook gate. — 709e1d3
 
 ### Phase 2: Wire Husky Hooks
 
 #### Automated
 
-- [ ] 2.1 `.husky/pre-commit` exists and runs `npx lint-staged` plus the staged related-test script.
-- [ ] 2.2 `.husky/pre-push` exists and runs the pre-push unit-test script.
-- [ ] 2.3 `npm run test:related:staged` passes in the current working tree.
-- [ ] 2.4 `npm run test:pre-push` passes in the current working tree.
-- [ ] 2.5 `npm run lint` passes after hook changes.
+- [x] 2.1 `.husky/pre-commit` exists and runs `npx lint-staged` plus the staged related-test script.
+- [x] 2.2 `.husky/pre-push` exists and runs the pre-push unit-test script.
+- [x] 2.3 `npm run test:related:staged` passes in the current working tree.
+- [x] 2.4 `npm run test:pre-push` passes in the current working tree.
+- [x] 2.5 `npm run lint` passes after hook changes.
 
 #### Manual
 
-- [ ] 2.6 Confirm a commit with no staged `src/**/*.ts` or `src/**/*.tsx` files does not run unrelated tests.
-- [ ] 2.7 Confirm a commit with a staged source TypeScript file runs related tests before allowing commit.
-- [ ] 2.8 Confirm `git push --dry-run` or an equivalent safe push check invokes the pre-push unit-test gate, if a remote is available.
+- [x] 2.6 Confirm a commit with no staged `src/**/*.ts` or `src/**/*.tsx` files does not run unrelated tests.
+- [x] 2.7 Confirm a commit with a staged source TypeScript file runs related tests before allowing commit.
+- [x] 2.8 Confirm `git push --dry-run` or an equivalent safe push check invokes the pre-push unit-test gate, if a remote is available.
 
 ### Phase 3: Document Development Gates
 
