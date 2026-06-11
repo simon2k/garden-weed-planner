@@ -264,13 +264,13 @@ This plan keeps Husky and lint-staged. No migration to Lefthook is performed. Ex
 
 #### Automated
 
-- [x] 3.1 `npm run lint` passes after documentation changes.
-- [x] 3.2 `npm run test` passes after documentation changes.
-- [x] 3.3 `npx astro sync` passes after documentation changes.
-- [x] 3.4 `npm run build` passes after documentation changes.
+- [x] 3.1 `npm run lint` passes after documentation changes. — 7c7e18f
+- [x] 3.2 `npm run test` passes after documentation changes. — 7c7e18f
+- [x] 3.3 `npx astro sync` passes after documentation changes. — 7c7e18f
+- [x] 3.4 `npm run build` passes after documentation changes. — 7c7e18f
 
 #### Manual
 
-- [x] 3.5 Confirm `AGENTS.md` clearly distinguishes pre-commit, pre-push, manual handoff, and CI gates.
-- [x] 3.6 Confirm `context/foundation/test-plan.md §6.5` describes only shipped gates and does not imply deferred API/UI/e2e/Stryker/typecheck gates are required.
-- [x] 3.7 Confirm future agents can identify which command to run manually when a hook fails.
+- [x] 3.5 Confirm `AGENTS.md` clearly distinguishes pre-commit, pre-push, manual handoff, and CI gates. — 7c7e18f
+- [x] 3.6 Confirm `context/foundation/test-plan.md §6.5` describes only shipped gates and does not imply deferred API/UI/e2e/Stryker/typecheck gates are required. — 7c7e18f
+- [x] 3.7 Confirm future agents can identify which command to run manually when a hook fails. — 7c7e18f
