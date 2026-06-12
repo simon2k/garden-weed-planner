@@ -188,13 +188,13 @@ Validation rule from `context/foundation/lessons.md`: `observed_at` is an occurr
 Keep the current bed score in `src/lib/garden-beds.ts` and add an observation pressure input:
 
 ```ts
-baseDays = SUGGESTED_WEED_INTERVAL_DAYS[bed.weed_level]
-observationPressure = getObservationPressureScore(observations)
-adjustedDays = adjustSuggestedInterval(baseDays, observationPressure)
-nextByLastWeeded = last_weeded_at + adjustedDays
-nextByObservation = most_recent_observed_at + responseWindowDays(observationPressure)
-suggested_weed_at = min(nextByLastWeeded, nextByObservation)
-priority_score = existingBedScore + observationPressure
+baseDays = SUGGESTED_WEED_INTERVAL_DAYS[bed.weed_level];
+observationPressure = getObservationPressureScore(observations);
+adjustedDays = adjustSuggestedInterval(baseDays, observationPressure);
+nextByLastWeeded = last_weeded_at + adjustedDays;
+nextByObservation = most_recent_observed_at + responseWindowDays(observationPressure);
+suggested_weed_at = min(nextByLastWeeded, nextByObservation);
+priority_score = existingBedScore + observationPressure;
 ```
 
 Important: `nextByObservation` matters because a severe observation today should make the queue urgent even if `last_weeded_at` was recent.
@@ -205,34 +205,34 @@ Use recent observations only, e.g. last 45 or 60 days, then cap to keep the scor
 
 Suggested weights:
 
-| Factor | Weight |
-| --- | ---: |
-| Severity 1-5 | `severity * 6` = 6-30 |
-| Coverage | `0-25` from percentage buckets |
-| Growth stage seedling | 0 |
-| Growth stage vegetative | 5 |
-| Growth stage flowering | 15 |
-| Growth stage seeding | 25 |
-| Rhizomes or stolons | 20 |
-| Tubers/bulbs/nutlets | 25 |
-| Root-fragment regrowth | 20 |
-| Prolific seed producer | 15 |
-| Fast regrowth after mowing/pulling | 15 |
-| Multiple risky observations in same bed | up to 15 cap |
-| Old observation decay | multiply by recency factor |
+| Factor                                  |                         Weight |
+| --------------------------------------- | -----------------------------: |
+| Severity 1-5                            |          `severity * 6` = 6-30 |
+| Coverage                                | `0-25` from percentage buckets |
+| Growth stage seedling                   |                              0 |
+| Growth stage vegetative                 |                              5 |
+| Growth stage flowering                  |                             15 |
+| Growth stage seeding                    |                             25 |
+| Rhizomes or stolons                     |                             20 |
+| Tubers/bulbs/nutlets                    |                             25 |
+| Root-fragment regrowth                  |                             20 |
+| Prolific seed producer                  |                             15 |
+| Fast regrowth after mowing/pulling      |                             15 |
+| Multiple risky observations in same bed |                   up to 15 cap |
+| Old observation decay                   |     multiply by recency factor |
 
 Recency factor:
 
 ```ts
-ageDays = daysBetween(observed_at, today)
-recency = max(0, 1 - ageDays / 60)
-weightedObservation = rawObservationScore * recency
+ageDays = daysBetween(observed_at, today);
+recency = max(0, 1 - ageDays / 60);
+weightedObservation = rawObservationScore * recency;
 ```
 
 Aggregate:
 
 ```ts
-observationPressure = min(80, maxObservationScore + repeatPressureBonus)
+observationPressure = min(80, maxObservationScore + repeatPressureBonus);
 ```
 
 This avoids one bed getting absurd scores while still letting dangerous observations override the baseline.
@@ -242,12 +242,12 @@ This avoids one bed getting absurd scores while still letting dangerous observat
 Use score bands instead of a complex formula first:
 
 | Observation pressure | Interval change | Response window from newest observation |
-| ---: | ---: | ---: |
-| 0-14 | no change | none |
-| 15-29 | 20% sooner | 14 days |
-| 30-49 | 35% sooner | 7 days |
-| 50-69 | 50% sooner | 3 days |
-| 70-80 | 65% sooner | 1 day |
+| -------------------: | --------------: | --------------------------------------: |
+|                 0-14 |       no change |                                    none |
+|                15-29 |      20% sooner |                                 14 days |
+|                30-49 |      35% sooner |                                  7 days |
+|                50-69 |      50% sooner |                                  3 days |
+|                70-80 |      65% sooner |                                   1 day |
 
 Implementation sketch:
 
@@ -288,11 +288,13 @@ Example: a bed with medium weeds has base interval 14 days. If the user observes
 The user chooses `weed_category`, `growth_stage`, severity, coverage, and risk traits. The algorithm uses fixed weights.
 
 Pros:
+
 - Easy to explain in UI: “Earlier because: tubers + high coverage + flowering.”
 - Small database and no maintained weed catalog.
 - Works even when the user does not know the exact species.
 
 Cons:
+
 - More manual input.
 - User may over/under-select traits.
 
@@ -301,10 +303,12 @@ Cons:
 The app stores a small local catalog, e.g. bindweed, quackgrass/perz, nutsedge/turzyca, creeping Charlie/bluszczyk, dandelion, lambsquarters/komosa. Each has default risk traits and weights; the user can override severity/coverage.
 
 Pros:
+
 - Better UX and more precise defaults.
 - Easier to keep scoring consistent.
 
 Cons:
+
 - More product scope.
 - Catalog needs localization and botanical accuracy.
 - Unknown weeds still need fallback.

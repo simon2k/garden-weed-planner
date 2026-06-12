@@ -17,16 +17,16 @@ A user can add a weed observation from a broad Polish catalog, adjust Polish ris
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| Observation storage | Append-only child table | Mirrors plant pattern and avoids stale persisted priority fields. | Research |
-| Priority integration | Compute at queue-list time | Keeps `GET /api/garden/beds` as the single queue source. | Research |
-| Weed identity | Broad Polish catalog 20+ entries | Better UX than free text only and supports defaults. | Plan |
-| Risk traits | Polish checkboxes | Directly feeds transparent scoring. | Plan |
-| Coverage | `low | medium | high` | Simpler MVP input than percentages. | Plan |
-| Observation expiry | 60-day decay | Prevents stale observations from dominating while preserving recent risk. | Research / Plan |
-| UI feedback | Short Polish explanation | Builds trust in why date/priority changed. | Plan |
-| Submit behavior | Reload full queue | Sort order and suggested date may change after one observation. | Research / Plan |
+| Decision             | Choice                           | Why (1 sentence)                                                          | Source          |
+| -------------------- | -------------------------------- | ------------------------------------------------------------------------- | --------------- | ----------------------------------- | ---- |
+| Observation storage  | Append-only child table          | Mirrors plant pattern and avoids stale persisted priority fields.         | Research        |
+| Priority integration | Compute at queue-list time       | Keeps `GET /api/garden/beds` as the single queue source.                  | Research        |
+| Weed identity        | Broad Polish catalog 20+ entries | Better UX than free text only and supports defaults.                      | Plan            |
+| Risk traits          | Polish checkboxes                | Directly feeds transparent scoring.                                       | Plan            |
+| Coverage             | `low                             | medium                                                                    | high`           | Simpler MVP input than percentages. | Plan |
+| Observation expiry   | 60-day decay                     | Prevents stale observations from dominating while preserving recent risk. | Research / Plan |
+| UI feedback          | Short Polish explanation         | Builds trust in why date/priority changed.                                | Plan            |
+| Submit behavior      | Reload full queue                | Sort order and suggested date may change after one observation.           | Research / Plan |
 
 ## Scope
 
@@ -53,14 +53,14 @@ Data flows from `garden_bed_weed_observations` through a nested bed API and thro
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| --- | --- | --- |
-| 1. Database Contract and RLS | Secure observation table | RLS/ownership mistakes |
-| 2. Domain Model and Polish Catalog | Types, validation, catalog | Catalog defaults may be too broad or inaccurate |
-| 3. Priority Algorithm | Observation-aware score/date/reasons | Score bands may need tuning |
-| 4. API Integration | Nested routes + queue summaries | Extra query must stay user-scoped |
-| 5. Garden UI Integration | Add/list observations and show impact | `GardenQueue.tsx` complexity grows |
-| 6. Final Verification | Gates and scope guard | Missing cross-user/manual smoke checks |
+| Phase                              | What it delivers                      | Key risk                                        |
+| ---------------------------------- | ------------------------------------- | ----------------------------------------------- |
+| 1. Database Contract and RLS       | Secure observation table              | RLS/ownership mistakes                          |
+| 2. Domain Model and Polish Catalog | Types, validation, catalog            | Catalog defaults may be too broad or inaccurate |
+| 3. Priority Algorithm              | Observation-aware score/date/reasons  | Score bands may need tuning                     |
+| 4. API Integration                 | Nested routes + queue summaries       | Extra query must stay user-scoped               |
+| 5. Garden UI Integration           | Add/list observations and show impact | `GardenQueue.tsx` complexity grows              |
+| 6. Final Verification              | Gates and scope guard                 | Missing cross-user/manual smoke checks          |
 
 **Prerequisites:** F-01/S-01 existing bed queue; Supabase local/project access for migration/RLS smoke tests.
 **Estimated effort:** ~3-5 focused sessions across 6 phases.
