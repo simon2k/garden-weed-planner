@@ -1,10 +1,10 @@
 ---
 change_id: priority-bed-queue
 title: Priority Bed Queue
-status: impl_reviewed
+status: archived
 created: 2026-06-02
-updated: 2026-06-02
-archived_at: null
+updated: 2026-06-12
+archived_at: 2026-06-12T21:19:28Z
 ---
 
 ## Notes

@@ -30,7 +30,7 @@ Garden Weed Planner pomaga osobie zarządzającej wieloma rabatami zdecydować, 
 | ID   | Change ID                  | Outcome (user can …)                                                                                                                      | Prerequisites | PRD refs                                                    | Status   |
 | ---- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------- | -------- |
 | F-01 | user-scoped-garden-records | (foundation) minimalny kontrakt danych dla rabat, priorytetów i izolacji użytkownika jest gotowy do użycia przez pierwszą pionową ścieżkę | —             | Access Control, Non-Functional Requirements: data isolation | finished |
-| S-01 | priority-bed-queue         | dodać rabaty z podstawowymi danymi i zobaczyć kolejkę według pilności z sugerowaną datą                                                   | F-01          | US-01, FR-001, FR-002, FR-004, FR-006, FR-007               | finished |
+| S-01 | priority-bed-queue         | dodać rabaty z podstawowymi danymi i zobaczyć kolejkę według pilności z sugerowaną datą                                                   | F-01          | US-01, FR-001, FR-002, FR-004, FR-006, FR-007               | done     |
 | S-02 | bed-plant-list             | prowadzić listę roślin posadzonych na rabacie jako kontekst decyzji o pieleniu                                                            | F-01, S-01    | FR-003                                                      | finished |
 | S-03 | weed-observations-priority | dodawać obserwacje chwastów i widzieć ich wpływ na priorytet rabaty                                                                       | F-01, S-01    | US-01, FR-005, FR-006, FR-007                               | finished |
 | S-04 | mark-bed-weeded            | oznaczyć rabatę jako wypieloną, zapisać czas pracy i notatkę, a potem zobaczyć niższy priorytet                                           | F-01, S-01    | FR-008, FR-006, FR-007                                      | finished |
@@ -83,7 +83,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** To najkrótsza ścieżka do wartości MVP; ryzykiem jest wciągnięcie zbyt wielu pól pobocznych zamiast utrzymania minimum potrzebnego do kolejki.
-- **Status:** finished
+- **Status:** done
 
 ### S-02: Lista roślin na rabacie
 
@@ -142,3 +142,5 @@ Brak. PRD zapisuje: „Brak otwartych pytań na podstawie zaakceptowanego shape-
 - **Pełny kalendarz zadań ogrodowych** — Why parked: PRD §Non-Goals; system sugeruje termin pielenia, ale nie jest kompletnym plannerem ogrodu.
 
 ## Done
+
+- **S-01: user can dodać rabaty z podstawowymi danymi i zobaczyć kolejkę według pilności z sugerowaną datą** — Archived 2026-06-12 → `context/archive/2026-06-02-priority-bed-queue/`. Lesson: —.
