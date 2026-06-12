@@ -17,13 +17,13 @@ Pre-commit runs the existing staged lint/format gate plus related Vitest tests f
 
 ## Key Decisions Made
 
-| Decision | Choice | Why | Source |
-|---|---|---|---|
-| Hook runner | Keep Husky | Husky is already installed and wired; user chose not to migrate to Lefthook. | Plan |
-| Staged lint/format | Keep lint-staged | Lowest risk and preserves existing `.astro` + Prettier behavior. | Research / Plan |
-| Pre-commit tests | Run related tests for staged `src/**/*.{ts,tsx}` | Matches user correction to test only staged files while avoiding surprising config/docs behavior. | Research / Plan |
-| Pre-push tests | Run `npm run test` | Matches “unit for now” requirement and existing Vitest setup. | Research / Plan |
-| Typecheck | Defer | `npx tsc --noEmit` currently fails and would block commits immediately. | Research / Plan |
+| Decision           | Choice                                           | Why                                                                                               | Source          |
+| ------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------- | --------------- |
+| Hook runner        | Keep Husky                                       | Husky is already installed and wired; user chose not to migrate to Lefthook.                      | Plan            |
+| Staged lint/format | Keep lint-staged                                 | Lowest risk and preserves existing `.astro` + Prettier behavior.                                  | Research / Plan |
+| Pre-commit tests   | Run related tests for staged `src/**/*.{ts,tsx}` | Matches user correction to test only staged files while avoiding surprising config/docs behavior. | Research / Plan |
+| Pre-push tests     | Run `npm run test`                               | Matches “unit for now” requirement and existing Vitest setup.                                     | Research / Plan |
+| Typecheck          | Defer                                            | `npx tsc --noEmit` currently fails and would block commits immediately.                           | Research / Plan |
 
 ## Scope
 
@@ -48,11 +48,11 @@ Keep hooks thin and call npm scripts. `package.json` owns reusable gate commands
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
+| Phase                  | What it delivers                                                       | Key risk                                                                  |
+| ---------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | 1. Hook runner scripts | Reusable npm scripts for staged related tests and pre-push unit tests. | Staged-file filtering must no-op cleanly when no source files are staged. |
-| 2. Husky hook wiring | Pre-commit and pre-push call the new scripts. | Hooks must not become too slow or skip existing lint-staged behavior. |
-| 3. Documentation | AGENTS and test-plan cookbook explain local gate layers. | Docs must not imply deferred typecheck/API/UI/Stryker gates are required. |
+| 2. Husky hook wiring   | Pre-commit and pre-push call the new scripts.                          | Hooks must not become too slow or skip existing lint-staged behavior.     |
+| 3. Documentation       | AGENTS and test-plan cookbook explain local gate layers.               | Docs must not imply deferred typecheck/API/UI/Stryker gates are required. |
 
 **Prerequisites:** Existing Husky/lint-staged setup and Vitest unit suite.
 **Estimated effort:** ~1 focused session across 3 small phases.

@@ -100,10 +100,10 @@ pre-commit:
 If Prettier behavior should remain equivalent to lint-staged, add a separate command:
 
 ```yaml
-    format:
-      glob: "*.{json,css,md}"
-      run: npx prettier --write {staged_files}
-      stage_fixed: true
+format:
+  glob: "*.{json,css,md}"
+  run: npx prettier --write {staged_files}
+  stage_fixed: true
 ```
 
 ### The proposed lint glob would weaken current behavior by omitting `.astro`
@@ -145,9 +145,9 @@ The proposed pre-commit test command uses `glob: "*.{ts,tsx}"` and raw `{staged_
 Recommended pre-commit related-test shape:
 
 ```yaml
-    test:
-      glob: "src/**/*.{ts,tsx}"
-      run: npx vitest related {staged_files} --run
+test:
+  glob: "src/**/*.{ts,tsx}"
+  run: npx vitest related {staged_files} --run
 ```
 
 For pre-push, use the full existing unit suite:

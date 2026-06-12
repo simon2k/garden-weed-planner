@@ -1,10 +1,10 @@
 ---
 change_id: introduce-development-gates
 title: Introduce development gates
-status: impl_reviewed
+status: archived
 created: 2026-06-11
 updated: 2026-06-12
-archived_at: null
+archived_at: 2026-06-12T21:32:26Z
 ---
 
 ## Notes
