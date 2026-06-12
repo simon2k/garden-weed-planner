@@ -1,10 +1,10 @@
 ---
 change_id: testing-priority-foundation
 title: Testing priority foundation
-status: impl_reviewed
+status: archived
 created: 2026-06-07
-updated: 2026-06-11
-archived_at: null
+updated: 2026-06-12
+archived_at: 2026-06-12T21:33:44Z
 ---
 
 ## Notes

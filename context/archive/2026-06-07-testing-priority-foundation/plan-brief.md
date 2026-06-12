@@ -17,13 +17,13 @@ Vitest is installed and configured for pure TypeScript domain tests. Priority/da
 
 ## Key Decisions Made
 
-| Decision | Choice | Why | Source |
-|---|---|---|---|
-| Runner scope | Vitest domain-unit only | Lowest-cost signal for priority/date behavior without Worker/Supabase setup. | Plan |
-| CI timing | Enforce `npm run test` in Phase 1 | A new test floor should not remain optional once tests land. | Plan |
-| Test target | Priority/date plus weeding validation | Covers risks #1 and #4 plus the date-direction lesson. | Research / Plan |
-| Time handling | Fake timers for date-boundary tests | Prevents calendar and timezone flakiness. | Research / Plan |
-| Cookbook | Fill Phase 1 entries only | Documents shipped patterns without inventing future API/UI guidance. | Test plan / Plan |
+| Decision      | Choice                                | Why                                                                          | Source           |
+| ------------- | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------- |
+| Runner scope  | Vitest domain-unit only               | Lowest-cost signal for priority/date behavior without Worker/Supabase setup. | Plan             |
+| CI timing     | Enforce `npm run test` in Phase 1     | A new test floor should not remain optional once tests land.                 | Plan             |
+| Test target   | Priority/date plus weeding validation | Covers risks #1 and #4 plus the date-direction lesson.                       | Research / Plan  |
+| Time handling | Fake timers for date-boundary tests   | Prevents calendar and timezone flakiness.                                    | Research / Plan  |
+| Cookbook      | Fill Phase 1 entries only             | Documents shipped patterns without inventing future API/UI guidance.         | Test plan / Plan |
 
 ## Scope
 
@@ -49,11 +49,11 @@ Keep Phase 1 small and deterministic: Vitest runs in a Node environment against 
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Bootstrap Vitest Foundation | Test scripts, dependency, lockfile, and `vitest.config.ts`. | Misconfiguring tests with unnecessary Worker/browser/Supabase setup. |
-| 2. Add Priority and Date Oracle Tests | Deterministic tests for priority, suggested dates, observations, and weeding validation. | Tests mirror implementation instead of product scenarios. |
-| 3. Wire CI and Phase 1 Cookbook | CI `npm run test` gate plus durable test-plan cookbook updates. | Cookbook or AGENTS guidance drifts from actual commands. |
+| Phase                                 | What it delivers                                                                         | Key risk                                                             |
+| ------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 1. Bootstrap Vitest Foundation        | Test scripts, dependency, lockfile, and `vitest.config.ts`.                              | Misconfiguring tests with unnecessary Worker/browser/Supabase setup. |
+| 2. Add Priority and Date Oracle Tests | Deterministic tests for priority, suggested dates, observations, and weeding validation. | Tests mirror implementation instead of product scenarios.            |
+| 3. Wire CI and Phase 1 Cookbook       | CI `npm run test` gate plus durable test-plan cookbook updates.                          | Cookbook or AGENTS guidance drifts from actual commands.             |
 
 **Prerequisites:** Existing research at `context/changes/testing-priority-foundation/research.md`; Node `22.14.0`; npm.
 **Estimated effort:** ~2-3 focused sessions across 3 phases.
