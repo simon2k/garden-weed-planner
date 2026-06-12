@@ -1,130 +1,176 @@
 ---
 project: "Garden Weed Planner"
-version: 1
-status: draft
-created: 2026-05-21
-updated: 2026-05-21
-context_type: greenfield
+context_type: brownfield
+created: 2026-06-12
+updated: 2026-06-12
 product_type: web-app
 target_scale:
   users: small
   qps: low
   data_volume: small
 timeline_budget:
-  mvp_weeks: 3
+  delivery_weeks: 1
   hard_deadline: null
   after_hours_only: true
 checkpoint:
   current_phase: 8
   phases_completed: [1, 2, 3, 4, 5, 6, 7]
-  frs_drafted: 8
+  gray_areas_resolved:
+    - topic: context type
+      decision: brownfield — existing Garden Weed Planner codebase, shaping a deletion/management change
+    - topic: deletion scope
+      decision: hard delete beds, plants, and weed observations
+    - topic: preserved behavior
+      decision: preserve existing queue, priority, auth, plant-list, observation, mark-weeded, and user-isolation flows
+    - topic: access control
+      decision: no auth or role changes; deletion is owner-only
+    - topic: deletion confirmation
+      decision: confirm before hard delete
+    - topic: delivery size
+      decision: one-week small slice
+    - topic: bed deletion semantics
+      decision: deleting a bed cascades to its child plants, weed observations, and weeding history
+    - topic: delete UI location
+      decision: delete actions appear inline where records are displayed
+    - topic: priority semantics
+      decision: deleted beds and deleted observations no longer participate in queue or priority calculations
+    - topic: compatibility
+      decision: preserve existing APIs and UI flows except adding delete capabilities
+    - topic: non-goals
+      decision: no soft delete/archive/undo, no edit flows, no bulk delete, no team/admin deletion, no audit log/recovery
+  frs_drafted: 7
   quality_check_status: accepted
 ---
 
-# Shape Notes — Garden Weed Planner
+# Shape Notes — Garden Weed Planner Management Deletions
 
-Seed idea: Garden Weed Planner - Aplikacja do monitorowania rabat, poziomu zachwaszczenia oraz sugerowania terminu kolejnego pielenia
+Seed idea: dodaj możliwość zarządzania rabatami - usuwanie rabat, usuwanie roślin, usuwanie chwastów/obserwacji
 
+## Current System
+
+Garden Weed Planner is an existing web app for a logged-in solo user managing garden beds. The current product already supports user-scoped garden beds, a priority-sorted bed queue, plant lists per bed, weed observations that influence priority, and marking a bed as weeded with work history.
+
+Tech stack mentioned by existing project context: Astro SSR app, React islands, TypeScript, Tailwind, Supabase auth/database, and Cloudflare deployment.
+
+Current user base: the app is used by the project owner personally.
 
 ## Vision & Problem Statement
 
-Osoba zarządzająca wieloma rabatami nie wie, które rabaty wymagają najpilniejszego pielenia, gdy planuje pracę w ogrodzie. Dziś musi ręcznie oceniać rabaty, przez co pilne miejsca mogą zostać pominięte albo czas pracy może zostać poświęcony mniej ważnym rabatom.
+The current system lets the user add beds, plants, and weed observations, but does not let them remove obsolete, unnecessary, accidental, or test records. This creates clutter and can leave irrelevant data in the garden workflow.
 
-Insight: priorytet pielenia nie zależy tylko od daty ostatniego pielenia; trzeba łączyć datę, poziom zachwaszczenia, przewidywany czas pracy i ilość kory.
+This change adds hard-delete management for beds, plants, and weed observations so the user can clean up records that should no longer exist.
 
-Pain category: decision paralysis / priorytetyzacja.
+Change category: significant feature / management capability.
+
+Insight: because the app is used personally and the stated need is cleanup of accidental/test/obsolete records, hard delete is acceptable for this slice; the core risk is avoiding accidental breakage of existing queue, priority, auth, plant, observation, and mark-weeded flows.
 
 ## User & Persona
 
-Primary persona: jedna osoba zarządzająca wieloma rabatami w jednym ogrodzie lub obiekcie. Użytkownik potrzebuje szybkiej kolejki pracy pokazującej, które rabaty są OK, które wymagają działania wkrótce, a które są pilne.
-
+Primary persona: the existing logged-in solo Garden Weed Planner user who manages their own garden beds and wants to remove obsolete, accidental, or test records from the app.
 
 ## Access Control
 
-Zalogowany użytkownik zarządza wyłącznie swoimi rabatami. MVP ma płaski model dostępu: brak ról admin/członek/gość i brak współdzielenia rabat między użytkownikami.
+No access control changes — current model preserved.
 
+Only the authenticated owner of a bed can delete that bed. Only the authenticated owner of the parent bed can delete plants and weed observations attached to that bed. No admin, guest, team, or shared-access roles are introduced by this change.
 
 ## Success Criteria
 
 ### Primary
-- Użytkownik może zalogować się, dodać kilka rabat z podstawowymi danymi i zobaczyć listę rabat uporządkowaną według priorytetu OK / wkrótce / pilne.
-- Użytkownik wie, którą rabatę pielić jako pierwszą.
+
+- The authenticated owner can hard-delete obsolete, accidental, or test beds, plants, and weed observations from the garden UI after confirming the destructive action.
+- Deleted records disappear from the relevant UI and no longer influence the garden queue or priority calculation.
 
 ### Secondary
-- Po wykonaniu pracy użytkownik może zresetować datę ostatniego pielenia, a priorytet rabaty spada.
+
+- Deletion feedback is clear enough that the user knows which record was removed and whether the action succeeded or failed.
 
 ### Guardrails
-- Użytkownik widzi priorytet i sugerowaną datę kolejnego pielenia bez konieczności interpretowania surowych danych wejściowych.
-- Dane rabat nie mogą mieszać się między użytkownikami: każdy zalogowany użytkownik widzi tylko swoje rabaty.
 
+- Existing add/list beds, priority queue ordering, plant lists, weed observations, mark-bed-weeded history, authentication, and user isolation continue to work.
+- A destructive delete requires confirmation before the hard delete is performed.
+- A user cannot delete another user's beds, plants, or weed observations.
 
-## User Stories
-
-### US-01: Wyznaczenie priorytetu pielenia rabat
-
-- **Given** zalogowany użytkownik ma co najmniej jedną rabatę z danymi o ostatnim pieleniu, zachwaszczeniu, czasie pracy, korze i obserwacjach chwastów
-- **When** użytkownik otwiera listę rabat
-- **Then** widzi rabaty uporządkowane według priorytetu OK / wkrótce / pilne
-
-#### Acceptance Criteria
-- Lista rabat pokazuje priorytet każdej rabaty jako OK, wkrótce albo pilne.
-- Rabaty o wyższej pilności są prezentowane przed mniej pilnymi.
+Timeline: this change is scoped as roughly 1 week of delivery work.
 
 ## Functional Requirements
 
-- FR-001: Zalogowany użytkownik może dodać rabatę. Priority: must-have
-  > Socrates: Counter-argument considered: "można zacząć od predefiniowanych rabat / importu testowego, żeby szybciej sprawdzić algorytm." Resolution: kept; dodawanie rabat jest konieczne, bo bez tego nie ma czego priorytetyzować.
-- FR-002: Zalogowany użytkownik może podać powierzchnię rabaty. Priority: must-have
-  > Socrates: Counter-argument considered: "powierzchnia może być niepotrzebna w MVP, jeśli priorytet zależy głównie od zachwaszczenia i ostatniego pielenia." Resolution: kept; powierzchnia wpływa na ocenę nakładu pracy.
-- FR-003: Zalogowany użytkownik może prowadzić listę roślin posadzonych na rabacie. Priority: must-have
-  > Socrates: Counter-argument considered: "lista roślin może być przydatna jako kontekst, ale niekoniecznie wpływa na decyzję co pielić teraz." Resolution: kept; lista roślin pomaga ocenić rabatę i ryzyko zachwaszczenia.
-- FR-004: Zalogowany użytkownik może podać dla rabaty datę ostatniego pielenia, poziom zachwaszczenia, przewidywany czas pracy i ilość kory. Priority: must-have
-  > Socrates: Counter-argument considered: "formularz może być za ciężki, jeśli użytkownik musi wpisać zbyt dużo danych przed zobaczeniem wartości." Resolution: kept; te dane są rdzeniem algorytmu priorytetu.
-- FR-005: Zalogowany użytkownik może dodawać obserwacje chwastów zawierające typ chwastu, datę, poziom nasilenia lub pokrycia oraz notatkę. Priority: must-have
-  > Socrates: Counter-argument considered: "obserwacje chwastów mogą rozbudować MVP i opóźnić pierwszą wersję." Resolution: kept; obserwacje wpływają na priorytet pielenia.
-- FR-006: Zalogowany użytkownik może zobaczyć priorytet rabaty jako OK, wkrótce albo pilne oraz sugerowaną datę kolejnego pielenia. Priority: must-have
-  > Socrates: Counter-argument considered: "trzy etykiety mogą być zbyt uproszczone, jeśli użytkownik potrzebuje dokładnej daty kolejnego pielenia." Resolution: revised; MVP pokazuje także sugerowaną datę kolejnego pielenia.
-- FR-007: Zalogowany użytkownik może zobaczyć listę rabat uporządkowaną według pilności z widoczną sugerowaną datą kolejnego pielenia. Priority: must-have
-  > Socrates: Counter-argument considered: "sama kolejność po pilności może być niewystarczająca, jeśli użytkownik planuje pracę według czasu pracy lub konkretnej daty." Resolution: revised; widok uwzględnia sugerowaną datę kolejnego pielenia.
-- FR-008: Zalogowany użytkownik może oznaczyć rabatę jako wypieloną oraz zapisać czas pracy i notatkę. Priority: must-have
-  > Socrates: Counter-argument considered: "samo oznaczenie jako wypielone może być za mało, jeśli użytkownik chce zapisać, kiedy i ile czasu zajęła praca." Resolution: revised; MVP zapisuje też czas pracy i notatkę.
+- FR-001: Authenticated owner can hard-delete one of their garden beds after confirming the destructive action. Priority: must-have. Change: new
+  > Socrates: Counter-argument considered: no counter-argument; it stands as written. Resolution: kept.
+- FR-002: Deleting a garden bed also removes its child records, including plants, weed observations, and weeding history attached to that bed. Priority: must-have. Change: new
+  > Socrates: Counter-argument considered: no counter-argument; it stands as written. Resolution: kept.
+- FR-003: Authenticated owner can hard-delete a plant from one of their beds after confirming the destructive action. Priority: must-have. Change: new
+  > Socrates: Counter-argument considered: no counter-argument; it stands as written. Resolution: kept.
+- FR-004: Authenticated owner can hard-delete a weed observation from one of their beds after confirming the destructive action. Priority: must-have. Change: new
+  > Socrates: Counter-argument considered: deleting observations can rewrite priority history. Resolution: kept; this change is explicitly for cleanup of obsolete, accidental, or test observations, and deleted observations should no longer affect current priority.
+- FR-005: Delete actions are available inline where the bed, plant, or weed observation is displayed. Priority: must-have. Change: new
+  > Socrates: Counter-argument considered: inline delete actions may clutter already dense bed cards. Resolution: kept; inline access is preferred for direct cleanup, with UI care needed downstream.
+- FR-006: Deleted records disappear from the relevant UI and no longer affect the garden queue or priority calculation. Priority: must-have. Change: modified
+  > Socrates: Counter-argument considered: no counter-argument; it stands as written. Resolution: kept.
+- FR-007: Existing add/list beds, priority queue, plant list, weed observation, mark-bed-weeded, authentication, and user-isolation behavior continues to work unchanged. Priority: must-have. Change: preserved
+  > Socrates: Counter-argument considered: preserving all existing flows may increase testing effort. Resolution: kept; this is the core brownfield guardrail for safe deletion.
 
+## User Stories
+
+### US-01: Delete obsolete garden records
+
+- **Given** the authenticated owner is viewing their garden beds, plants, or weed observations
+- **When** they choose an inline delete action and confirm the destructive action
+- **Then** the selected record is hard-deleted, disappears from the UI, and no longer affects the remaining garden workflow
+
+#### Acceptance Criteria
+
+- Deleting a bed requires confirmation before the bed is removed.
+- Deleting a bed removes its child plants, weed observations, and weeding history.
+- Deleting a plant or weed observation requires confirmation before removal.
+- Deleted weed observations no longer influence bed priority.
+- Existing queue, plant list, observation, mark-bed-weeded, authentication, and user-isolation flows continue to work.
 
 ## Business Logic
 
-System wyznacza priorytet i datę kolejnego pielenia na podstawie czasu od ostatniego pielenia, poziomu zachwaszczenia, powierzchni, czasu pracy, ilości kory i obserwacji chwastów.
+The existing priority rule is preserved, with the deletion delta that deleted beds and deleted weed observations no longer participate in queue or priority calculations because they no longer exist.
 
-Obserwacje chwastów wpływają na priorytet przez poziom nasilenia lub pokrycia oraz przez typ chwastu. Większe nasilenie, większe pokrycie lub bardziej problematyczny typ chwastu zwiększają pilność rabaty.
+Deleting a bed removes the bed from the queue and removes its associated child records from the user's garden data. Deleting a weed observation removes that observation's contribution to the bed's current priority. Deleting a plant removes the plant from the bed context without changing unrelated priority rules.
 
-Ilość kory działa jako czynnik obniżający pilność: większa ilość kory może przesuwać sugerowany termin kolejnego pielenia później.
+## Constraints & Preserved Behavior
+
+- Existing authentication and owner-only data isolation must continue to hold for all delete operations.
+- Existing add/list bed behavior must continue working after delete support is added.
+- Existing priority queue behavior must continue working for remaining beds after a bed or observation is deleted.
+- Existing plant list behavior must continue working for remaining plants after a plant is deleted.
+- Existing weed observation behavior must continue working for remaining observations after an observation is deleted.
+- Existing mark-bed-weeded behavior and weeding history display must continue working for remaining beds.
+- Backward compatibility: existing routes and UI flows for creating/listing records should not be removed or renamed as part of this change.
+- Data migration: no user-facing migration is expected beyond ensuring delete capability is valid for existing records.
 
 ## Non-Functional Requirements
 
-- Dane rabat, obserwacji chwastów i historii pielenia jednego użytkownika nie są widoczne ani dostępne dla innych zalogowanych użytkowników.
-- Po zmianie danych rabaty użytkownik widzi zaktualizowany priorytet i sugerowaną datę bez odczuwalnego opóźnienia.
-
+- Delete operations preserve owner isolation: one authenticated user cannot delete another user's beds, plants, or weed observations.
+- After a successful delete, the user sees the removed record disappear from the relevant view without needing to manually refresh the page.
+- Failed delete attempts show understandable feedback and do not remove the record from the UI as if the delete had succeeded.
+- Destructive actions require an explicit confirmation before the record is hard-deleted.
 
 ## Product Framing
 
-Produkt: aplikacja webowa.
+Product type is unchanged: this remains the existing Garden Weed Planner web app.
 
-Skala startowa: mała — kilka osób. Przy 100× większej skali reguła priorytetu nie zmieniłaby się funkcjonalnie; algorytm pozostałby taki sam, tylko obsługiwałby więcej rabat i użytkowników.
+User base is unchanged: small-scale personal use by the existing authenticated solo user.
 
-Timing: MVP planowane na 3 tygodnie pracy po godzinach, bez twardego deadline’u.
+Timing: this deletion-management change is scoped to roughly 1 week of after-hours delivery work, with no hard deadline.
 
 ## Non-Goals
 
-- Brak pracy zespołowej i przypisywania zadań — MVP obsługuje jednego użytkownika i jego rabaty.
-- Brak zdjęć i rozpoznawania chwastów ze zdjęć — obserwacje chwastów są ręcznie wpisywane.
-- Brak pełnego kalendarza zadań ogrodowych — system sugeruje termin pielenia, ale nie jest kompletnym plannerem ogrodu.
-
+- No soft delete, archive, or undo — this change intentionally implements hard delete for cleanup of obsolete, accidental, or test records.
+- No edit/update flows — this change adds deletion management only, not editing beds, plants, weed observations, or weeding history.
+- No bulk delete — records are deleted one at a time to keep the destructive action deliberate.
+- No team, admin, or shared deletion roles — deletion remains owner-only under the existing access model.
+- No audit log or recovery history — deleted records are not recoverable through the product UI.
 
 ## Quality cross-check
 
 - Access Control: present.
-- Business Logic: present.
+- Business Logic: present; deletion delta is stated against the existing priority rule.
 - Project artifacts: present.
-- Timeline-cost acknowledgement: present; MVP is scoped to 3 weeks.
+- Timeline-cost acknowledgement: present; delivery is scoped to 1 week.
 - Non-Goals: present.
-- Preserved behavior: n/a for greenfield.
-
+- Preserved behavior: present; existing auth, queue, add/list, plant, observation, mark-bed-weeded, and user-isolation flows are explicitly preserved.
