@@ -1,10 +1,10 @@
 ---
 change_id: bed-plant-list
 title: Bed plant list from roadmap S-02
-status: impl_reviewed
+status: archived
 created: 2026-06-05
-updated: 2026-06-05
-archived_at: null
+updated: 2026-06-12
+archived_at: 2026-06-12T21:22:03Z
 ---
 
 ## Notes
