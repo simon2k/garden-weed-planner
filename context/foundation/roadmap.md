@@ -29,7 +29,7 @@ Garden Weed Planner pomaga osobie zarządzającej wieloma rabatami zdecydować, 
 
 | ID   | Change ID                  | Outcome (user can …)                                                                                                                      | Prerequisites | PRD refs                                                    | Status   |
 | ---- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------- | -------- |
-| F-01 | user-scoped-garden-records | (foundation) minimalny kontrakt danych dla rabat, priorytetów i izolacji użytkownika jest gotowy do użycia przez pierwszą pionową ścieżkę | —             | Access Control, Non-Functional Requirements: data isolation | finished |
+| F-01 | user-scoped-garden-records | (foundation) minimalny kontrakt danych dla rabat, priorytetów i izolacji użytkownika jest gotowy do użycia przez pierwszą pionową ścieżkę | —             | Access Control, Non-Functional Requirements: data isolation | done     |
 | S-01 | priority-bed-queue         | dodać rabaty z podstawowymi danymi i zobaczyć kolejkę według pilności z sugerowaną datą                                                   | F-01          | US-01, FR-001, FR-002, FR-004, FR-006, FR-007               | done     |
 | S-02 | bed-plant-list             | prowadzić listę roślin posadzonych na rabacie jako kontekst decyzji o pieleniu                                                            | F-01, S-01    | FR-003                                                      | done     |
 | S-03 | weed-observations-priority | dodawać obserwacje chwastów i widzieć ich wpływ na priorytet rabaty                                                                       | F-01, S-01    | US-01, FR-005, FR-006, FR-007                               | done     |
@@ -69,7 +69,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sekwencjonowane przed pierwszą ścieżką, bo bez trwałych danych i izolacji użytkowników kolejka rabat nie jest bezpiecznie planowalna.
-- **Status:** finished
+- **Status:** done
 
 ## Slices
 
@@ -146,3 +146,4 @@ Brak. PRD zapisuje: „Brak otwartych pytań na podstawie zaakceptowanego shape-
 - **S-01: user can dodać rabaty z podstawowymi danymi i zobaczyć kolejkę według pilności z sugerowaną datą** — Archived 2026-06-12 → `context/archive/2026-06-02-priority-bed-queue/`. Lesson: —.
 - **S-02: user can prowadzić listę roślin posadzonych na rabacie jako kontekst decyzji o pieleniu** — Archived 2026-06-12 → `context/archive/2026-06-05-bed-plant-list/`. Lesson: —.
 - **S-03: user can dodawać obserwacje chwastów i widzieć ich wpływ na priorytet rabaty** — Archived 2026-06-12 → `context/archive/2026-06-05-weed-observations-priority/`. Lesson: —.
+- **F-01: (foundation) minimalny kontrakt danych dla rabat, priorytetów i izolacji użytkownika jest gotowy do użycia przez pierwszą pionową ścieżkę** — Archived 2026-06-12 → `context/archive/2026-06-01-user-scoped-garden-records/`. Lesson: —.
