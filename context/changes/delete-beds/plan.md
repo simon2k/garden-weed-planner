@@ -294,30 +294,30 @@ Add one forward-only Supabase migration for the `garden_beds` delete policy. Exi
 
 #### Automated
 
-- [x] 3.1 `npm run lint` completes successfully
-- [x] 3.2 `npm run test` completes successfully
-- [x] 3.3 `npm run build` completes successfully
+- [x] 3.1 `npm run lint` completes successfully — ebb3209
+- [x] 3.2 `npm run test` completes successfully — ebb3209
+- [x] 3.3 `npm run build` completes successfully — ebb3209
 
 #### Manual
 
-- [x] 3.4 Clicking delete once does not delete; it reveals inline confirmation on that card
-- [x] 3.5 Cancel hides the confirmation without changing the queue
-- [x] 3.6 Confirm deletes the bed, removes the card without a full queue reload, and shows a success message
-- [x] 3.7 Expanded plant, observation, and weeding-history sections for the deleted bed do not leave stale UI behind
-- [x] 3.8 The empty queue message still appears when the last bed is deleted
+- [x] 3.4 Clicking delete once does not delete; it reveals inline confirmation on that card — ebb3209
+- [x] 3.5 Cancel hides the confirmation without changing the queue — ebb3209
+- [x] 3.6 Confirm deletes the bed, removes the card without a full queue reload, and shows a success message — ebb3209
+- [x] 3.7 Expanded plant, observation, and weeding-history sections for the deleted bed do not leave stale UI behind — ebb3209
+- [x] 3.8 The empty queue message still appears when the last bed is deleted — ebb3209
 
 ### Phase 4: Verification and Handoff
 
 #### Automated
 
-- [ ] 4.1 `npx astro sync` completes successfully
-- [ ] 4.2 `npm run lint` completes successfully
-- [ ] 4.3 `npm run test` completes successfully
-- [ ] 4.4 `npm run build` completes successfully
+- [x] 4.1 `npx astro sync` completes successfully
+- [x] 4.2 `npm run lint` completes successfully
+- [x] 4.3 `npm run test` completes successfully
+- [x] 4.4 `npm run build` completes successfully
 
 #### Manual
 
-- [ ] 4.5 Owned bed deletion works from `/garden`
-- [ ] 4.6 Associated plants, weed observations, and weeding events are removed by cascade
-- [ ] 4.7 Missing/not-owned delete attempts do not leak another user's data
-- [ ] 4.8 PR/handoff notes list the validation commands and manual smoke checks performed
+- [x] 4.5 Owned bed deletion works from `/garden`
+- [x] 4.6 Associated plants, weed observations, and weeding events are removed by cascade
+- [x] 4.7 Missing/not-owned delete attempts do not leak another user's data
+- [x] 4.8 PR/handoff notes list the validation commands and manual smoke checks performed
