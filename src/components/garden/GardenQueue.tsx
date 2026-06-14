@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertCircle, CalendarDays, Clock, Leaf, Loader2, Map, Plus, Sprout } from "lucide-react";
+import { AlertCircle, CalendarDays, Clock, Leaf, Loader2, Map, Plus, Sprout, Trash2 } from "lucide-react";
 import { ServerError } from "@/components/auth/ServerError";
 import { Button } from "@/components/ui/button";
 import {
@@ -262,6 +262,8 @@ export function GardenQueue() {
   const [expandedBedIds, setExpandedBedIds] = useState<Set<string>>(new Set());
   const [expandedObservationBedIds, setExpandedObservationBedIds] = useState<Set<string>>(new Set());
   const [expandedWeedingHistoryBedIds, setExpandedWeedingHistoryBedIds] = useState<Set<string>>(new Set());
+  const [confirmingDeleteBedId, setConfirmingDeleteBedId] = useState<string | null>(null);
+  const [deletingBedId, setDeletingBedId] = useState<string | null>(null);
   const [plantStateByBedId, setPlantStateByBedId] = useState<Record<string, PlantBedState>>({});
   const [observationStateByBedId, setObservationStateByBedId] = useState<Record<string, ObservationBedState>>({});
   const [weedingStateByBedId, setWeedingStateByBedId] = useState<Record<string, WeedingBedState>>({});
@@ -788,6 +790,40 @@ export function GardenQueue() {
     }
   }
 
+  async function deleteBed(bed: GardenBedQueueItem) {
+    if (deletingBedId === bed.id) return;
+    setError(null);
+    setSuccessMessage(null);
+    setDeletingBedId(bed.id);
+
+    try {
+      const response = await fetch(`/api/garden/beds/${bed.id}`, { method: "DELETE" });
+      const payload = (await response.json()) as ErrorResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to delete garden bed.");
+      }
+
+      setBeds((current) => current.filter((item) => item.id !== bed.id));
+      removeDeletedBedState(bed.id);
+      setConfirmingDeleteBedId(null);
+      setSuccessMessage(`${bed.name} deleted from the queue.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to delete garden bed.");
+    } finally {
+      setDeletingBedId(null);
+    }
+  }
+
+  function removeDeletedBedState(bedId: string) {
+    setExpandedBedIds((current) => withoutSetValue(current, bedId));
+    setExpandedObservationBedIds((current) => withoutSetValue(current, bedId));
+    setExpandedWeedingHistoryBedIds((current) => withoutSetValue(current, bedId));
+    setPlantStateByBedId((current) => withoutRecordKey(current, bedId));
+    setObservationStateByBedId((current) => withoutRecordKey(current, bedId));
+    setWeedingStateByBedId((current) => withoutRecordKey(current, bedId));
+  }
+
   return (
     <section className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
       <form
@@ -956,6 +992,17 @@ export function GardenQueue() {
                 plantState={getPlantState(plantStateByBedId, bed.id)}
                 observationState={getObservationState(observationStateByBedId, bed.id)}
                 weedingState={getWeedingState(weedingStateByBedId, bed.id)}
+                isDeleteConfirming={confirmingDeleteBedId === bed.id}
+                isDeleting={deletingBedId === bed.id}
+                onRequestDelete={() => {
+                  setConfirmingDeleteBedId(bed.id);
+                  setError(null);
+                  setSuccessMessage(null);
+                }}
+                onCancelDelete={() => {
+                  setConfirmingDeleteBedId(null);
+                }}
+                onConfirmDelete={() => void deleteBed(bed)}
                 onTogglePlants={() => void togglePlantSection(bed.id)}
                 onToggleObservations={() => void toggleObservationSection(bed.id)}
                 onToggleWeedingHistory={() => void toggleWeedingHistorySection(bed.id)}
@@ -1119,6 +1166,11 @@ function QueueCard({
   onWeedingFieldChange,
   onWeedingSubmit,
   onWeedingRetry,
+  isDeleteConfirming,
+  isDeleting,
+  onRequestDelete,
+  onCancelDelete,
+  onConfirmDelete,
 }: {
   bed: GardenBedQueueItem;
   position: number;
@@ -1128,6 +1180,11 @@ function QueueCard({
   plantState: PlantBedState;
   observationState: ObservationBedState;
   weedingState: WeedingBedState;
+  isDeleteConfirming: boolean;
+  isDeleting: boolean;
+  onRequestDelete: () => void;
+  onCancelDelete: () => void;
+  onConfirmDelete: () => void;
   onTogglePlants: () => void;
   onToggleObservations: () => void;
   onToggleWeedingHistory: () => void;
@@ -1229,6 +1286,47 @@ function QueueCard({
             {isPlantExpanded ? "Hide plants" : "Show plants"}
           </Button>
         </div>
+      </div>
+
+      <div className="mt-3 rounded-lg border border-red-300/20 bg-red-950/15 p-3">
+        {isDeleteConfirming ? (
+          <div className="space-y-3">
+            <p className="text-sm text-red-100">
+              Delete <span className="font-semibold">{bed.name}</span>? This also deletes its plants, weed observations,
+              and weeding history. This cannot be undone.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancelDelete}
+                disabled={isDeleting}
+                className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={onConfirmDelete}
+                disabled={isDeleting}
+                className="bg-red-400 text-slate-950 hover:bg-red-300"
+              >
+                {isDeleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                {isDeleting ? "Deleting..." : "Confirm delete"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onRequestDelete}
+            className="border-red-300/30 bg-red-400/10 text-red-100 hover:bg-red-400/20 hover:text-white"
+          >
+            <Trash2 className="size-4" />
+            Delete bed
+          </Button>
+        )}
       </div>
 
       <WeedingForm
@@ -1753,6 +1851,17 @@ function QueueMetric({ icon, label, value }: { icon: ReactNode; label: string; v
       <dd className="mt-1 font-medium text-white">{value}</dd>
     </div>
   );
+}
+
+function withoutSetValue(source: Set<string>, value: string): Set<string> {
+  const next = new Set(source);
+  next.delete(value);
+  return next;
+}
+
+function withoutRecordKey<T>(source: Record<string, T>, key: string): Record<string, T> {
+  const { [key]: _removed, ...rest } = source;
+  return rest;
 }
 
 function getPlantState(source: Record<string, PlantBedState>, bedId: string): PlantBedState {

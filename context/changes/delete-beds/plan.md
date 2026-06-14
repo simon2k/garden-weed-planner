@@ -279,32 +279,32 @@ Add one forward-only Supabase migration for the `garden_beds` delete policy. Exi
 
 #### Automated
 
-- [x] 2.1 `npx astro sync` completes successfully
-- [x] 2.2 `npm run lint` completes successfully
-- [x] 2.3 `npm run test` completes successfully
-- [x] 2.4 `npm run build` completes successfully
+- [x] 2.1 `npx astro sync` completes successfully — 5370913
+- [x] 2.2 `npm run lint` completes successfully — 5370913
+- [x] 2.3 `npm run test` completes successfully — 5370913
+- [x] 2.4 `npm run build` completes successfully — 5370913
 
 #### Manual
 
-- [x] 2.5 Authenticated delete of an owned bed returns success
-- [x] 2.6 Deleting a missing bed ID returns `404`
-- [x] 2.7 A not-owned bed cannot be deleted and is surfaced as `404`, not `403` or success
+- [x] 2.5 Authenticated delete of an owned bed returns success — 5370913
+- [x] 2.6 Deleting a missing bed ID returns `404` — 5370913
+- [x] 2.7 A not-owned bed cannot be deleted and is surfaced as `404`, not `403` or success — 5370913
 
 ### Phase 3: Garden Queue UI
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` completes successfully
-- [ ] 3.2 `npm run test` completes successfully
-- [ ] 3.3 `npm run build` completes successfully
+- [x] 3.1 `npm run lint` completes successfully
+- [x] 3.2 `npm run test` completes successfully
+- [x] 3.3 `npm run build` completes successfully
 
 #### Manual
 
-- [ ] 3.4 Clicking delete once does not delete; it reveals inline confirmation on that card
-- [ ] 3.5 Cancel hides the confirmation without changing the queue
-- [ ] 3.6 Confirm deletes the bed, removes the card without a full queue reload, and shows a success message
-- [ ] 3.7 Expanded plant, observation, and weeding-history sections for the deleted bed do not leave stale UI behind
-- [ ] 3.8 The empty queue message still appears when the last bed is deleted
+- [x] 3.4 Clicking delete once does not delete; it reveals inline confirmation on that card
+- [x] 3.5 Cancel hides the confirmation without changing the queue
+- [x] 3.6 Confirm deletes the bed, removes the card without a full queue reload, and shows a success message
+- [x] 3.7 Expanded plant, observation, and weeding-history sections for the deleted bed do not leave stale UI behind
+- [x] 3.8 The empty queue message still appears when the last bed is deleted
 
 ### Phase 4: Verification and Handoff
 
