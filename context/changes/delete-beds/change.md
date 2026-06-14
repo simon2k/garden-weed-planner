@@ -1,7 +1,7 @@
 ---
 change_id: delete-beds
 title: Delete beds
-status: implementing
+status: implemented
 created: 2026-06-14
 updated: 2026-06-14
 archived_at: null

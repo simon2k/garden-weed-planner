@@ -310,14 +310,14 @@ Add one forward-only Supabase migration for the `garden_beds` delete policy. Exi
 
 #### Automated
 
-- [x] 4.1 `npx astro sync` completes successfully
-- [x] 4.2 `npm run lint` completes successfully
-- [x] 4.3 `npm run test` completes successfully
-- [x] 4.4 `npm run build` completes successfully
+- [x] 4.1 `npx astro sync` completes successfully — 02300e5
+- [x] 4.2 `npm run lint` completes successfully — 02300e5
+- [x] 4.3 `npm run test` completes successfully — 02300e5
+- [x] 4.4 `npm run build` completes successfully — 02300e5
 
 #### Manual
 
-- [x] 4.5 Owned bed deletion works from `/garden`
-- [x] 4.6 Associated plants, weed observations, and weeding events are removed by cascade
-- [x] 4.7 Missing/not-owned delete attempts do not leak another user's data
-- [x] 4.8 PR/handoff notes list the validation commands and manual smoke checks performed
+- [x] 4.5 Owned bed deletion works from `/garden` — 02300e5
+- [x] 4.6 Associated plants, weed observations, and weeding events are removed by cascade — 02300e5
+- [x] 4.7 Missing/not-owned delete attempts do not leak another user's data — 02300e5
+- [x] 4.8 PR/handoff notes list the validation commands and manual smoke checks performed — 02300e5
