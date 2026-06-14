@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:related:staged": "node scripts/test-related-staged.mjs",
-    "test:pre-push": "npm run test",
+    "test:pre-push": "npm run test && npm run test:e2e",
     "test:e2e": "playwright test"
   },
   "dependencies": {

@@ -9,6 +9,7 @@ test.describe("E2E seed conventions", () => {
 
     await expect(page.getByRole("heading", { name: "Priority bed queue" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Next beds to weed" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Refresh" })).toBeEnabled();
 
     const bedNameField = page.getByRole("textbox", { name: /Bed name/ });
     const weedLevelField = page.getByRole("combobox", { name: /Weed level/ });
@@ -16,7 +17,7 @@ test.describe("E2E seed conventions", () => {
     await weedLevelField.selectOption("medium");
     await expect(weedLevelField).toHaveValue("medium");
 
-    await bedNameField.fill(bedName);
+    await bedNameField.pressSequentially(bedName);
     await expect(bedNameField).toHaveValue(bedName);
 
     await page.getByRole("button", { name: "Add to priority queue" }).click();
