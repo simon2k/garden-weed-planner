@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:related:staged": "node scripts/test-related-staged.mjs",
-    "test:pre-push": "npm run test"
+    "test:pre-push": "npm run test",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^9.29.0",
+    "@playwright/test": "^1.60.0",
     "@stryker-mutator/core": "^9.6.1",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.8",

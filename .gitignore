@@ -33,3 +33,7 @@ pnpm-debug.log*
 .agents/**/10x-*
 .agents/prompts/**.md
 
+playwright/.auth/
+playwright-report/
+test-results/
+.playwright-cli/
