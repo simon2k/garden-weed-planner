@@ -267,28 +267,28 @@ Add one forward-only Supabase migration for the `garden_beds` delete policy. Exi
 
 #### Automated
 
-- [x] 1.1 Migration file exists under `supabase/migrations/` with a timestamped name
-- [x] 1.2 Migration defines a delete policy scoped to authenticated users and `user_id = auth.uid()`
-- [x] 1.3 `npx astro sync` completes successfully
+- [x] 1.1 Migration file exists under `supabase/migrations/` with a timestamped name — e86515b
+- [x] 1.2 Migration defines a delete policy scoped to authenticated users and `user_id = auth.uid()` — e86515b
+- [x] 1.3 `npx astro sync` completes successfully — e86515b
 
 #### Manual
 
-- [x] 1.4 Reviewer confirms the migration does not add broader table access or alter child-table policies
+- [x] 1.4 Reviewer confirms the migration does not add broader table access or alter child-table policies — e86515b
 
 ### Phase 2: Delete Bed API
 
 #### Automated
 
-- [ ] 2.1 `npx astro sync` completes successfully
-- [ ] 2.2 `npm run lint` completes successfully
-- [ ] 2.3 `npm run test` completes successfully
-- [ ] 2.4 `npm run build` completes successfully
+- [x] 2.1 `npx astro sync` completes successfully
+- [x] 2.2 `npm run lint` completes successfully
+- [x] 2.3 `npm run test` completes successfully
+- [x] 2.4 `npm run build` completes successfully
 
 #### Manual
 
-- [ ] 2.5 Authenticated delete of an owned bed returns success
-- [ ] 2.6 Deleting a missing bed ID returns `404`
-- [ ] 2.7 A not-owned bed cannot be deleted and is surfaced as `404`, not `403` or success
+- [x] 2.5 Authenticated delete of an owned bed returns success
+- [x] 2.6 Deleting a missing bed ID returns `404`
+- [x] 2.7 A not-owned bed cannot be deleted and is surfaced as `404`, not `403` or success
 
 ### Phase 3: Garden Queue UI
 
