@@ -189,10 +189,10 @@ respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-17
-- Stack versions last verified: 2026-06-17
-- AI-native tool references last verified: 2026-06-17
-- E2E seed and priority-queue patterns recorded: 2026-06-17
+- Strategy (§1–§5) last reviewed: 2026-06-16
+- Stack versions last verified: 2026-06-16
+- AI-native tool references last verified: 2026-06-16
+- E2E seed and priority-queue patterns recorded: 2026-06-16
 
 Refresh (`/10x-test-plan --refresh`) when:
 
