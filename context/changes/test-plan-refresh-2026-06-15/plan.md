@@ -207,35 +207,35 @@ No data or code migration. This is a documentation/planning refresh only.
 
 #### Automated
 
-- [x] 1.1 `npm run test:pre-push` passes after the documentation refresh
-- [x] 1.2 `context/foundation/test-plan.md` mentions `npm run test:e2e`, `npm run test:pre-push`, Vitest, and Playwright
+- [x] 1.1 `npm run test:pre-push` passes after the documentation refresh — 658b4f3
+- [x] 1.2 `context/foundation/test-plan.md` mentions `npm run test:e2e`, `npm run test:pre-push`, Vitest, and Playwright — 658b4f3
 
 #### Manual
 
-- [x] 1.3 Human confirms local pre-push E2E is distinguished from CI-required gates
-- [x] 1.4 Human confirms §4 no longer says E2E is absent
+- [x] 1.3 Human confirms local pre-push E2E is distinguished from CI-required gates — 658b4f3
+- [x] 1.4 Human confirms §4 no longer says E2E is absent — 658b4f3
 
 ### Phase 2: Refresh risk and rollout guidance for observation-driven ordering
 
 #### Automated
 
-- [x] 2.1 The refreshed plan contains a Phase 3 reference to observation-driven queue ordering or observation pressure affecting queue order
-- [x] 2.2 The refreshed plan still contains the strategy principle that risks are scenarios, not code locations
+- [x] 2.1 The refreshed plan contains a Phase 3 reference to observation-driven queue ordering or observation pressure affecting queue order — 658b4f3
+- [x] 2.2 The refreshed plan still contains the strategy principle that risks are scenarios, not code locations — 658b4f3
 
 #### Manual
 
-- [x] 2.3 Human confirms risk #1 is presented as partially covered, not fully closed
-- [x] 2.4 Human confirms the observation-driven queue-ordering gap is visible enough for a future `/10x-e2e` or rollout phase
+- [x] 2.3 Human confirms risk #1 is presented as partially covered, not fully closed — 658b4f3
+- [x] 2.4 Human confirms the observation-driven queue-ordering gap is visible enough for a future `/10x-e2e` or rollout phase — 658b4f3
 
 ### Phase 3: Refresh cookbook patterns
 
 #### Automated
 
-- [x] 3.1 `npm run test:e2e` passes after the cookbook refresh
-- [x] 3.2 `npm run test` passes after the cookbook refresh
-- [x] 3.3 The refreshed cookbook references `e2e/seed.spec.ts` and `e2e/priority-queue.spec.ts`
+- [x] 3.1 `npm run test:e2e` passes after the cookbook refresh — 658b4f3
+- [x] 3.2 `npm run test` passes after the cookbook refresh — 658b4f3
+- [x] 3.3 The refreshed cookbook references `e2e/seed.spec.ts` and `e2e/priority-queue.spec.ts` — 658b4f3
 
 #### Manual
 
-- [x] 3.4 Human confirms a future contributor could identify where to put a new E2E test and what conventions to follow
-- [x] 3.5 Human confirms negative-space exclusions remain unchanged
+- [x] 3.4 Human confirms a future contributor could identify where to put a new E2E test and what conventions to follow — 658b4f3
+- [x] 3.5 Human confirms negative-space exclusions remain unchanged — 658b4f3
