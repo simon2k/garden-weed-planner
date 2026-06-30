@@ -426,13 +426,13 @@ No database, Supabase, route, or data migration is required. Existing persisted 
 
 #### Automated
 
-- [x] 5.1 Astro sync passes: `npx astro sync`
-- [x] 5.2 Lint passes: `npm run lint`
-- [x] 5.3 Unit tests pass: `npm run test`
-- [x] 5.4 Production build passes: `npm run build`
+- [x] 5.1 Astro sync passes: `npx astro sync` — 516fb89
+- [x] 5.2 Lint passes: `npm run lint` — 516fb89
+- [x] 5.3 Unit tests pass: `npm run test` — 516fb89
+- [x] 5.4 Production build passes: `npm run build` — 516fb89
 
 #### Manual
 
-- [x] 5.5 Main frontend routes and current interactive states show Polish user-facing copy.
-- [x] 5.6 No obvious starter-product copy remains on the landing page.
-- [x] 5.7 No route, auth, garden queue, or form behavior regression is observed during manual review.
+- [x] 5.5 Main frontend routes and current interactive states show Polish user-facing copy. — 516fb89
+- [x] 5.6 No obvious starter-product copy remains on the landing page. — 516fb89
+- [x] 5.7 No route, auth, garden queue, or form behavior regression is observed during manual review. — 516fb89

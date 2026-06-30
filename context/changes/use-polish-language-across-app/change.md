@@ -1,9 +1,9 @@
 ---
 change_id: use-polish-language-across-app
 title: Use Polish language across app
-status: implementing
+status: implemented
 created: 2026-06-22
-updated: 2026-06-23
+updated: 2026-06-30
 archived_at: null
 ---
 
