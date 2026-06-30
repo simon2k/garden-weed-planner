@@ -287,41 +287,48 @@ const coverageSet = new Set<string>(OBSERVATION_COVERAGES);
 
 export function validateCreateWeedObservationInput(value: unknown): WeedObservationValidationResult {
   if (!isRecord(value)) {
-    return { success: false, error: "Weed observation payload must be an object." };
+    return { success: false, error: "Dane obserwacji chwastu muszą być obiektem." };
   }
 
   const observedAt = value.observed_at;
   if (typeof observedAt !== "string" || !isValidPastOrTodayIsoDate(observedAt)) {
-    return { success: false, error: "Observation date must be a valid YYYY-MM-DD date that is not in the future." };
+    return {
+      success: false,
+      error: "Data obserwacji musi być poprawną datą RRRR-MM-DD, dzisiejszą albo z przeszłości.",
+    };
   }
 
   const weedCategory = value.weed_category;
   if (!isWeedCategory(weedCategory)) {
-    return { success: false, error: "Weed category is required and must be a supported value." };
+    return { success: false, error: "Wybierz obsługiwaną kategorię chwastu." };
   }
 
   const growthStage = value.growth_stage;
   if (!isGrowthStage(growthStage)) {
-    return { success: false, error: "Growth stage is required and must be a supported value." };
+    return { success: false, error: "Wybierz obsługiwaną fazę wzrostu." };
   }
 
   const coverage = value.coverage;
   if (!isObservationCoverage(coverage)) {
-    return { success: false, error: "Coverage is required and must be low, medium, or high." };
+    return { success: false, error: "Pokrycie musi mieć wartość: małe, średnie albo duże." };
   }
 
   const severity = value.severity;
   if (typeof severity !== "number" || !Number.isInteger(severity) || severity < 1 || severity > 5) {
-    return { success: false, error: "Severity must be an integer from 1 through 5." };
+    return { success: false, error: "Nasilenie musi być liczbą całkowitą od 1 do 5." };
   }
 
-  const weedCatalogSlug = readOptionalTrimmedString(value, "weed_catalog_slug", "Weed catalog slug cannot be empty.");
+  const weedCatalogSlug = readOptionalTrimmedString(
+    value,
+    "weed_catalog_slug",
+    "Identyfikator chwastu z katalogu nie może być pusty.",
+  );
   if (!weedCatalogSlug.success) return weedCatalogSlug;
 
-  const weedName = readOptionalTrimmedString(value, "weed_name", "Weed name cannot be empty.");
+  const weedName = readOptionalTrimmedString(value, "weed_name", "Nazwa chwastu nie może być pusta.");
   if (!weedName.success) return weedName;
 
-  const note = readOptionalTrimmedString(value, "note", "Observation note cannot be empty.");
+  const note = readOptionalTrimmedString(value, "note", "Notatka obserwacji nie może być pusta.");
   if (!note.success) return note;
 
   const traits = readRiskTraits(value);
@@ -414,7 +421,7 @@ function readRiskTraits(source: Record<string, unknown>): RiskTraitReadResult {
     const raw = source[trait];
     if (raw === undefined || raw === null) continue;
     if (typeof raw !== "boolean") {
-      return { success: false, error: `${WEED_RISK_TRAIT_LABELS[trait]} must be true or false.` };
+      return { success: false, error: `${WEED_RISK_TRAIT_LABELS[trait]} musi mieć wartość prawda albo fałsz.` };
     }
     value[trait] = raw;
   }

@@ -401,26 +401,26 @@ No database, Supabase, route, or data migration is required. Existing persisted 
 
 #### Automated
 
-- [x] 3.1 Garden queue component lint passes: `npm run lint`
-- [x] 3.2 Existing unit tests pass: `npm run test`
+- [x] 3.1 Garden queue component lint passes: `npm run lint` — c9e6222
+- [x] 3.2 Existing unit tests pass: `npm run test` — c9e6222
 
 #### Manual
 
-- [x] 3.3 `/garden` shows Polish text across the add-rabata form, queue list, expanded plant section, weed observation section, and weeding history section.
-- [x] 3.4 Creating, deleting, expanding, and validation-error states do not surface English fallback copy.
-- [x] 3.5 Existing garden queue interactions still behave as before.
+- [x] 3.3 `/garden` shows Polish text across the add-rabata form, queue list, expanded plant section, weed observation section, and weeding history section. — c9e6222
+- [x] 3.4 Creating, deleting, expanding, and validation-error states do not surface English fallback copy. — c9e6222
+- [x] 3.5 Existing garden queue interactions still behave as before. — c9e6222
 
 ### Phase 4: Visible Domain Validation Messages and Polish Date Formatting
 
 #### Automated
 
-- [ ] 4.1 Unit tests for domain helpers pass: `npm run test`
-- [ ] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Unit tests for domain helpers pass: `npm run test`
+- [x] 4.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 4.3 API/domain validation errors that reach the UI read as Polish user-facing messages.
-- [ ] 4.4 Visible formatted dates in the garden queue use Polish locale formatting.
+- [x] 4.3 API/domain validation errors that reach the UI read as Polish user-facing messages.
+- [x] 4.4 Visible formatted dates in the garden queue use Polish locale formatting.
 
 ### Phase 5: Final Verification and Polish UI Review
 

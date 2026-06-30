@@ -161,26 +161,26 @@ const GROWTH_STAGE_SCORE: Record<GrowthStage, number> = {
 
 export function validateCreateGardenBedInput(value: unknown): GardenBedValidationResult {
   if (!isRecord(value)) {
-    return { success: false, error: "Garden bed payload must be an object." };
+    return { success: false, error: "Dane rabaty muszą być obiektem." };
   }
 
   const name = value.name;
   if (typeof name !== "string" || name.trim().length === 0) {
-    return { success: false, error: "Garden bed name is required." };
+    return { success: false, error: "Podaj nazwę rabaty." };
   }
 
   const weedLevel = value.weed_level;
   if (!isWeedLevel(weedLevel)) {
-    return { success: false, error: "Weed level must be low, medium, or high." };
+    return { success: false, error: "Poziom zachwaszczenia musi mieć wartość: niskie, średnie albo wysokie." };
   }
 
-  const area = readOptionalNumber(value, "area_m2", "Area must be a positive number.", isPositiveNumber);
+  const area = readOptionalNumber(value, "area_m2", "Powierzchnia musi być dodatnią liczbą.", isPositiveNumber);
   if (!area.success) return area;
 
   const estimatedMinutes = readOptionalNumber(
     value,
     "estimated_minutes",
-    "Estimated minutes must be a positive integer.",
+    "Szacowany czas musi być dodatnią liczbą całkowitą.",
     isPositiveInteger,
   );
   if (!estimatedMinutes.success) return estimatedMinutes;
@@ -188,7 +188,7 @@ export function validateCreateGardenBedInput(value: unknown): GardenBedValidatio
   const mulchDepth = readOptionalNumber(
     value,
     "mulch_depth_cm",
-    "Mulch depth must be a non-negative number.",
+    "Grubość ściółki nie może być ujemna.",
     isNonNegativeNumber,
   );
   if (!mulchDepth.success) return mulchDepth;
@@ -196,7 +196,10 @@ export function validateCreateGardenBedInput(value: unknown): GardenBedValidatio
   const lastWeededAt = value.last_weeded_at;
   if (lastWeededAt !== undefined && lastWeededAt !== null) {
     if (typeof lastWeededAt !== "string" || !isValidPastOrTodayIsoDate(lastWeededAt)) {
-      return { success: false, error: "Last weeded date must be a valid YYYY-MM-DD date that is not in the future." };
+      return {
+        success: false,
+        error: "Data ostatniego pielenia musi być poprawną datą RRRR-MM-DD, dzisiejszą albo z przeszłości.",
+      };
     }
   }
 

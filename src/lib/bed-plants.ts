@@ -32,29 +32,34 @@ const MIN_PLANTED_YEAR = 1900;
 
 export function validateCreateBedPlantInput(value: unknown): BedPlantValidationResult {
   if (!isRecord(value)) {
-    return { success: false, error: "Plant payload must be an object." };
+    return { success: false, error: "Dane rośliny muszą być obiektem." };
   }
 
   const name = value.name;
   if (typeof name !== "string" || name.trim().length === 0) {
-    return { success: false, error: "Plant name is required." };
+    return { success: false, error: "Podaj nazwę rośliny." };
   }
 
   const plantedYear = readOptionalNumber(
     value,
     "planted_year",
-    `Planted year must be an integer from ${MIN_PLANTED_YEAR} through the current year.`,
+    `Rok posadzenia musi być liczbą całkowitą od ${MIN_PLANTED_YEAR} do bieżącego roku.`,
     isValidPlantedYear,
   );
   if (!plantedYear.success) return plantedYear;
 
-  const quantity = readOptionalNumber(value, "quantity", "Quantity must be a positive integer.", isPositiveInteger);
+  const quantity = readOptionalNumber(
+    value,
+    "quantity",
+    "Liczba sztuk musi być dodatnią liczbą całkowitą.",
+    isPositiveInteger,
+  );
   if (!quantity.success) return quantity;
 
-  const height = readOptionalNumber(value, "height_cm", "Current height must be a positive number.", isPositiveNumber);
+  const height = readOptionalNumber(value, "height_cm", "Obecna wysokość musi być dodatnią liczbą.", isPositiveNumber);
   if (!height.success) return height;
 
-  const width = readOptionalNumber(value, "width_cm", "Current width must be a positive number.", isPositiveNumber);
+  const width = readOptionalNumber(value, "width_cm", "Obecna szerokość musi być dodatnią liczbą.", isPositiveNumber);
   if (!width.success) return width;
 
   return {

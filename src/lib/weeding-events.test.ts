@@ -31,21 +31,21 @@ describe("mark bed weeded validation", () => {
   it("rejects future weeding dates", () => {
     expect(validateMarkBedWeededInput(validEvent({ weeded_at: "2026-06-12" }))).toEqual({
       success: false,
-      error: "Weeding date must be a valid YYYY-MM-DD date that is not in the future.",
+      error: "Data pielenia musi być poprawną datą RRRR-MM-DD, dzisiejszą albo z przeszłości.",
     });
   });
 
   it.each(["2026-02-30", "06/10/2026", "yesterday"])("rejects invalid date format %s", (weededAt) => {
     expect(validateMarkBedWeededInput(validEvent({ weeded_at: weededAt }))).toEqual({
       success: false,
-      error: "Weeding date must be a valid YYYY-MM-DD date that is not in the future.",
+      error: "Data pielenia musi być poprawną datą RRRR-MM-DD, dzisiejszą albo z przeszłości.",
     });
   });
 
   it.each([0, -5, 1.5, "30"])("rejects non-positive or non-integer duration %s", (durationMinutes) => {
     expect(validateMarkBedWeededInput(validEvent({ duration_minutes: durationMinutes }))).toEqual({
       success: false,
-      error: "Duration minutes must be a positive integer.",
+      error: "Czas pielenia musi być dodatnią liczbą całkowitą.",
     });
   });
 
@@ -60,7 +60,7 @@ describe("mark bed weeded validation", () => {
   it("rejects blank notes so the event history is not padded with empty text", () => {
     expect(validateMarkBedWeededInput(validEvent({ note: "   " }))).toEqual({
       success: false,
-      error: "Weeding note cannot be empty.",
+      error: "Notatka z pielenia nie może być pusta.",
     });
   });
 });

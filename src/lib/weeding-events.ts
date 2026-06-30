@@ -29,20 +29,20 @@ export type WeedingEventValidationResult =
 
 export function validateMarkBedWeededInput(value: unknown): WeedingEventValidationResult {
   if (!isRecord(value)) {
-    return { success: false, error: "Mark-weeding payload must be an object." };
+    return { success: false, error: "Dane pielenia muszą być obiektem." };
   }
 
   const weededAt = value.weeded_at;
   if (typeof weededAt !== "string" || !isValidPastOrTodayIsoDate(weededAt)) {
-    return { success: false, error: "Weeding date must be a valid YYYY-MM-DD date that is not in the future." };
+    return { success: false, error: "Data pielenia musi być poprawną datą RRRR-MM-DD, dzisiejszą albo z przeszłości." };
   }
 
   const durationMinutes = value.duration_minutes;
   if (typeof durationMinutes !== "number" || !Number.isInteger(durationMinutes) || durationMinutes <= 0) {
-    return { success: false, error: "Duration minutes must be a positive integer." };
+    return { success: false, error: "Czas pielenia musi być dodatnią liczbą całkowitą." };
   }
 
-  const note = readOptionalTrimmedString(value, "note", "Weeding note cannot be empty.");
+  const note = readOptionalTrimmedString(value, "note", "Notatka z pielenia nie może być pusta.");
   if (!note.success) return note;
 
   return {
