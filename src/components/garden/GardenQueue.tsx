@@ -2130,7 +2130,9 @@ function formatObservationDetails(observation: WeedObservation): string {
 }
 
 function formatDisplayDate(value: string): string {
-  return new Intl.DateTimeFormat("pl-PL", { dateStyle: "medium" }).format(new Date(`${value}T00:00:00Z`));
+  return new Intl.DateTimeFormat("pl-PL", { dateStyle: "medium", timeZone: "UTC" }).format(
+    new Date(`${value}T00:00:00Z`),
+  );
 }
 
 function getTodayIsoDate(): string {

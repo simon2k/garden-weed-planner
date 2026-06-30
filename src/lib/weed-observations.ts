@@ -256,10 +256,10 @@ export const POLISH_WEED_CATALOG = [
   },
   {
     slug: "turzyca-nutsedge",
-    name: "turzyca / chwast bulwkowy podobny do nutsedge",
+    name: "turzyca / chwast bulwkowy",
     category: "tuber_or_bulb",
     default_risk_traits: ["spreads_by_tubers", "spreads_by_rhizomes", "fast_regrowth"],
-    helper_text: "Fallback dla chwastów tworzących bulwki lub rozmnóżki — traktuj jako wysokie ryzyko.",
+    helper_text: "Zastępcza pozycja dla chwastów tworzących bulwki lub rozmnóżki — traktuj jako wysokie ryzyko.",
   },
   {
     slug: "bluszczyk-kurdybanek",

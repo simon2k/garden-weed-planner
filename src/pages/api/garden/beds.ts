@@ -20,12 +20,12 @@ const observationDecayDays = 60;
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const { data, error } = await supabase
@@ -35,7 +35,7 @@ export const GET: APIRoute = async (context) => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    return json({ error: "Unable to list garden beds." }, 500);
+    return json({ error: "Nie udało się wczytać rabat." }, 500);
   }
 
   const gardenBedRows = data as unknown as GardenBedRow[];
@@ -54,7 +54,7 @@ export const GET: APIRoute = async (context) => {
     .gte("observed_at", observationWindowStart);
 
   if (observationsError) {
-    return json({ error: "Unable to load weed observation priority data." }, 500);
+    return json({ error: "Nie udało się wczytać danych priorytetu obserwacji chwastów." }, 500);
   }
 
   const observationSummaries = buildObservationSummaryMap(observations, gardenBedRows);
@@ -65,12 +65,12 @@ export const GET: APIRoute = async (context) => {
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const body = await readJson(context.request);
@@ -87,7 +87,7 @@ export const POST: APIRoute = async (context) => {
   const { data, error } = await supabase.from("garden_beds").insert(insertPayload).select(gardenBedColumns).single();
 
   if (error) {
-    return json({ error: "Unable to create garden bed." }, 500);
+    return json({ error: "Nie udało się dodać rabaty." }, 500);
   }
 
   return json({ bed: toGardenBedQueueItem(data) }, 201);
@@ -108,7 +108,7 @@ async function readJson(request: Request): Promise<JsonReadResult> {
   try {
     return { success: true, data: await request.json() };
   } catch {
-    return { success: false, error: "Request body must be valid JSON." };
+    return { success: false, error: "Treść żądania musi być poprawnym JSON-em." };
   }
 }
 

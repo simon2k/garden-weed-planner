@@ -6,17 +6,17 @@ const gardenBedColumns = "id";
 export const DELETE: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const bedId = getBedId(context)?.trim();
   if (!bedId) {
-    return json({ error: "Garden bed id is required." }, 400);
+    return json({ error: "Brakuje identyfikatora rabaty." }, 400);
   }
 
   const { data, error } = await supabase
@@ -28,11 +28,11 @@ export const DELETE: APIRoute = async (context) => {
     .maybeSingle();
 
   if (error) {
-    return json({ error: "Unable to delete garden bed." }, 500);
+    return json({ error: "Nie udało się usunąć rabaty." }, 500);
   }
 
   if (!data) {
-    return json({ error: "Garden bed not found." }, 404);
+    return json({ error: "Nie znaleziono rabaty." }, 404);
   }
 
   return json({ deleted_bed_id: bedId });

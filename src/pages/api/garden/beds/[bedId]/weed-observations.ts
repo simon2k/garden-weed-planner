@@ -13,12 +13,12 @@ const weedObservationColumns =
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const bedId = getBedId(context);
@@ -35,7 +35,7 @@ export const GET: APIRoute = async (context) => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    return json({ error: "Unable to list weed observations for this garden bed." }, 500);
+    return json({ error: "Nie udało się wczytać obserwacji chwastów dla tej rabaty." }, 500);
   }
 
   return json({ observations: (data as WeedObservationRow[]).map(toWeedObservationResponse) });
@@ -44,17 +44,17 @@ export const GET: APIRoute = async (context) => {
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const bedId = getBedId(context)?.trim();
   if (!bedId) {
-    return json({ error: "Garden bed id is required." }, 400);
+    return json({ error: "Brakuje identyfikatora rabaty." }, 400);
   }
 
   const body = await readJson(context.request);
@@ -75,7 +75,7 @@ export const POST: APIRoute = async (context) => {
     .single();
 
   if (error) {
-    return json({ error: "Unable to create weed observation for this garden bed." }, 500);
+    return json({ error: "Nie udało się dodać obserwacji chwastów dla tej rabaty." }, 500);
   }
 
   return json({ observation: toWeedObservationResponse(data) }, 201);
@@ -96,7 +96,7 @@ async function readJson(request: Request): Promise<JsonReadResult> {
   try {
     return { success: true, data: await request.json() };
   } catch {
-    return { success: false, error: "Request body must be valid JSON." };
+    return { success: false, error: "Treść żądania musi być poprawnym JSON-em." };
   }
 }
 
