@@ -16,9 +16,8 @@ test.describe("risk #1: priority queue points the user to the right bed", () => 
   test("risk #1: highest-priority bed appears first with its own suggested next-weeding date", async ({ page }) => {
     await page.goto("/garden");
 
-    await expect(page.getByRole("heading", { name: "Priority bed queue" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Next beds to weed" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Refresh" })).toBeEnabled();
+    await expect(page.getByRole("heading", { name: "Następne rabaty do pielenia" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Odśwież" })).toBeEnabled();
 
     // Teardown-before-setup: remove stale data from interrupted runs of this spec only.
     const staleTestBed = page.getByRole("listitem").filter({
@@ -27,9 +26,9 @@ test.describe("risk #1: priority queue points the user to the right bed", () => 
     while ((await staleTestBed.count()) > 0) {
       const bed = staleTestBed.first();
       const bedName = (await bed.getByRole("heading", { level: 3 }).textContent()) ?? "";
-      await bed.getByRole("button", { name: "Delete bed" }).click();
-      await expect(bed.getByText(`Delete ${bedName}?`)).toBeVisible();
-      await bed.getByRole("button", { name: "Confirm delete" }).click();
+      await bed.getByRole("button", { name: "Usuń rabatę" }).click();
+      await expect(bed.getByText(`Usunąć ${bedName}?`)).toBeVisible();
+      await bed.getByRole("button", { name: "Potwierdź usunięcie" }).click();
       await expect(
         page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: bedName }) }),
       ).toBeHidden();
@@ -37,53 +36,53 @@ test.describe("risk #1: priority queue points the user to the right bed", () => 
 
     try {
       // Setup: create independent beds whose product-oracle outcome is urgent, soon, and OK.
-      await page.getByRole("combobox", { name: /Weed level/ }).selectOption("low");
-      await expect(page.getByRole("combobox", { name: /Weed level/ })).toHaveValue("low");
-      await page.getByRole("spinbutton", { name: "Area (m²)" }).fill("4");
-      await page.getByRole("textbox", { name: "Last weeded" }).fill(okLastWeededDate);
-      await page.getByRole("spinbutton", { name: "Estimated minutes" }).fill("10");
-      await page.getByRole("spinbutton", { name: "Mulch depth (cm)" }).fill("6");
-      await page.getByRole("textbox", { name: /Bed name/ }).pressSequentially(okBedName);
-      await expect(page.getByRole("textbox", { name: /Bed name/ })).toHaveValue(okBedName);
-      await page.getByRole("button", { name: "Add to priority queue" }).click();
-      await expect(page.getByText(`${okBedName} added to the queue.`)).toBeVisible();
+      await page.getByRole("combobox", { name: /Poziom zachwaszczenia/ }).selectOption("low");
+      await expect(page.getByRole("combobox", { name: /Poziom zachwaszczenia/ })).toHaveValue("low");
+      await page.getByRole("spinbutton", { name: "Powierzchnia (m²)" }).fill("4");
+      await page.getByRole("textbox", { name: "Ostatnie pielenie" }).fill(okLastWeededDate);
+      await page.getByRole("spinbutton", { name: "Szacowany czas (min)" }).fill("10");
+      await page.getByRole("spinbutton", { name: "Grubość ściółki (cm)" }).fill("6");
+      await page.getByRole("textbox", { name: /Nazwa rabaty/ }).pressSequentially(okBedName);
+      await expect(page.getByRole("textbox", { name: /Nazwa rabaty/ })).toHaveValue(okBedName);
+      await page.getByRole("button", { name: "Dodaj do kolejki priorytetów" }).click();
+      await expect(page.getByText(`${okBedName} dodana do kolejki.`)).toBeVisible();
 
-      await page.getByRole("combobox", { name: /Weed level/ }).selectOption("medium");
-      await expect(page.getByRole("combobox", { name: /Weed level/ })).toHaveValue("medium");
-      await page.getByRole("spinbutton", { name: "Area (m²)" }).fill("8");
-      await page.getByRole("textbox", { name: "Last weeded" }).fill(soonLastWeededDate);
-      await page.getByRole("spinbutton", { name: "Estimated minutes" }).fill("25");
-      await page.getByRole("spinbutton", { name: "Mulch depth (cm)" }).fill("3");
-      await page.getByRole("textbox", { name: /Bed name/ }).pressSequentially(soonBedName);
-      await expect(page.getByRole("textbox", { name: /Bed name/ })).toHaveValue(soonBedName);
-      await page.getByRole("button", { name: "Add to priority queue" }).click();
-      await expect(page.getByText(`${soonBedName} added to the queue.`)).toBeVisible();
+      await page.getByRole("combobox", { name: /Poziom zachwaszczenia/ }).selectOption("medium");
+      await expect(page.getByRole("combobox", { name: /Poziom zachwaszczenia/ })).toHaveValue("medium");
+      await page.getByRole("spinbutton", { name: "Powierzchnia (m²)" }).fill("8");
+      await page.getByRole("textbox", { name: "Ostatnie pielenie" }).fill(soonLastWeededDate);
+      await page.getByRole("spinbutton", { name: "Szacowany czas (min)" }).fill("25");
+      await page.getByRole("spinbutton", { name: "Grubość ściółki (cm)" }).fill("3");
+      await page.getByRole("textbox", { name: /Nazwa rabaty/ }).pressSequentially(soonBedName);
+      await expect(page.getByRole("textbox", { name: /Nazwa rabaty/ })).toHaveValue(soonBedName);
+      await page.getByRole("button", { name: "Dodaj do kolejki priorytetów" }).click();
+      await expect(page.getByText(`${soonBedName} dodana do kolejki.`)).toBeVisible();
 
-      await page.getByRole("combobox", { name: /Weed level/ }).selectOption("high");
-      await expect(page.getByRole("combobox", { name: /Weed level/ })).toHaveValue("high");
-      await page.getByRole("spinbutton", { name: "Area (m²)" }).fill("25");
-      await page.getByRole("textbox", { name: "Last weeded" }).fill(urgentLastWeededDate);
-      await page.getByRole("spinbutton", { name: "Estimated minutes" }).fill("120");
-      await page.getByRole("spinbutton", { name: "Mulch depth (cm)" }).fill("1");
-      await page.getByRole("textbox", { name: /Bed name/ }).pressSequentially(urgentBedName);
-      await expect(page.getByRole("textbox", { name: /Bed name/ })).toHaveValue(urgentBedName);
-      await page.getByRole("button", { name: "Add to priority queue" }).click();
-      await expect(page.getByText(`${urgentBedName} added to the queue.`)).toBeVisible();
+      await page.getByRole("combobox", { name: /Poziom zachwaszczenia/ }).selectOption("high");
+      await expect(page.getByRole("combobox", { name: /Poziom zachwaszczenia/ })).toHaveValue("high");
+      await page.getByRole("spinbutton", { name: "Powierzchnia (m²)" }).fill("25");
+      await page.getByRole("textbox", { name: "Ostatnie pielenie" }).fill(urgentLastWeededDate);
+      await page.getByRole("spinbutton", { name: "Szacowany czas (min)" }).fill("120");
+      await page.getByRole("spinbutton", { name: "Grubość ściółki (cm)" }).fill("1");
+      await page.getByRole("textbox", { name: /Nazwa rabaty/ }).pressSequentially(urgentBedName);
+      await expect(page.getByRole("textbox", { name: /Nazwa rabaty/ })).toHaveValue(urgentBedName);
+      await page.getByRole("button", { name: "Dodaj do kolejki priorytetów" }).click();
+      await expect(page.getByText(`${urgentBedName} dodana do kolejki.`)).toBeVisible();
 
       // Assert the business outcome: the queue points the user to the urgent bed first.
       const firstQueueItem = page.getByRole("listitem").first();
       await expect(firstQueueItem.getByRole("heading", { name: urgentBedName })).toBeVisible();
-      await expect(firstQueueItem.getByText(`Suggested next weeding: ${urgentSuggestedDate}`)).toBeVisible();
+      await expect(firstQueueItem.getByText(`Sugerowane następne pielenie: ${urgentSuggestedDate}`)).toBeVisible();
       await expect(firstQueueItem.getByText("pilne", { exact: true })).toBeVisible();
-      await expect(firstQueueItem.getByText("Priority score:")).toBeVisible();
+      await expect(firstQueueItem.getByText("Wynik priorytetu:")).toBeVisible();
     } finally {
       // Cleanup: remove only this test's unique beds through the interface.
       for (const bedName of [urgentBedName, soonBedName, okBedName]) {
         const bed = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: bedName }) });
         if ((await bed.count()) > 0) {
-          await bed.getByRole("button", { name: "Delete bed" }).click();
-          await expect(bed.getByText(`Delete ${bedName}?`)).toBeVisible();
-          await bed.getByRole("button", { name: "Confirm delete" }).click();
+          await bed.getByRole("button", { name: "Usuń rabatę" }).click();
+          await expect(bed.getByText(`Usunąć ${bedName}?`)).toBeVisible();
+          await bed.getByRole("button", { name: "Potwierdź usunięcie" }).click();
           await expect(bed).toBeHidden();
         }
       }
@@ -102,5 +101,7 @@ function addUtcDays(isoDate: string, days: number): string {
 }
 
 function formatDisplayDate(isoDate: string): string {
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(new Date(`${isoDate}T00:00:00Z`));
+  return new Intl.DateTimeFormat("pl-PL", { dateStyle: "medium", timeZone: "UTC" }).format(
+    new Date(`${isoDate}T00:00:00Z`),
+  );
 }
