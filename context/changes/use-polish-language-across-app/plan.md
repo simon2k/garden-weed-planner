@@ -414,25 +414,25 @@ No database, Supabase, route, or data migration is required. Existing persisted 
 
 #### Automated
 
-- [x] 4.1 Unit tests for domain helpers pass: `npm run test`
-- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Unit tests for domain helpers pass: `npm run test` — de9f430
+- [x] 4.2 Lint passes: `npm run lint` — de9f430
 
 #### Manual
 
-- [x] 4.3 API/domain validation errors that reach the UI read as Polish user-facing messages.
-- [x] 4.4 Visible formatted dates in the garden queue use Polish locale formatting.
+- [x] 4.3 API/domain validation errors that reach the UI read as Polish user-facing messages. — de9f430
+- [x] 4.4 Visible formatted dates in the garden queue use Polish locale formatting. — de9f430
 
 ### Phase 5: Final Verification and Polish UI Review
 
 #### Automated
 
-- [ ] 5.1 Astro sync passes: `npx astro sync`
-- [ ] 5.2 Lint passes: `npm run lint`
-- [ ] 5.3 Unit tests pass: `npm run test`
-- [ ] 5.4 Production build passes: `npm run build`
+- [x] 5.1 Astro sync passes: `npx astro sync`
+- [x] 5.2 Lint passes: `npm run lint`
+- [x] 5.3 Unit tests pass: `npm run test`
+- [x] 5.4 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 5.5 Main frontend routes and current interactive states show Polish user-facing copy.
-- [ ] 5.6 No obvious starter-product copy remains on the landing page.
-- [ ] 5.7 No route, auth, garden queue, or form behavior regression is observed during manual review.
+- [x] 5.5 Main frontend routes and current interactive states show Polish user-facing copy.
+- [x] 5.6 No obvious starter-product copy remains on the landing page.
+- [x] 5.7 No route, auth, garden queue, or form behavior regression is observed during manual review.
