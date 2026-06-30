@@ -376,26 +376,26 @@ No database, Supabase, route, or data migration is required. Existing persisted 
 
 #### Automated
 
-- [x] 1.1 Astro sync passes: `npx astro sync`
-- [x] 1.2 Lint passes for changed files: `npm run lint`
+- [x] 1.1 Astro sync passes: `npx astro sync` — 35bb90e
+- [x] 1.2 Lint passes for changed files: `npm run lint` — 35bb90e
 
 #### Manual
 
-- [x] 1.3 Landing page, top navigation, dashboard, auth pages, and garden page shell show Polish copy with no obvious English starter text.
-- [x] 1.4 Existing links still navigate to the same routes.
+- [x] 1.3 Landing page, top navigation, dashboard, auth pages, and garden page shell show Polish copy with no obvious English starter text. — 35bb90e
+- [x] 1.4 Existing links still navigate to the same routes. — 35bb90e
 
 ### Phase 2: Auth Forms and Accessibility Text
 
 #### Automated
 
-- [ ] 2.1 Auth form TypeScript/JSX still lint cleanly: `npm run lint`
-- [ ] 2.2 Existing test suite passes: `npm run test`
+- [x] 2.1 Auth form TypeScript/JSX still lint cleanly: `npm run lint`
+- [x] 2.2 Existing test suite passes: `npm run test`
 
 #### Manual
 
-- [ ] 2.3 Empty and invalid sign-in/sign-up submissions show Polish validation messages.
-- [ ] 2.4 Password show/hide controls remain usable and have Polish accessibility labels.
-- [ ] 2.5 Pending submit button text is Polish.
+- [x] 2.3 Empty and invalid sign-in/sign-up submissions show Polish validation messages.
+- [x] 2.4 Password show/hide controls remain usable and have Polish accessibility labels.
+- [x] 2.5 Pending submit button text is Polish.
 
 ### Phase 3: Garden Queue UI
 
