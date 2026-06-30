@@ -88,9 +88,9 @@ interface WeedingEvent {
 }
 
 const weedLevelOptions: { value: WeedLevel; label: string; description: string }[] = [
-  { value: "low", label: "Low", description: "Mostly under control" },
-  { value: "medium", label: "Medium", description: "Needs attention soon" },
-  { value: "high", label: "High", description: "Visibly urgent" },
+  { value: "low", label: "Niskie", description: "W większości pod kontrolą" },
+  { value: "medium", label: "Średnie", description: "Wkrótce wymaga uwagi" },
+  { value: "high", label: "Wysokie", description: "Wyraźnie pilne" },
 ];
 
 interface BedsResponse {
@@ -287,12 +287,12 @@ export function GardenQueue() {
       const payload = (await response.json()) as BedsResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to load garden beds.");
+        throw new Error(payload.error ?? "Nie udało się wczytać rabat.");
       }
 
       setBeds(payload.beds);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load garden beds.");
+      setError(err instanceof Error ? err.message : "Nie udało się wczytać rabat.");
     } finally {
       setIsLoading(false);
     }
@@ -326,15 +326,15 @@ export function GardenQueue() {
       const payload = (await response.json()) as BedResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to create garden bed.");
+        throw new Error(payload.error ?? "Nie udało się dodać rabaty.");
       }
 
       await loadBeds();
       setForm(initialFormState);
       setFieldErrors({});
-      setSuccessMessage(`${payload.bed.name} added to the queue.`);
+      setSuccessMessage(`${payload.bed.name} dodana do kolejki.`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to create garden bed.");
+      setError(err instanceof Error ? err.message : "Nie udało się dodać rabaty.");
     } finally {
       setIsSubmitting(false);
     }
@@ -372,7 +372,7 @@ export function GardenQueue() {
       const payload = (await response.json()) as PlantsResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to load plants for this bed.");
+        throw new Error(payload.error ?? "Nie udało się wczytać roślin dla tej rabaty.");
       }
 
       setPlantStateByBedId((current) => ({
@@ -391,7 +391,7 @@ export function GardenQueue() {
         [bedId]: {
           ...getPlantState(current, bedId),
           isLoading: false,
-          error: err instanceof Error ? err.message : "Unable to load plants for this bed.",
+          error: err instanceof Error ? err.message : "Nie udało się wczytać roślin dla tej rabaty.",
           hasLoaded: true,
         },
       }));
@@ -446,7 +446,7 @@ export function GardenQueue() {
       const payload = (await response.json()) as PlantResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to add plant to this bed.");
+        throw new Error(payload.error ?? "Nie udało się dodać rośliny do tej rabaty.");
       }
 
       setPlantStateByBedId((current) => {
@@ -470,7 +470,7 @@ export function GardenQueue() {
         [bedId]: {
           ...getPlantState(current, bedId),
           isSubmitting: false,
-          error: err instanceof Error ? err.message : "Unable to add plant to this bed.",
+          error: err instanceof Error ? err.message : "Nie udało się dodać rośliny do tej rabaty.",
         },
       }));
     }
@@ -509,7 +509,7 @@ export function GardenQueue() {
       const payload = (await response.json()) as WeedObservationsResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to load weed observations for this bed.");
+        throw new Error(payload.error ?? "Nie udało się wczytać obserwacji chwastów dla tej rabaty.");
       }
 
       setObservationStateByBedId((current) => ({
@@ -528,7 +528,7 @@ export function GardenQueue() {
         [bedId]: {
           ...getObservationState(current, bedId),
           isLoading: false,
-          error: err instanceof Error ? err.message : "Unable to load weed observations for this bed.",
+          error: err instanceof Error ? err.message : "Nie udało się wczytać obserwacji chwastów dla tej rabaty.",
           hasLoaded: true,
         },
       }));
@@ -615,7 +615,7 @@ export function GardenQueue() {
       const payload = (await response.json()) as WeedObservationResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to add weed observation to this bed.");
+        throw new Error(payload.error ?? "Nie udało się dodać obserwacji chwastów dla tej rabaty.");
       }
 
       setObservationStateByBedId((current) => {
@@ -641,7 +641,7 @@ export function GardenQueue() {
         [bedId]: {
           ...getObservationState(current, bedId),
           isSubmitting: false,
-          error: err instanceof Error ? err.message : "Unable to add weed observation to this bed.",
+          error: err instanceof Error ? err.message : "Nie udało się dodać obserwacji chwastów dla tej rabaty.",
         },
       }));
     }
@@ -679,7 +679,7 @@ export function GardenQueue() {
       const payload = (await response.json()) as WeedingEventsResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to load weeding history for this bed.");
+        throw new Error(payload.error ?? "Nie udało się wczytać historii pielenia dla tej rabaty.");
       }
 
       setWeedingStateByBedId((current) => ({
@@ -698,7 +698,7 @@ export function GardenQueue() {
         [bedId]: {
           ...getWeedingState(current, bedId),
           isLoading: false,
-          error: err instanceof Error ? err.message : "Unable to load weeding history for this bed.",
+          error: err instanceof Error ? err.message : "Nie udało się wczytać historii pielenia dla tej rabaty.",
           hasLoaded: true,
         },
       }));
@@ -755,7 +755,7 @@ export function GardenQueue() {
       const payload = (await response.json()) as MarkWeededResponse & ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to record weeding for this bed.");
+        throw new Error(payload.error ?? "Nie udało się zapisać pielenia dla tej rabaty.");
       }
 
       setWeedingStateByBedId((current) => {
@@ -771,7 +771,7 @@ export function GardenQueue() {
             form: { ...initialWeedingFormState, weeded_at: getTodayIsoDate() },
             fieldErrors: {},
             error: null,
-            successMessage: "Weeding recorded — queue refreshed.",
+            successMessage: "Pielenie zapisane — kolejka została odświeżona.",
             isSubmitting: false,
             hasLoaded: currentState.hasLoaded,
           },
@@ -784,7 +784,7 @@ export function GardenQueue() {
         [bedId]: {
           ...getWeedingState(current, bedId),
           isSubmitting: false,
-          error: err instanceof Error ? err.message : "Unable to record weeding for this bed.",
+          error: err instanceof Error ? err.message : "Nie udało się zapisać pielenia dla tej rabaty.",
         },
       }));
     }
@@ -801,15 +801,15 @@ export function GardenQueue() {
       const payload = (await response.json()) as ErrorResponse;
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to delete garden bed.");
+        throw new Error(payload.error ?? "Nie udało się usunąć rabaty.");
       }
 
       setBeds((current) => current.filter((item) => item.id !== bed.id));
       removeDeletedBedState(bed.id);
       setConfirmingDeleteBedId(null);
-      setSuccessMessage(`${bed.name} deleted from the queue.`);
+      setSuccessMessage(`${bed.name} usunięta z kolejki.`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to delete garden bed.");
+      setError(err instanceof Error ? err.message : "Nie udało się usunąć rabaty.");
     } finally {
       setDeletingBedId(null);
     }
@@ -832,29 +832,30 @@ export function GardenQueue() {
         noValidate
       >
         <div className="mb-6 space-y-2">
-          <p className="text-sm font-semibold tracking-[0.3em] text-emerald-200/80 uppercase">Add bed</p>
-          <h2 className="text-2xl font-bold">Garden bed details</h2>
+          <p className="text-sm font-semibold tracking-[0.3em] text-emerald-200/80 uppercase">Dodaj rabatę</p>
+          <h2 className="text-2xl font-bold">Szczegóły rabaty</h2>
           <p className="text-sm leading-6 text-blue-100/70">
-            Name and weed level are required. Other fields improve priority confidence but may stay blank.
+            Nazwa i poziom zachwaszczenia są wymagane. Pozostałe pola poprawiają pewność priorytetu, ale mogą zostać
+            puste.
           </p>
         </div>
 
         <div className="space-y-4">
           <TextField
             id="name"
-            label="Bed name"
+            label="Nazwa rabaty"
             value={form.name}
             onChange={(value) => {
               updateField("name", value);
             }}
-            placeholder="e.g. Front perennial border"
+            placeholder="np. rabata przy tarasie"
             error={fieldErrors.name}
             required
           />
 
           <div>
             <label htmlFor="weed_level" className="mb-1 block text-sm text-blue-100/80">
-              Weed level <span className="text-emerald-200">*</span>
+              Poziom zachwaszczenia <span className="text-emerald-200">*</span>
             </label>
             <select
               id="weed_level"
@@ -875,7 +876,7 @@ export function GardenQueue() {
           <div className="grid gap-4 sm:grid-cols-2">
             <TextField
               id="area_m2"
-              label="Area (m²)"
+              label="Powierzchnia (m²)"
               value={form.area_m2}
               onChange={(value) => {
                 updateField("area_m2", value);
@@ -888,7 +889,7 @@ export function GardenQueue() {
             />
             <TextField
               id="last_weeded_at"
-              label="Last weeded"
+              label="Ostatnie pielenie"
               value={form.last_weeded_at}
               onChange={(value) => {
                 updateField("last_weeded_at", value);
@@ -899,7 +900,7 @@ export function GardenQueue() {
             />
             <TextField
               id="estimated_minutes"
-              label="Estimated minutes"
+              label="Szacowany czas (min)"
               value={form.estimated_minutes}
               onChange={(value) => {
                 updateField("estimated_minutes", value);
@@ -912,7 +913,7 @@ export function GardenQueue() {
             />
             <TextField
               id="mulch_depth_cm"
-              label="Mulch depth (cm)"
+              label="Grubość ściółki (cm)"
               value={form.mulch_depth_cm}
               onChange={(value) => {
                 updateField("mulch_depth_cm", value);
@@ -938,7 +939,7 @@ export function GardenQueue() {
             className="w-full bg-emerald-400 text-slate-950 hover:bg-emerald-300"
           >
             {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-            {isSubmitting ? "Adding bed..." : "Add to priority queue"}
+            {isSubmitting ? "Dodawanie rabaty..." : "Dodaj do kolejki priorytetów"}
           </Button>
         </div>
       </form>
@@ -946,12 +947,12 @@ export function GardenQueue() {
       <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-xl">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
-            <p className="text-sm font-semibold tracking-[0.3em] text-emerald-200/80 uppercase">Priority queue</p>
-            <h2 className="text-2xl font-bold">Next beds to weed</h2>
+            <p className="text-sm font-semibold tracking-[0.3em] text-emerald-200/80 uppercase">Kolejka priorytetów</p>
+            <h2 className="text-2xl font-bold">Następne rabaty do pielenia</h2>
             <p className="text-sm text-blue-100/70">
               {queueSummary.total === 0
-                ? "Add your first bed to see the queue."
-                : `${queueSummary.total} beds · ${queueSummary.urgent} urgent · ${queueSummary.soon} soon`}
+                ? "Dodaj pierwszą rabatę, aby zobaczyć kolejkę."
+                : `${queueSummary.total} rabat · pilne: ${queueSummary.urgent} · wkrótce: ${queueSummary.soon}`}
             </p>
           </div>
           <Button
@@ -962,21 +963,21 @@ export function GardenQueue() {
             className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
           >
             {isLoading && <Loader2 className="size-4 animate-spin" />}
-            Refresh
+            Odśwież
           </Button>
         </div>
 
         {isLoading ? (
           <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/30 p-4 text-blue-100/80">
             <Loader2 className="size-5 animate-spin" />
-            Loading garden beds...
+            Wczytywanie rabat...
           </div>
         ) : beds.length === 0 ? (
           <div className="rounded-xl border border-dashed border-white/20 bg-slate-950/30 p-6 text-center">
             <Sprout className="mx-auto mb-3 size-8 text-emerald-200" />
-            <h3 className="font-semibold">No beds in your queue yet</h3>
+            <h3 className="font-semibold">Nie masz jeszcze rabat w kolejce</h3>
             <p className="mt-2 text-sm text-blue-100/70">
-              Add a bed with a weed level to start building your weeding priority queue.
+              Dodaj rabatę z poziomem zachwaszczenia, aby zacząć budować kolejkę pielenia.
             </p>
           </div>
         ) : (
@@ -1203,13 +1204,13 @@ function QueueCard({
   onWeedingRetry: () => void;
 }) {
   const suggestedDateText = bed.suggested_weed_at
-    ? `Suggested next weeding: ${formatDisplayDate(bed.suggested_weed_at)}`
-    : "Add last weeded date for a suggested next-weeding date.";
+    ? `Sugerowane następne pielenie: ${formatDisplayDate(bed.suggested_weed_at)}`
+    : "Dodaj datę ostatniego pielenia, aby otrzymać sugestię kolejnego terminu.";
   const priorityClass = `rounded-full px-3 py-1 text-sm font-semibold ${priorityClassName(bed.priority)}`;
   const confidenceClass = `rounded-full px-3 py-1 text-xs font-medium ${
     bed.priority_confidence === "complete" ? "bg-emerald-400/15 text-emerald-100" : "bg-amber-400/15 text-amber-100"
   }`;
-  const weedLevel = capitalize(bed.weed_level);
+  const weedLevel = formatWeedLevel(bed.weed_level);
   const area = formatOptionalNumber(bed.area_m2, "m²");
   const workTime = formatOptionalNumber(bed.estimated_minutes, "min");
   const mulch = formatOptionalNumber(bed.mulch_depth_cm, "cm");
@@ -1233,21 +1234,21 @@ function QueueCard({
         <div className="flex flex-wrap gap-2 sm:justify-end">
           <span className={priorityClass}>{bed.priority_label}</span>
           <span className={confidenceClass}>
-            {bed.priority_confidence === "complete" ? "complete confidence" : "partial confidence"}
+            {bed.priority_confidence === "complete" ? "pełna pewność" : "częściowa pewność"}
           </span>
         </div>
       </div>
 
       <dl className="mt-4 grid gap-3 text-sm text-blue-100/75 sm:grid-cols-2 lg:grid-cols-4">
-        <QueueMetric icon={<Sprout className="size-4" />} label="Weed level" value={weedLevel} />
-        <QueueMetric icon={<Map className="size-4" />} label="Area" value={area} />
-        <QueueMetric icon={<Clock className="size-4" />} label="Work time" value={workTime} />
-        <QueueMetric icon={<Sprout className="size-4" />} label="Mulch" value={mulch} />
+        <QueueMetric icon={<Sprout className="size-4" />} label="Poziom zachwaszczenia" value={weedLevel} />
+        <QueueMetric icon={<Map className="size-4" />} label="Powierzchnia" value={area} />
+        <QueueMetric icon={<Clock className="size-4" />} label="Czas pracy" value={workTime} />
+        <QueueMetric icon={<Sprout className="size-4" />} label="Ściółka" value={mulch} />
       </dl>
 
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1 text-xs text-blue-100/60">
-          <p>Priority score: {bed.priority_score}</p>
+          <p>Wynik priorytetu: {bed.priority_score}</p>
           {bed.observation_count > 0 && (
             <p>
               Obserwacje chwastów: {bed.observation_pressure_label} (+{bed.observation_pressure_score})
@@ -1273,7 +1274,7 @@ function QueueCard({
             aria-expanded={isWeedingHistoryExpanded}
           >
             <Clock className="size-4" />
-            {isWeedingHistoryExpanded ? "Hide weeding history" : "Weeding history"}
+            {isWeedingHistoryExpanded ? "Ukryj historię pielenia" : "Historia pielenia"}
           </Button>
           <Button
             type="button"
@@ -1283,7 +1284,7 @@ function QueueCard({
             aria-expanded={isPlantExpanded}
           >
             <Leaf className="size-4" />
-            {isPlantExpanded ? "Hide plants" : "Show plants"}
+            {isPlantExpanded ? "Ukryj rośliny" : "Pokaż rośliny"}
           </Button>
         </div>
       </div>
@@ -1292,8 +1293,8 @@ function QueueCard({
         {isDeleteConfirming ? (
           <div className="space-y-3">
             <p className="text-sm text-red-100">
-              Delete <span className="font-semibold">{bed.name}</span>? This also deletes its plants, weed observations,
-              and weeding history. This cannot be undone.
+              Usunąć <span className="font-semibold">{bed.name}</span>? To usunie też rośliny, obserwacje chwastów i
+              historię pielenia. Tej operacji nie można cofnąć.
             </p>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -1303,7 +1304,7 @@ function QueueCard({
                 disabled={isDeleting}
                 className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >
-                Cancel
+                Anuluj
               </Button>
               <Button
                 type="button"
@@ -1312,7 +1313,7 @@ function QueueCard({
                 className="bg-red-400 text-slate-950 hover:bg-red-300"
               >
                 {isDeleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-                {isDeleting ? "Deleting..." : "Confirm delete"}
+                {isDeleting ? "Usuwanie..." : "Potwierdź usunięcie"}
               </Button>
             </div>
           </div>
@@ -1324,7 +1325,7 @@ function QueueCard({
             className="border-red-300/30 bg-red-400/10 text-red-100 hover:bg-red-400/20 hover:text-white"
           >
             <Trash2 className="size-4" />
-            Delete bed
+            Usuń rabatę
           </Button>
         )}
       </div>
@@ -1384,15 +1385,15 @@ function WeedingForm({
   return (
     <form onSubmit={onSubmit} className="mt-4 rounded-xl border border-blue-300/15 bg-blue-950/20 p-4" noValidate>
       <div className="mb-3">
-        <h4 className="font-semibold text-blue-100">Record completed weeding</h4>
+        <h4 className="font-semibold text-blue-100">Zapisz wykonane pielenie</h4>
         <p className="text-xs text-blue-100/60">
-          Save when {bedName} was weeded, how long it took, and an optional note.
+          Zapisz, kiedy rabata {bedName} została wypielona, ile to zajęło i opcjonalną notatkę.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
         <TextField
           id={`weeding-date-${bedName}`}
-          label="Weeded date"
+          label="Data pielenia"
           value={state.form.weeded_at}
           onChange={(value) => {
             onFieldChange("weeded_at", value);
@@ -1404,7 +1405,7 @@ function WeedingForm({
         />
         <TextField
           id={`weeding-duration-${bedName}`}
-          label="Duration minutes"
+          label="Czas w minutach"
           value={state.form.duration_minutes}
           onChange={(value) => {
             onFieldChange("duration_minutes", value);
@@ -1418,12 +1419,12 @@ function WeedingForm({
         />
         <TextField
           id={`weeding-note-${bedName}`}
-          label="Note"
+          label="Notatka"
           value={state.form.note}
           onChange={(value) => {
             onFieldChange("note", value);
           }}
-          placeholder="optional"
+          placeholder="opcjonalnie"
           error={state.fieldErrors.note}
         />
       </div>
@@ -1439,7 +1440,7 @@ function WeedingForm({
         className="mt-3 w-full bg-blue-300 text-slate-950 hover:bg-blue-200"
       >
         {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Clock className="size-4" />}
-        {state.isSubmitting ? "Recording weeding..." : "Mark bed weeded"}
+        {state.isSubmitting ? "Zapisywanie pielenia..." : "Oznacz rabatę jako wypieloną"}
       </Button>
     </form>
   );
@@ -1458,8 +1459,10 @@ function WeedingHistorySection({
     <div className="mt-4 rounded-xl border border-blue-300/15 bg-blue-950/20 p-4">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h4 className="font-semibold text-blue-100">Weeding history for {bedName}</h4>
-          <p className="text-xs text-blue-100/60">Completion events are loaded on demand for this bed.</p>
+          <h4 className="font-semibold text-blue-100">Historia pielenia rabaty {bedName}</h4>
+          <p className="text-xs text-blue-100/60">
+            Wpisy o wykonanych pracach są wczytywane na żądanie dla tej rabaty.
+          </p>
         </div>
         {state.error && (
           <Button
@@ -1468,7 +1471,7 @@ function WeedingHistorySection({
             onClick={onRetry}
             className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
           >
-            Retry
+            Spróbuj ponownie
           </Button>
         )}
       </div>
@@ -1476,13 +1479,13 @@ function WeedingHistorySection({
       {state.isLoading ? (
         <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
           <Loader2 className="size-4 animate-spin" />
-          Loading weeding history...
+          Wczytywanie historii pielenia...
         </div>
       ) : state.error ? (
         <ServerError message={state.error} />
       ) : state.events.length === 0 ? (
         <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
-          No weeding sessions recorded for this bed yet.
+          Nie zapisano jeszcze pielenia dla tej rabaty.
         </p>
       ) : (
         <ul className="space-y-2">
@@ -1531,7 +1534,7 @@ function ObservationSection({
             onClick={onRetry}
             className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
           >
-            Retry
+            Spróbuj ponownie
           </Button>
         )}
       </div>
@@ -1539,7 +1542,7 @@ function ObservationSection({
       {state.isLoading ? (
         <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
           <Loader2 className="size-4 animate-spin" />
-          Loading weed observations...
+          Wczytywanie obserwacji chwastów...
         </div>
       ) : state.error ? (
         <ServerError message={state.error} />
@@ -1722,9 +1725,9 @@ function PlantSection({
     <div className="mt-4 rounded-xl border border-emerald-300/15 bg-emerald-950/20 p-4">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h4 className="font-semibold text-emerald-100">Plants in {bedName}</h4>
+          <h4 className="font-semibold text-emerald-100">Rośliny w rabacie {bedName}</h4>
           <p className="text-xs text-blue-100/60">
-            Current height and width are snapshots you enter now; they are not automatically updated.
+            Obecna wysokość i szerokość to wartości wpisane teraz; nie aktualizują się automatycznie.
           </p>
         </div>
         {state.error && (
@@ -1734,7 +1737,7 @@ function PlantSection({
             onClick={onRetry}
             className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
           >
-            Retry
+            Spróbuj ponownie
           </Button>
         )}
       </div>
@@ -1742,13 +1745,13 @@ function PlantSection({
       {state.isLoading ? (
         <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
           <Loader2 className="size-4 animate-spin" />
-          Loading plants...
+          Wczytywanie roślin...
         </div>
       ) : state.error ? (
         <ServerError message={state.error} />
       ) : state.plants.length === 0 ? (
         <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
-          No plants recorded for this bed yet.
+          Nie zapisano jeszcze roślin dla tej rabaty.
         </p>
       ) : (
         <ul className="space-y-2">
@@ -1764,19 +1767,19 @@ function PlantSection({
       <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
         <TextField
           id={`plant-name-${bedName}`}
-          label="Plant name"
+          label="Nazwa rośliny"
           value={state.form.name}
           onChange={(value) => {
             onFieldChange("name", value);
           }}
-          placeholder="e.g. Lavender"
+          placeholder="np. lawenda"
           error={state.fieldErrors.name}
           required
         />
         <div className="grid gap-3 sm:grid-cols-2">
           <TextField
             id={`plant-year-${bedName}`}
-            label="Planted year"
+            label="Rok posadzenia"
             value={state.form.planted_year}
             onChange={(value) => {
               onFieldChange("planted_year", value);
@@ -1790,7 +1793,7 @@ function PlantSection({
           />
           <TextField
             id={`plant-quantity-${bedName}`}
-            label="Quantity"
+            label="Liczba sztuk"
             value={state.form.quantity}
             onChange={(value) => {
               onFieldChange("quantity", value);
@@ -1803,7 +1806,7 @@ function PlantSection({
           />
           <TextField
             id={`plant-height-${bedName}`}
-            label="Current height (cm)"
+            label="Obecna wysokość (cm)"
             value={state.form.height_cm}
             onChange={(value) => {
               onFieldChange("height_cm", value);
@@ -1816,7 +1819,7 @@ function PlantSection({
           />
           <TextField
             id={`plant-width-${bedName}`}
-            label="Current width (cm)"
+            label="Obecna szerokość (cm)"
             value={state.form.width_cm}
             onChange={(value) => {
               onFieldChange("width_cm", value);
@@ -1834,7 +1837,7 @@ function PlantSection({
           className="w-full bg-emerald-400 text-slate-950 hover:bg-emerald-300"
         >
           {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-          {state.isSubmitting ? "Adding plant..." : "Add plant"}
+          {state.isSubmitting ? "Dodawanie rośliny..." : "Dodaj roślinę"}
         </Button>
       </form>
     </div>
@@ -1911,14 +1914,16 @@ function getWeedingState(source: Record<string, WeedingBedState>, bedId: string)
 function validateForm(form: FormState): { success: boolean; errors: Partial<Record<keyof FormState, string>> } {
   const errors: Partial<Record<keyof FormState, string>> = {};
 
-  if (!form.name.trim()) errors.name = "Bed name is required.";
-  if (!weedLevelOptions.some((option) => option.value === form.weed_level)) errors.weed_level = "Choose a weed level.";
-  if (!isBlankOrNumber(form.area_m2, { min: 0, exclusiveMin: true })) errors.area_m2 = "Area must be greater than 0.";
+  if (!form.name.trim()) errors.name = "Podaj nazwę rabaty.";
+  if (!weedLevelOptions.some((option) => option.value === form.weed_level))
+    errors.weed_level = "Wybierz poziom zachwaszczenia.";
+  if (!isBlankOrNumber(form.area_m2, { min: 0, exclusiveMin: true }))
+    errors.area_m2 = "Powierzchnia musi być większa od 0.";
   if (!isBlankOrInteger(form.estimated_minutes, 1))
-    errors.estimated_minutes = "Estimated minutes must be a positive whole number.";
-  if (!isBlankOrNumber(form.mulch_depth_cm, { min: 0 })) errors.mulch_depth_cm = "Mulch depth cannot be negative.";
+    errors.estimated_minutes = "Szacowany czas musi być dodatnią liczbą całkowitą.";
+  if (!isBlankOrNumber(form.mulch_depth_cm, { min: 0 })) errors.mulch_depth_cm = "Grubość ściółki nie może być ujemna.";
   if (form.last_weeded_at && !isPastOrTodayDate(form.last_weeded_at)) {
-    errors.last_weeded_at = "Last weeded date must be today or in the past.";
+    errors.last_weeded_at = "Data ostatniego pielenia musi być dzisiejsza albo z przeszłości.";
   }
 
   return { success: Object.keys(errors).length === 0, errors };
@@ -1930,14 +1935,14 @@ function validatePlantForm(form: PlantFormState): {
 } {
   const errors: Partial<Record<keyof PlantFormState, string>> = {};
 
-  if (!form.name.trim()) errors.name = "Plant name is required.";
+  if (!form.name.trim()) errors.name = "Podaj nazwę rośliny.";
   if (!isBlankOrIntegerInRange(form.planted_year, 1900, currentYear))
-    errors.planted_year = `Planted year must be from 1900 through ${currentYear}.`;
-  if (!isBlankOrInteger(form.quantity, 1)) errors.quantity = "Quantity must be a positive whole number.";
+    errors.planted_year = `Rok posadzenia musi być z zakresu od 1900 do ${currentYear}.`;
+  if (!isBlankOrInteger(form.quantity, 1)) errors.quantity = "Liczba sztuk musi być dodatnią liczbą całkowitą.";
   if (!isBlankOrNumber(form.height_cm, { min: 0, exclusiveMin: true }))
-    errors.height_cm = "Current height must be greater than 0.";
+    errors.height_cm = "Obecna wysokość musi być większa od 0.";
   if (!isBlankOrNumber(form.width_cm, { min: 0, exclusiveMin: true }))
-    errors.width_cm = "Current width must be greater than 0.";
+    errors.width_cm = "Obecna szerokość musi być większa od 0.";
 
   return { success: Object.keys(errors).length === 0, errors };
 }
@@ -1949,13 +1954,13 @@ function validateWeedingForm(form: WeedingFormState): {
   const errors: Partial<Record<keyof WeedingFormState, string>> = {};
 
   if (!isPastOrTodayDate(form.weeded_at)) {
-    errors.weeded_at = "Weeding date must be today or in the past.";
+    errors.weeded_at = "Data pielenia musi być dzisiejsza albo z przeszłości.";
   }
   if (!isRequiredInteger(form.duration_minutes, 1)) {
-    errors.duration_minutes = "Duration must be a positive whole number.";
+    errors.duration_minutes = "Czas musi być dodatnią liczbą całkowitą.";
   }
   if (form.note.length > 0 && !form.note.trim()) {
-    errors.note = "Note cannot be empty.";
+    errors.note = "Notatka nie może być pusta.";
   }
 
   return { success: Object.keys(errors).length === 0, errors };
@@ -2078,18 +2083,18 @@ function priorityClassName(priority: GardenBedQueueItem["priority"]): string {
 }
 
 function formatOptionalNumber(value: number | null, unit: string): string {
-  return value === null ? "Not set" : `${value} ${unit}`;
+  return value === null ? "Nie podano" : `${value} ${unit}`;
 }
 
 function formatPlantDetails(plant: BedPlant): string {
   const details = [
-    plant.planted_year ? `planted ${plant.planted_year}` : null,
-    plant.quantity ? `qty ${plant.quantity}` : null,
-    plant.height_cm ? `current height ${plant.height_cm} cm` : null,
-    plant.width_cm ? `current width ${plant.width_cm} cm` : null,
+    plant.planted_year ? `posadzono ${plant.planted_year}` : null,
+    plant.quantity ? `liczba sztuk ${plant.quantity}` : null,
+    plant.height_cm ? `wysokość ${plant.height_cm} cm` : null,
+    plant.width_cm ? `szerokość ${plant.width_cm} cm` : null,
   ].filter(Boolean);
 
-  return details.length > 0 ? details.join(" · ") : "No optional details set.";
+  return details.length > 0 ? details.join(" · ") : "Nie podano dodatkowych szczegółów.";
 }
 
 function sortWeedingEvents(events: readonly WeedingEvent[]): WeedingEvent[] {
@@ -2132,6 +2137,6 @@ function getTodayIsoDate(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function capitalize(value: string): string {
-  return `${value.slice(0, 1).toUpperCase()}${value.slice(1)}`;
+function formatWeedLevel(value: WeedLevel): string {
+  return weedLevelOptions.find((option) => option.value === value)?.label ?? value;
 }

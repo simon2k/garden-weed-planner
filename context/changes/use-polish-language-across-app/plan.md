@@ -388,27 +388,27 @@ No database, Supabase, route, or data migration is required. Existing persisted 
 
 #### Automated
 
-- [x] 2.1 Auth form TypeScript/JSX still lint cleanly: `npm run lint`
-- [x] 2.2 Existing test suite passes: `npm run test`
+- [x] 2.1 Auth form TypeScript/JSX still lint cleanly: `npm run lint` — b834c70
+- [x] 2.2 Existing test suite passes: `npm run test` — b834c70
 
 #### Manual
 
-- [x] 2.3 Empty and invalid sign-in/sign-up submissions show Polish validation messages.
-- [x] 2.4 Password show/hide controls remain usable and have Polish accessibility labels.
-- [x] 2.5 Pending submit button text is Polish.
+- [x] 2.3 Empty and invalid sign-in/sign-up submissions show Polish validation messages. — b834c70
+- [x] 2.4 Password show/hide controls remain usable and have Polish accessibility labels. — b834c70
+- [x] 2.5 Pending submit button text is Polish. — b834c70
 
 ### Phase 3: Garden Queue UI
 
 #### Automated
 
-- [ ] 3.1 Garden queue component lint passes: `npm run lint`
-- [ ] 3.2 Existing unit tests pass: `npm run test`
+- [x] 3.1 Garden queue component lint passes: `npm run lint`
+- [x] 3.2 Existing unit tests pass: `npm run test`
 
 #### Manual
 
-- [ ] 3.3 `/garden` shows Polish text across the add-rabata form, queue list, expanded plant section, weed observation section, and weeding history section.
-- [ ] 3.4 Creating, deleting, expanding, and validation-error states do not surface English fallback copy.
-- [ ] 3.5 Existing garden queue interactions still behave as before.
+- [x] 3.3 `/garden` shows Polish text across the add-rabata form, queue list, expanded plant section, weed observation section, and weeding history section.
+- [x] 3.4 Creating, deleting, expanding, and validation-error states do not surface English fallback copy.
+- [x] 3.5 Existing garden queue interactions still behave as before.
 
 ### Phase 4: Visible Domain Validation Messages and Polish Date Formatting
 
