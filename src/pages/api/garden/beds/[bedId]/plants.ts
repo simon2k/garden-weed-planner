@@ -15,17 +15,17 @@ type SupabaseClient = NonNullable<ReturnType<typeof createClient>>;
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const bedId = context.params.bedId;
   if (!bedId || !isUuid(bedId)) {
-    return json({ error: "Garden bed not found." }, 404);
+    return json({ error: "Nie znaleziono rabaty." }, 404);
   }
 
   const ownsBed = await verifyBedOwnership(supabase, bedId, user.id);
@@ -41,7 +41,7 @@ export const GET: APIRoute = async (context) => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    return json({ error: "Unable to list plants for this garden bed." }, 500);
+    return json({ error: "Nie udało się wczytać roślin dla tej rabaty." }, 500);
   }
 
   return json({ plants: (data as BedPlantRow[]).map(toBedPlantResponse) });
@@ -50,17 +50,17 @@ export const GET: APIRoute = async (context) => {
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const bedId = context.params.bedId;
   if (!bedId || !isUuid(bedId)) {
-    return json({ error: "Garden bed not found." }, 404);
+    return json({ error: "Nie znaleziono rabaty." }, 404);
   }
 
   const ownsBed = await verifyBedOwnership(supabase, bedId, user.id);
@@ -86,7 +86,7 @@ export const POST: APIRoute = async (context) => {
     .single();
 
   if (error) {
-    return json({ error: "Unable to create plant for this garden bed." }, 500);
+    return json({ error: "Nie udało się dodać rośliny do tej rabaty." }, 500);
   }
 
   return json({ plant: toBedPlantResponse(data) }, 201);
@@ -107,7 +107,7 @@ async function readJson(request: Request): Promise<JsonReadResult> {
   try {
     return { success: true, data: await request.json() };
   } catch {
-    return { success: false, error: "Request body must be valid JSON." };
+    return { success: false, error: "Treść żądania musi być poprawnym JSON-em." };
   }
 }
 
@@ -122,11 +122,11 @@ async function verifyBedOwnership(supabase: SupabaseClient, bedId: string, userI
     .maybeSingle();
 
   if (error) {
-    return { success: false, status: 500, error: "Unable to verify garden bed ownership." };
+    return { success: false, status: 500, error: "Nie udało się sprawdzić dostępu do rabaty." };
   }
 
   if (!data) {
-    return { success: false, status: 404, error: "Garden bed not found." };
+    return { success: false, status: 404, error: "Nie znaleziono rabaty." };
   }
 
   return { success: true };

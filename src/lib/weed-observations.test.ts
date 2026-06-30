@@ -44,14 +44,14 @@ describe("weed observation validation", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "Observation date must be a valid YYYY-MM-DD date that is not in the future.",
+      error: "Data obserwacji musi być poprawną datą RRRR-MM-DD, dzisiejszą albo z przeszłości.",
     });
   });
 
   it.each([
-    ["weed_category", "unsupported", "Weed category is required and must be a supported value."],
-    ["growth_stage", "sprouting", "Growth stage is required and must be a supported value."],
-    ["coverage", "dense", "Coverage is required and must be low, medium, or high."],
+    ["weed_category", "unsupported", "Wybierz obsługiwaną kategorię chwastu."],
+    ["growth_stage", "sprouting", "Wybierz obsługiwaną fazę wzrostu."],
+    ["coverage", "dense", "Pokrycie musi mieć wartość: małe, średnie albo duże."],
   ])("rejects invalid %s values", (field, value, error) => {
     expect(validateCreateWeedObservationInput(validObservation({ [field]: value }))).toEqual({ success: false, error });
   });
@@ -59,7 +59,7 @@ describe("weed observation validation", () => {
   it.each([0, 6, 2.5, "5"])("rejects invalid severity %s", (severity) => {
     expect(validateCreateWeedObservationInput(validObservation({ severity }))).toEqual({
       success: false,
-      error: "Severity must be an integer from 1 through 5.",
+      error: "Nasilenie musi być liczbą całkowitą od 1 do 5.",
     });
   });
 
@@ -76,7 +76,7 @@ describe("weed observation validation", () => {
   it("rejects blank optional text because blank notes would mislead the observation history", () => {
     expect(validateCreateWeedObservationInput(validObservation({ note: "   " }))).toEqual({
       success: false,
-      error: "Observation note cannot be empty.",
+      error: "Notatka obserwacji nie może być pusta.",
     });
   });
 });

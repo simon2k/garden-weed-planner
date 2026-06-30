@@ -7,17 +7,17 @@ const weedingEventColumns = "id,bed_id,user_id,weeded_at,duration_minutes,note,c
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return json({ error: "Supabase is not configured." }, 503);
+    return json({ error: "Supabase nie jest skonfigurowany." }, 503);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return json({ error: "Authentication required." }, 401);
+    return json({ error: "Zaloguj się, aby kontynuować." }, 401);
   }
 
   const bedId = getBedId(context)?.trim();
   if (!bedId) {
-    return json({ error: "Garden bed id is required." }, 400);
+    return json({ error: "Brakuje identyfikatora rabaty." }, 400);
   }
 
   const { data, error } = await supabase
@@ -29,7 +29,7 @@ export const GET: APIRoute = async (context) => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    return json({ error: "Unable to list weeding events for this garden bed." }, 500);
+    return json({ error: "Nie udało się wczytać historii pielenia dla tej rabaty." }, 500);
   }
 
   return json({ events: (data as WeedingEventRow[]).map(toWeedingEventResponse) });
