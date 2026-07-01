@@ -6,16 +6,13 @@ const error = Astro.url.searchParams.get("error");
 ---
 
 <Layout title="Logowanie">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent"
-      >
-        Zaloguj się
-      </h1>
+  <div class="bg-auth-garden flex min-h-screen items-center justify-center p-4">
+    <div class="garden-card w-full max-w-sm rounded-xl border p-8 text-emerald-950 backdrop-blur-md">
+      <p class="mb-2 text-center text-sm font-semibold tracking-[0.25em] text-emerald-700 uppercase">Planer ogrodu</p>
+      <h1 class="mb-6 text-center text-2xl font-bold text-emerald-950">Zaloguj się</h1>
       <SignInForm serverError={error} client:load />
-      <p class="mt-4 text-center text-sm text-blue-100/60">
-        Nie masz konta? <a href="/auth/signup" class="text-purple-300 hover:underline">Utwórz konto</a>
+      <p class="mt-4 text-center text-sm text-emerald-900/70">
+        Nie masz konta? <a href="/auth/signup" class="font-semibold text-emerald-700 hover:underline">Utwórz konto</a>
       </p>
     </div>
   </div>
