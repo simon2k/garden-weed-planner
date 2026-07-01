@@ -185,32 +185,32 @@ No database, API, data, or secret migration is required. This is an Astro direct
 
 #### Automated
 
-- [x] 1.1 Astro sync passes: `npx astro sync`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm run test`
-- [x] 1.4 Production build passes: `npm run build`
+- [x] 1.1 Astro sync passes: `npx astro sync` — 496ac93
+- [x] 1.2 Lint passes: `npm run lint` — 496ac93
+- [x] 1.3 Unit tests pass: `npm run test` — 496ac93
+- [x] 1.4 Production build passes: `npm run build` — 496ac93
 
 #### Manual
 
-- [x] 1.5 `/auth/signin` renders without the invalid hook call and shows the sign-in form after hydration
-- [x] 1.6 `/auth/signup` renders without the invalid hook call and shows the sign-up form after hydration
-- [x] 1.7 `/garden` no longer triggers the `GardenQueue` `useState` SSR crash and shows the queue after hydration for an authenticated session
-- [x] 1.8 Authenticated `/` still renders the garden experience and does not reintroduce the hook crash
-- [x] 1.9 Minimal fallback text appears in Polish if the island is briefly unavailable before hydration
+- [x] 1.5 `/auth/signin` renders without the invalid hook call and shows the sign-in form after hydration — 496ac93
+- [x] 1.6 `/auth/signup` renders without the invalid hook call and shows the sign-up form after hydration — 496ac93
+- [x] 1.7 `/garden` no longer triggers the `GardenQueue` `useState` SSR crash and shows the queue after hydration for an authenticated session — 496ac93
+- [x] 1.8 Authenticated `/` still renders the garden experience and does not reintroduce the hook crash — 496ac93
+- [x] 1.9 Minimal fallback text appears in Polish if the island is briefly unavailable before hydration — 496ac93
 
 ### Phase 2: Verification and Regression Pass
 
 #### Automated
 
-- [ ] 2.1 Astro sync passes after final changes: `npx astro sync`
-- [ ] 2.2 Lint passes after final changes: `npm run lint`
-- [ ] 2.3 Unit tests pass after final changes: `npm run test`
-- [ ] 2.4 E2E tests pass when the local authenticated Playwright/Supabase environment is available: `npm run test:e2e`
-- [ ] 2.5 Production build passes after final changes: `npm run build`
+- [x] 2.1 Astro sync passes after final changes: `npx astro sync`
+- [x] 2.2 Lint passes after final changes: `npm run lint`
+- [x] 2.3 Unit tests pass after final changes: `npm run test`
+- [x] 2.4 E2E tests pass when the local authenticated Playwright/Supabase environment is available: `npm run test:e2e`
+- [x] 2.5 Production build passes after final changes: `npm run build`
 
 #### Manual
 
-- [ ] 2.6 Dev server no longer logs the React invalid hook call when `/auth/signin` is loaded
-- [ ] 2.7 Dev server no longer logs the React invalid hook call when `/auth/signup` is loaded
-- [ ] 2.8 Dev server no longer logs the React invalid hook call when `/garden` or authenticated `/` is loaded
-- [ ] 2.9 The affected pages remain visually coherent: shell/card/hero content appears immediately, then the React island replaces the Polish fallback after hydration
+- [x] 2.6 Dev server no longer logs the React invalid hook call when `/auth/signin` is loaded
+- [x] 2.7 Dev server no longer logs the React invalid hook call when `/auth/signup` is loaded
+- [x] 2.8 Dev server no longer logs the React invalid hook call when `/garden` or authenticated `/` is loaded
+- [x] 2.9 The affected pages remain visually coherent: shell/card/hero content appears immediately, then the React island replaces the Polish fallback after hydration
