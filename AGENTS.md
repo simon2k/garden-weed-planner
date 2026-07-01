@@ -8,6 +8,7 @@ Garden Weed Planner is an Astro 6 SSR app on Cloudflare Workers with React 19 is
 - Run `npx astro sync`, `npm run lint`, `npm run test`, and `npm run build` before handing off changes that touch app code or config; GitHub Actions runs the same gate on `main` PRs.
 - Keep `SUPABASE_URL` and `SUPABASE_KEY` server-only. Declare env access through @astro.config.mjs and store local Cloudflare secrets in `.dev.vars`, not committed files.
 - Do not add protected pages without updating `PROTECTED_ROUTES` in @src/middleware.ts.
+- Skills must not write to `context/archive/`. Archived changes are immutable; if a resolved target path starts with `context/archive/`, abort with: "This change is archived. Open a new change with `/10x-new` instead."
 
 ## Project Structure
 
@@ -18,11 +19,7 @@ Garden Weed Planner is an Astro 6 SSR app on Cloudflare Workers with React 19 is
 
 ## Development Workflow
 
-- `npm run dev` starts the Astro dev server.
-- `npm run build` creates the Cloudflare-targeted production build.
-- `npm run preview` previews the built app.
-- `npm run lint` runs type-aware ESLint; `npm run lint:fix` applies safe fixes.
-- `npm run format` runs Prettier with Astro and Tailwind plugins.
+Use npm scripts from @package.json for local development, validation, preview, linting, and formatting.
 
 ## Coding Style & Conventions
 
@@ -34,7 +31,7 @@ Use the `@/*` import alias from @tsconfig.json for `src` imports. Prefer Astro c
 
 ## Local Git Hooks
 
-Husky pre-commit runs `npx lint-staged` for staged lint/format, then `npm run test:related:staged` for related Vitest tests on staged `src/**/*.{ts,tsx}` files. Husky pre-push runs `npm run test:pre-push`, which currently delegates to the unit suite via `npm run test`. If a hook fails, run the named npm script directly to debug it.
+Hook behavior lives in @.husky/pre-commit, @.husky/pre-push, and the related scripts in @package.json. If a hook fails, run the named npm script directly to debug it.
 
 ## Commits & PRs
 
@@ -44,43 +41,12 @@ Recent history uses Conventional Commit-style prefixes (`feat:`, `docs:`, `chore
 
 ## 10xDevs AI Toolkit - Module 2, Lesson 3
 
-Review AI-generated code before merge with the **implementation review chain**:
+Review AI-generated code before merge with the implementation review chain:
 
 ```
 /10x-implement -> /10x-impl-review -> triage -> (/10x-lesson | fix | skip | disagree)
 ```
 
-`/10x-impl-review` is the lesson focus. Review is a quality gate, not an instruction to fix every finding.
-
-### Task Router - Where to start
-
-| Skill                          | Use it when                                                                                                                                                                                                                             |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Code review (lesson focus)** |                                                                                                                                                                                                                                         |
-| `/10x-impl-review <change-id>` | You have implemented code and want a structured review before merge. The skill checks plan adherence, scope discipline, safety and quality, architecture, pattern consistency, and success criteria, then presents findings for triage. |
-| **Recurring lesson outcome**   |                                                                                                                                                                                                                                         |
-| `/10x-lesson`                  | A finding reveals a recurring project rule or agent failure pattern. Record it in `context/foundation/lessons.md` instead of treating it as a one-off note.                                                                             |
-
-### Triage discipline
-
-- Severity says how bad the finding is. Impact says how much the decision matters now.
-- Valid outcomes: fix now, fix differently, skip, accept as risk, record as recurring rule (`/10x-lesson`), disagree.
-- Fix critical findings. Do not burn hours on low-impact observations just because the agent found them.
-- Conscious skipping of low-impact findings is a valid review outcome, not negligence.
-- If you disagree with a finding, record why. Wrong agent reasoning is also signal.
-
-### Review boundaries
-
-- This lesson reviews implemented code. It does not create the plan, execute new phases, or teach CI review.
-- Testing strategy and quality gates are introduced in Module 3.
-- Do not use `/10x-contract` as a triage outcome in this lesson.
-
-### Paths used by this lesson
-
-- `context/changes/<change-id>/plan.md` - expected implementation contract
-- `context/changes/<change-id>/reviews/` - review output
-- `context/foundation/lessons.md` - recurring lessons
-
-Skills must not write to `context/archive/`. Archived changes are immutable; if a resolved target path starts with `context/archive/`, abort with: "This change is archived. Open a new change with `/10x-new` instead."
+Use `/10x-impl-review <change-id>` for implemented-code review before merge. Use `/10x-lesson` when a finding reveals a recurring project rule or agent failure pattern worth recording in @context/foundation/lessons.md.
 
 <!-- END @przeprogramowani/10x-cli -->
