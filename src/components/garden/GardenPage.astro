@@ -20,7 +20,11 @@ const { user } = Astro.locals;
         </p>
       </div>
 
-      <GardenQueue client:load />
+      <GardenQueue client:only="react">
+        <div slot="fallback" class="garden-card rounded-xl border p-6 text-emerald-900/70 backdrop-blur-md">
+          Ładowanie kolejki rabat…
+        </div>
+      </GardenQueue>
     </section>
   </div>
 </main>
