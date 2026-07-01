@@ -1,7 +1,7 @@
 ---
 change_id: redesign-front-end-theme
 title: Redesign front end theme
-status: implementing
+status: implemented
 created: 2026-07-01
 updated: 2026-07-01
 archived_at: null

@@ -407,15 +407,15 @@ No database, API, or data migration is required. This change is presentation and
 
 #### Automated
 
-- [x] 4.1 Astro sync passes: `npx astro sync`
-- [x] 4.2 Lint passes: `npm run lint`
-- [x] 4.3 Unit tests pass: `npm run test`
-- [x] 4.4 Production build passes: `npm run build`
-- [x] 4.5 E2E passes or the environment blocker is documented: `npm run test:e2e`
+- [x] 4.1 Astro sync passes: `npx astro sync` — bf485ce
+- [x] 4.2 Lint passes: `npm run lint` — bf485ce
+- [x] 4.3 Unit tests pass: `npm run test` — bf485ce
+- [x] 4.4 Production build passes: `npm run build` — bf485ce
+- [x] 4.5 E2E passes or the environment blocker is documented: `npm run test:e2e` — bf485ce
 
 #### Manual
 
-- [x] 4.6 Auth pages, public `/`, logged-in `/`, `/garden`, and `/dashboard` are visually coherent in the light pastel garden theme
-- [x] 4.7 Keyboard focus, hover, disabled, error, success, and destructive states remain visible
-- [x] 4.8 Local auth background image loads from `public/images/` and does not make form text hard to read
-- [x] 4.9 The implementation matches the chosen direction: light, airy, pastel garden, with rectangular lighter buttons
+- [x] 4.6 Auth pages, public `/`, logged-in `/`, `/garden`, and `/dashboard` are visually coherent in the light pastel garden theme — bf485ce
+- [x] 4.7 Keyboard focus, hover, disabled, error, success, and destructive states remain visible — bf485ce
+- [x] 4.8 Local auth background image loads from `public/images/` and does not make form text hard to read — bf485ce
+- [x] 4.9 The implementation matches the chosen direction: light, airy, pastel garden, with rectangular lighter buttons — bf485ce
