@@ -202,15 +202,15 @@ No database, API, data, or secret migration is required. This is an Astro direct
 
 #### Automated
 
-- [x] 2.1 Astro sync passes after final changes: `npx astro sync`
-- [x] 2.2 Lint passes after final changes: `npm run lint`
-- [x] 2.3 Unit tests pass after final changes: `npm run test`
-- [x] 2.4 E2E tests pass when the local authenticated Playwright/Supabase environment is available: `npm run test:e2e`
-- [x] 2.5 Production build passes after final changes: `npm run build`
+- [x] 2.1 Astro sync passes after final changes: `npx astro sync` — f67a198
+- [x] 2.2 Lint passes after final changes: `npm run lint` — f67a198
+- [x] 2.3 Unit tests pass after final changes: `npm run test` — f67a198
+- [x] 2.4 E2E tests pass when the local authenticated Playwright/Supabase environment is available: `npm run test:e2e` — f67a198
+- [x] 2.5 Production build passes after final changes: `npm run build` — f67a198
 
 #### Manual
 
-- [x] 2.6 Dev server no longer logs the React invalid hook call when `/auth/signin` is loaded
-- [x] 2.7 Dev server no longer logs the React invalid hook call when `/auth/signup` is loaded
-- [x] 2.8 Dev server no longer logs the React invalid hook call when `/garden` or authenticated `/` is loaded
-- [x] 2.9 The affected pages remain visually coherent: shell/card/hero content appears immediately, then the React island replaces the Polish fallback after hydration
+- [x] 2.6 Dev server no longer logs the React invalid hook call when `/auth/signin` is loaded — f67a198
+- [x] 2.7 Dev server no longer logs the React invalid hook call when `/auth/signup` is loaded — f67a198
+- [x] 2.8 Dev server no longer logs the React invalid hook call when `/garden` or authenticated `/` is loaded — f67a198
+- [x] 2.9 The affected pages remain visually coherent: shell/card/hero content appears immediately, then the React island replaces the Polish fallback after hydration — f67a198
