@@ -2,7 +2,14 @@
 import Layout from "@/layouts/Layout.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
 
-const error = Astro.url.searchParams.get("error");
+const authErrorMessages = {
+  signup_failed: "Nie udało się utworzyć konta. Sprawdź dane i spróbuj ponownie.",
+  supabase_not_configured: "Supabase nie jest skonfigurowany.",
+} as const;
+
+const errorCode = Astro.url.searchParams.get("error");
+const error =
+  errorCode && errorCode in authErrorMessages ? authErrorMessages[errorCode as keyof typeof authErrorMessages] : null;
 ---
 
 <Layout title="Rejestracja">

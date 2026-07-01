@@ -1331,6 +1331,7 @@ function QueueCard({
       </div>
 
       <WeedingForm
+        bedId={bed.id}
         bedName={bed.name}
         state={weedingState}
         onFieldChange={onWeedingFieldChange}
@@ -1349,6 +1350,7 @@ function QueueCard({
 
       {isObservationExpanded && (
         <ObservationSection
+          bedId={bed.id}
           bedName={bed.name}
           state={observationState}
           onFieldChange={onObservationFieldChange}
@@ -1360,6 +1362,7 @@ function QueueCard({
 
       {isPlantExpanded && (
         <PlantSection
+          bedId={bed.id}
           bedName={bed.name}
           state={plantState}
           onFieldChange={onPlantFieldChange}
@@ -1372,11 +1375,13 @@ function QueueCard({
 }
 
 function WeedingForm({
+  bedId,
   bedName,
   state,
   onFieldChange,
   onSubmit,
 }: {
+  bedId: string;
   bedName: string;
   state: WeedingBedState;
   onFieldChange: <K extends keyof WeedingFormState>(field: K, value: WeedingFormState[K]) => void;
@@ -1392,7 +1397,7 @@ function WeedingForm({
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
         <TextField
-          id={`weeding-date-${bedName}`}
+          id={`weeding-date-${bedId}`}
           label="Data pielenia"
           value={state.form.weeded_at}
           onChange={(value) => {
@@ -1404,7 +1409,7 @@ function WeedingForm({
           required
         />
         <TextField
-          id={`weeding-duration-${bedName}`}
+          id={`weeding-duration-${bedId}`}
           label="Czas w minutach"
           value={state.form.duration_minutes}
           onChange={(value) => {
@@ -1418,7 +1423,7 @@ function WeedingForm({
           required
         />
         <TextField
-          id={`weeding-note-${bedName}`}
+          id={`weeding-note-${bedId}`}
           label="Notatka"
           value={state.form.note}
           onChange={(value) => {
@@ -1504,6 +1509,7 @@ function WeedingHistorySection({
 }
 
 function ObservationSection({
+  bedId,
   bedName,
   state,
   onFieldChange,
@@ -1511,6 +1517,7 @@ function ObservationSection({
   onSubmit,
   onRetry,
 }: {
+  bedId: string;
   bedName: string;
   state: ObservationBedState;
   onFieldChange: <K extends keyof WeedObservationFormState>(field: K, value: WeedObservationFormState[K]) => void;
@@ -1573,11 +1580,11 @@ function ObservationSection({
 
       <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
         <div>
-          <label htmlFor={`weed-catalog-${bedName}`} className="mb-1 block text-sm text-emerald-950/75">
+          <label htmlFor={`weed-catalog-${bedId}`} className="mb-1 block text-sm text-emerald-950/75">
             Katalog chwastów
           </label>
           <select
-            id={`weed-catalog-${bedName}`}
+            id={`weed-catalog-${bedId}`}
             value={state.form.weed_catalog_slug}
             onChange={(event) => {
               onCatalogSelect(event.target.value);
@@ -1595,7 +1602,7 @@ function ObservationSection({
 
         <div className="grid gap-3 sm:grid-cols-2">
           <TextField
-            id={`weed-name-${bedName}`}
+            id={`weed-name-${bedId}`}
             label="Nazwa chwastu"
             value={state.form.weed_name}
             onChange={(value) => {
@@ -1605,7 +1612,7 @@ function ObservationSection({
             error={state.fieldErrors.weed_name}
           />
           <TextField
-            id={`weed-observed-${bedName}`}
+            id={`weed-observed-${bedId}`}
             label="Data obserwacji"
             value={state.form.observed_at}
             onChange={(value) => {
@@ -1620,7 +1627,7 @@ function ObservationSection({
 
         <div className="grid gap-3 sm:grid-cols-2">
           <SelectField
-            id={`weed-category-${bedName}`}
+            id={`weed-category-${bedId}`}
             label="Kategoria"
             value={state.form.weed_category}
             options={weedCategoryOptions}
@@ -1630,7 +1637,7 @@ function ObservationSection({
             error={state.fieldErrors.weed_category}
           />
           <SelectField
-            id={`weed-stage-${bedName}`}
+            id={`weed-stage-${bedId}`}
             label="Faza wzrostu"
             value={state.form.growth_stage}
             options={growthStageOptions.map(([value, label]) => ({ value, label }))}
@@ -1640,7 +1647,7 @@ function ObservationSection({
             error={state.fieldErrors.growth_stage}
           />
           <SelectField
-            id={`weed-coverage-${bedName}`}
+            id={`weed-coverage-${bedId}`}
             label="Pokrycie"
             value={state.form.coverage}
             options={coverageOptions.map(([value, label]) => ({ value, label }))}
@@ -1650,7 +1657,7 @@ function ObservationSection({
             error={state.fieldErrors.coverage}
           />
           <TextField
-            id={`weed-severity-${bedName}`}
+            id={`weed-severity-${bedId}`}
             label="Nasilenie 1-5"
             value={state.form.severity}
             onChange={(value) => {
@@ -1685,7 +1692,7 @@ function ObservationSection({
         </fieldset>
 
         <TextField
-          id={`weed-note-${bedName}`}
+          id={`weed-note-${bedId}`}
           label="Notatka"
           value={state.form.note}
           onChange={(value) => {
@@ -1709,12 +1716,14 @@ function ObservationSection({
 }
 
 function PlantSection({
+  bedId,
   bedName,
   state,
   onFieldChange,
   onSubmit,
   onRetry,
 }: {
+  bedId: string;
   bedName: string;
   state: PlantBedState;
   onFieldChange: (field: keyof PlantFormState, value: string) => void;
@@ -1766,7 +1775,7 @@ function PlantSection({
 
       <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
         <TextField
-          id={`plant-name-${bedName}`}
+          id={`plant-name-${bedId}`}
           label="Nazwa rośliny"
           value={state.form.name}
           onChange={(value) => {
@@ -1778,7 +1787,7 @@ function PlantSection({
         />
         <div className="grid gap-3 sm:grid-cols-2">
           <TextField
-            id={`plant-year-${bedName}`}
+            id={`plant-year-${bedId}`}
             label="Rok posadzenia"
             value={state.form.planted_year}
             onChange={(value) => {
@@ -1792,7 +1801,7 @@ function PlantSection({
             error={state.fieldErrors.planted_year}
           />
           <TextField
-            id={`plant-quantity-${bedName}`}
+            id={`plant-quantity-${bedId}`}
             label="Liczba sztuk"
             value={state.form.quantity}
             onChange={(value) => {
@@ -1805,7 +1814,7 @@ function PlantSection({
             error={state.fieldErrors.quantity}
           />
           <TextField
-            id={`plant-height-${bedName}`}
+            id={`plant-height-${bedId}`}
             label="Obecna wysokość (cm)"
             value={state.form.height_cm}
             onChange={(value) => {
@@ -1818,7 +1827,7 @@ function PlantSection({
             error={state.fieldErrors.height_cm}
           />
           <TextField
-            id={`plant-width-${bedName}`}
+            id={`plant-width-${bedId}`}
             label="Obecna szerokość (cm)"
             value={state.form.width_cm}
             onChange={(value) => {
@@ -2136,7 +2145,12 @@ function formatDisplayDate(value: string): string {
 }
 
 function getTodayIsoDate(): string {
-  return new Date().toISOString().slice(0, 10);
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 function formatWeedLevel(value: WeedLevel): string {

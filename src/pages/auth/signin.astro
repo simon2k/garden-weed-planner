@@ -2,7 +2,14 @@
 import Layout from "@/layouts/Layout.astro";
 import SignInForm from "@/components/auth/SignInForm";
 
-const error = Astro.url.searchParams.get("error");
+const authErrorMessages = {
+  invalid_credentials: "Nieprawidłowy adres e-mail lub hasło.",
+  supabase_not_configured: "Supabase nie jest skonfigurowany.",
+} as const;
+
+const errorCode = Astro.url.searchParams.get("error");
+const error =
+  errorCode && errorCode in authErrorMessages ? authErrorMessages[errorCode as keyof typeof authErrorMessages] : null;
 ---
 
 <Layout title="Logowanie">
