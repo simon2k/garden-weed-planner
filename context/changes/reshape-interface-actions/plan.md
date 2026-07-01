@@ -376,36 +376,36 @@ No database, API, data, or secret migration is required. Removing `/dashboard` m
 
 #### Automated
 
-- [x] 2.1 Astro sync passes after bed-card changes: `npx astro sync`
-- [x] 2.2 Lint passes after bed-card changes: `npm run lint`
-- [x] 2.3 Unit tests pass after bed-card changes: `npm run test`
-- [x] 2.4 Production build passes after bed-card changes: `npm run build`
+- [x] 2.1 Astro sync passes after bed-card changes: `npx astro sync` — 27c3908
+- [x] 2.2 Lint passes after bed-card changes: `npm run lint` — 27c3908
+- [x] 2.3 Unit tests pass after bed-card changes: `npm run test` — 27c3908
+- [x] 2.4 Production build passes after bed-card changes: `npm run build` — 27c3908
 
 #### Manual
 
-- [x] 2.5 Each bed card has a top-right X/icon button with Polish accessible delete label
-- [x] 2.6 Delete X opens inline confirmation in the same card; cancel and confirm still work
-- [x] 2.7 Only one of observations, weeding history, or plants is visible per bed card at a time
-- [x] 2.8 Selecting each tab lazy-loads its data and preserves retry/error behavior
-- [x] 2.9 Add observation, mark weeded, and add plant actions open modals and close only after successful submit
-- [x] 2.10 Failed validation/API calls keep the relevant modal open with Polish errors
-- [x] 2.11 “Oznacz rabatę jako wypieloną” is green
+- [x] 2.5 Each bed card has a top-right X/icon button with Polish accessible delete label — 27c3908
+- [x] 2.6 Delete X opens inline confirmation in the same card; cancel and confirm still work — 27c3908
+- [x] 2.7 Only one of observations, weeding history, or plants is visible per bed card at a time — 27c3908
+- [x] 2.8 Selecting each tab lazy-loads its data and preserves retry/error behavior — 27c3908
+- [x] 2.9 Add observation, mark weeded, and add plant actions open modals and close only after successful submit — 27c3908
+- [x] 2.10 Failed validation/API calls keep the relevant modal open with Polish errors — 27c3908
+- [x] 2.11 “Oznacz rabatę jako wypieloną” is green — 27c3908
 
 ### Phase 3: Remove Panel Navigation and Route
 
 #### Automated
 
-- [ ] 3.1 Astro sync passes after route removal: `npx astro sync`
-- [ ] 3.2 Lint passes after route removal: `npm run lint`
-- [ ] 3.3 Unit tests pass after route removal: `npm run test`
-- [ ] 3.4 Production build passes after route removal: `npm run build`
+- [x] 3.1 Astro sync passes after route removal: `npx astro sync`
+- [x] 3.2 Lint passes after route removal: `npm run lint`
+- [x] 3.3 Unit tests pass after route removal: `npm run test`
+- [x] 3.4 Production build passes after route removal: `npm run build`
 
 #### Manual
 
-- [ ] 3.5 Authenticated topbar no longer shows “Panel”
-- [ ] 3.6 Authenticated topbar still shows “Ogród” and “Wyloguj”
-- [ ] 3.7 `/garden` remains protected and renders for authenticated users
-- [ ] 3.8 `/dashboard` no longer renders the old Panel page
+- [x] 3.5 Authenticated topbar no longer shows “Panel”
+- [x] 3.6 Authenticated topbar still shows “Ogród” and “Wyloguj”
+- [x] 3.7 `/garden` remains protected and renders for authenticated users
+- [x] 3.8 `/dashboard` no longer renders the old Panel page
 
 ### Phase 4: E2E Updates and Final Verification
 
