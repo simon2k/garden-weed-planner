@@ -1,175 +1,200 @@
-# 10x Astro Starter
+# Garden Weed Planner
 
-![](./public/template.png)
+Garden Weed Planner is an MVP web app for deciding which garden bed should be weeded first. A signed-in user records beds, plants, weed observations, and completed weeding events. The app then computes a priority queue with `OK`, `wkrótce`, and `pilne` labels plus a suggested next-weeding date.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+The product foundation is documented in [`context/foundation/prd.md`](context/foundation/prd.md). The test strategy is documented in [`context/foundation/test-plan.md`](context/foundation/test-plan.md).
+
+## Core MVP Features
+
+- Email/password authentication with Supabase Auth.
+- Protected `/garden` area for signed-in users.
+- Per-user garden bed records stored in Supabase with row-level security.
+- CRUD flow for garden beds:
+  - create beds,
+  - list/read owned beds,
+  - mark a bed as weeded, which updates persisted bed state,
+  - delete owned beds.
+- Plant lists per bed.
+- Weed observations per bed, including category, growth stage, coverage, severity, and risk traits.
+- Weeding history per bed.
+- Rule-based priority calculation from last-weeding date, weed level, area, estimated work time, mulch depth, and recent weed observations.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+- Astro 6 SSR
+- React 19 islands for interactive garden/auth UI
+- TypeScript
+- Tailwind CSS 4
+- Supabase Auth + Postgres + RLS
+- Cloudflare Workers adapter
+- Vitest for domain-unit tests
+- Playwright for browser smoke tests
 
-## Prerequisites
+## Requirements
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+- Node.js `22.14.0` from [`.nvmrc`](.nvmrc)
+- npm
+- Supabase CLI for local database/auth development
+- Docker if running Supabase locally
 
-## Getting Started
+## Environment Variables
 
-1. Clone the repository:
+The app reads Supabase configuration server-side through Astro env declarations.
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
-
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
-
-```bash
-cp .env.example .dev.vars
-```
-
-5. Run the development server:
-
-```bash
-npm run dev
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
-
-## Project Structure
-
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
-```
-
-## Supabase Configuration
-
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
-
-### First-time setup (local, no cloud project needed)
-
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
+Create local env files from the example:
 
 ```bash
 cp .env.example .env
+cp .env.example .dev.vars
 ```
 
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
+Set:
 
 ```bash
-npx supabase init
+SUPABASE_URL=<your Supabase project URL>
+SUPABASE_KEY=<your Supabase anon key>
 ```
 
-3. Start the local stack (downloads Docker images on first run):
+Do not commit real Supabase values. `.dev.vars` is for local Cloudflare/Worker secrets.
+
+## Local Setup
+
+Install dependencies:
+
+```bash
+npm ci
+```
+
+Start Supabase locally if you are not using a hosted project:
 
 ```bash
 npx supabase start
 ```
 
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
-
-```
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
-```
-
-5. To stop the stack when done:
+Apply database migrations:
 
 ```bash
-npx supabase stop
+npx supabase db reset
 ```
 
-The local Studio UI is available at `http://localhost:54323`.
+Run Astro type/env sync:
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
-
-### Using a cloud Supabase project instead
-
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
-
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
-
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
+```bash
+npx astro sync
 ```
 
-### Email confirmation in local development
+Start the development server:
 
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
+```bash
+npm run dev
+```
 
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
+Open the app at `http://localhost:4321`.
 
-Users can then sign in immediately after sign-up without clicking a confirmation link.
+## Database Model
 
-### Auth routes
+Supabase migrations live in [`supabase/migrations/`](supabase/migrations/). The main persisted resources are:
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+- `public.garden_beds` — owned garden beds and queue inputs.
+- `public.garden_bed_plants` — plants assigned to a bed.
+- `public.garden_bed_weed_observations` — weed pressure observations for priority scoring.
+- `public.garden_bed_weeding_events` — completed weeding history.
+- `public.mark_garden_bed_weeded(...)` — transactional RPC that inserts a weeding event and updates the bed summary.
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+Tables use `user_id` ownership and Supabase RLS policies so users can access only their own garden data.
 
-## Deployment
+## Useful Routes
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
+- `/` — landing page
+- `/auth/signin` — sign in
+- `/auth/signup` — sign up
+- `/auth/confirm-email` — post-signup confirmation page
+- `/garden` — protected garden queue and management UI
 
-1. Build the project:
+API endpoints are under `src/pages/api/`, including auth routes and nested garden-bed routes.
+
+## Development Commands
+
+```bash
+npm run dev              # Start local Astro dev server
+npx astro sync           # Generate Astro types/env metadata
+npm run lint             # Run ESLint
+npm run test             # Run Vitest unit tests
+npm run test:e2e         # Run Playwright E2E smoke tests
+npm run test:pre-push    # Run unit + E2E tests
+npm run build            # Build for Cloudflare Workers
+npm run preview          # Preview production build
+npm run format           # Format files with Prettier
+```
+
+Before handing off app or config changes, run:
+
+```bash
+npx astro sync
+npm run lint
+npm run test
+npm run build
+```
+
+## Testing
+
+The risk-based test plan is in [`context/foundation/test-plan.md`](context/foundation/test-plan.md).
+
+Current test coverage includes:
+
+- Domain priority/date tests in `src/lib/garden-beds.test.ts`.
+- Weed observation validation tests in `src/lib/weed-observations.test.ts`.
+- Weeding-event validation tests in `src/lib/weeding-events.test.ts`.
+- Playwright smoke tests in `e2e/` for priority queue behavior and add/delete UI sync.
+
+Unit tests must stay deterministic and must not depend on real Supabase secrets or `.dev.vars` contents.
+
+## Project Structure
+
+```text
+src/
+  components/
+    auth/       # React auth form components
+    garden/     # Garden queue React island and page shell
+    ui/         # shadcn/ui-style primitives
+  lib/          # Domain logic, Supabase client, helpers, tests
+  pages/
+    api/        # Astro API routes
+    auth/       # Auth pages
+    garden.astro
+  middleware.ts # Auth loading and protected route enforcement
+supabase/
+  migrations/   # Database schema, RLS, RPCs
+context/
+  foundation/   # Product, stack, deployment, roadmap, and test docs
+e2e/            # Playwright tests
+```
+
+## Deployment Notes
+
+The app is configured for Cloudflare Workers. Build with:
 
 ```bash
 npm run build
 ```
 
-2. Deploy with Wrangler:
+Deploy with Wrangler after setting Supabase secrets in Cloudflare:
 
 ```bash
 npx wrangler deploy
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+See [`context/foundation/deploy-plan.md`](context/foundation/deploy-plan.md) for deployment context.
 
-## CI
+## 10xBuilder Review Notes
 
-GitHub Actions runs lint + build on every push and PR to `main`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+This MVP is intentionally focused on technical foundations:
 
-## License
+- persisted user-owned resources,
+- complete garden-bed CRUD flow,
+- domain-specific priority logic,
+- authentication and authorization boundaries,
+- risk-based automated tests,
+- written product foundation in `context/foundation/`.
 
-MIT
+Visual design, styling polish, accessibility, and live hosting status are intentionally outside this README's technical-certification scope.
