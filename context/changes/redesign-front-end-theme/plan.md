@@ -392,30 +392,30 @@ No database, API, or data migration is required. This change is presentation and
 
 #### Automated
 
-- [x] 3.1 Lint passes after GardenQueue class/layout changes: `npm run lint`
-- [x] 3.2 Unit tests still pass: `npm run test`
-- [x] 3.3 Existing E2E smoke/priority specs pass when auth state and Supabase test environment are available: `npm run test:e2e`
+- [x] 3.1 Lint passes after GardenQueue class/layout changes: `npm run lint` — 4c78573
+- [x] 3.2 Unit tests still pass: `npm run test` — 4c78573
+- [x] 3.3 Existing E2E smoke/priority specs pass when auth state and Supabase test environment are available: `npm run test:e2e` — 4c78573
 
 #### Manual
 
-- [x] 3.4 `/garden` no longer feels narrow on desktop; content uses a wider `max-w-7xl`-style layout while remaining usable on mobile
-- [x] 3.5 Adding, deleting, refreshing, marking weeded, adding observations, and adding plants still work through the UI
-- [x] 3.6 No dark cosmic panels, unreadable white-on-light text, or leftover dark-only controls remain in the garden dashboard
-- [x] 3.7 Priority badges, validation errors, success messages, and confirmation panels are readable and visually consistent
+- [x] 3.4 `/garden` no longer feels narrow on desktop; content uses a wider `max-w-7xl`-style layout while remaining usable on mobile — 4c78573
+- [x] 3.5 Adding, deleting, refreshing, marking weeded, adding observations, and adding plants still work through the UI — 4c78573
+- [x] 3.6 No dark cosmic panels, unreadable white-on-light text, or leftover dark-only controls remain in the garden dashboard — 4c78573
+- [x] 3.7 Priority badges, validation errors, success messages, and confirmation panels are readable and visually consistent — 4c78573
 
 ### Phase 4: Verification and Visual Regression Pass
 
 #### Automated
 
-- [ ] 4.1 Astro sync passes: `npx astro sync`
-- [ ] 4.2 Lint passes: `npm run lint`
-- [ ] 4.3 Unit tests pass: `npm run test`
-- [ ] 4.4 Production build passes: `npm run build`
-- [ ] 4.5 E2E passes or the environment blocker is documented: `npm run test:e2e`
+- [x] 4.1 Astro sync passes: `npx astro sync`
+- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.3 Unit tests pass: `npm run test`
+- [x] 4.4 Production build passes: `npm run build`
+- [x] 4.5 E2E passes or the environment blocker is documented: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 4.6 Auth pages, public `/`, logged-in `/`, `/garden`, and `/dashboard` are visually coherent in the light pastel garden theme
-- [ ] 4.7 Keyboard focus, hover, disabled, error, success, and destructive states remain visible
-- [ ] 4.8 Local auth background image loads from `public/images/` and does not make form text hard to read
-- [ ] 4.9 The implementation matches the chosen direction: light, airy, pastel garden, with rectangular lighter buttons
+- [x] 4.6 Auth pages, public `/`, logged-in `/`, `/garden`, and `/dashboard` are visually coherent in the light pastel garden theme
+- [x] 4.7 Keyboard focus, hover, disabled, error, success, and destructive states remain visible
+- [x] 4.8 Local auth background image loads from `public/images/` and does not make form text hard to read
+- [x] 4.9 The implementation matches the chosen direction: light, airy, pastel garden, with rectangular lighter buttons
