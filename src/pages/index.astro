@@ -1,8 +1,11 @@
 ---
+import GardenPage from "@/components/garden/GardenPage.astro";
 import Welcome from "@/components/Welcome.astro";
 import Layout from "@/layouts/Layout.astro";
+
+const { user } = Astro.locals;
 ---
 
-<Layout>
-  <Welcome />
+<Layout title={user ? "Kolejka pielenia" : "Garden Weed Planner"}>
+  {user ? <GardenPage /> : <Welcome />}
 </Layout>

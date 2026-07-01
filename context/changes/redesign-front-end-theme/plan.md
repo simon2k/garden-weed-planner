@@ -362,31 +362,31 @@ No database, API, or data migration is required. This change is presentation and
 
 #### Automated
 
-- [x] 1.1 Astro types/components sync passes: `npx astro sync`
-- [x] 1.2 Lint passes for changed UI files: `npm run lint`
-- [x] 1.3 Unit tests still pass: `npm run test`
+- [x] 1.1 Astro types/components sync passes: `npx astro sync` — da653cd
+- [x] 1.2 Lint passes for changed UI files: `npm run lint` — da653cd
+- [x] 1.3 Unit tests still pass: `npm run test` — da653cd
 
 #### Manual
 
-- [x] 1.4 `/auth/signin` shows a light garden-bed background from a local asset, with readable form text and errors
-- [x] 1.5 `/auth/signup` visually matches sign-in and remains readable on desktop and mobile widths
-- [x] 1.6 `/auth/confirm-email` visually matches the auth light theme and remains readable in both DEV and production message variants
-- [x] 1.7 Buttons on auth pages look rectangular/lighter while preserving visible focus and disabled states
+- [x] 1.4 `/auth/signin` shows a light garden-bed background from a local asset, with readable form text and errors — da653cd
+- [x] 1.5 `/auth/signup` visually matches sign-in and remains readable on desktop and mobile widths — da653cd
+- [x] 1.6 `/auth/confirm-email` visually matches the auth light theme and remains readable in both DEV and production message variants — da653cd
+- [x] 1.7 Buttons on auth pages look rectangular/lighter while preserving visible focus and disabled states — da653cd
 
 ### Phase 2: Root Route and Public Landing Alignment
 
 #### Automated
 
-- [ ] 2.1 Astro sync passes after route/component composition changes: `npx astro sync`
-- [ ] 2.2 Lint passes: `npm run lint`
-- [ ] 2.3 Unit tests still pass: `npm run test`
+- [x] 2.1 Astro sync passes after route/component composition changes: `npx astro sync`
+- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.3 Unit tests still pass: `npm run test`
 
 #### Manual
 
-- [ ] 2.4 Logged-out `/` shows the light redesigned public landing page with working sign-in/sign-up CTAs
-- [ ] 2.5 Logged-in `/` shows the garden experience directly without first showing the public landing
-- [ ] 2.6 `/garden` remains accessible and shows the same garden experience for authenticated users
-- [ ] 2.7 Topbar text and actions are readable on both public and authenticated light pages
+- [x] 2.4 Logged-out `/` shows the light redesigned public landing page with working sign-in/sign-up CTAs
+- [x] 2.5 Logged-in `/` shows the garden experience directly without first showing the public landing
+- [x] 2.6 `/garden` remains accessible and shows the same garden experience for authenticated users
+- [x] 2.7 Topbar text and actions are readable on both public and authenticated light pages
 
 ### Phase 3: Garden Dashboard Layout and Component Restyling
 
