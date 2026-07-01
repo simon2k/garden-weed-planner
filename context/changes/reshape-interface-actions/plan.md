@@ -395,31 +395,31 @@ No database, API, data, or secret migration is required. Removing `/dashboard` m
 
 #### Automated
 
-- [x] 3.1 Astro sync passes after route removal: `npx astro sync`
-- [x] 3.2 Lint passes after route removal: `npm run lint`
-- [x] 3.3 Unit tests pass after route removal: `npm run test`
-- [x] 3.4 Production build passes after route removal: `npm run build`
+- [x] 3.1 Astro sync passes after route removal: `npx astro sync` — 6409625
+- [x] 3.2 Lint passes after route removal: `npm run lint` — 6409625
+- [x] 3.3 Unit tests pass after route removal: `npm run test` — 6409625
+- [x] 3.4 Production build passes after route removal: `npm run build` — 6409625
 
 #### Manual
 
-- [x] 3.5 Authenticated topbar no longer shows “Panel”
-- [x] 3.6 Authenticated topbar still shows “Ogród” and “Wyloguj”
-- [x] 3.7 `/garden` remains protected and renders for authenticated users
-- [x] 3.8 `/dashboard` no longer renders the old Panel page
+- [x] 3.5 Authenticated topbar no longer shows “Panel” — 6409625
+- [x] 3.6 Authenticated topbar still shows “Ogród” and “Wyloguj” — 6409625
+- [x] 3.7 `/garden` remains protected and renders for authenticated users — 6409625
+- [x] 3.8 `/dashboard` no longer renders the old Panel page — 6409625
 
 ### Phase 4: E2E Updates and Final Verification
 
 #### Automated
 
-- [ ] 4.1 Astro sync passes after final changes: `npx astro sync`
-- [ ] 4.2 Lint passes after final changes: `npm run lint`
-- [ ] 4.3 Unit tests pass after final changes: `npm run test`
-- [ ] 4.4 E2E tests pass after test updates, including the mark-weeded modal smoke path: `npm run test:e2e`
-- [ ] 4.5 Production build passes after final changes: `npm run build`
+- [x] 4.1 Astro sync passes after final changes: `npx astro sync`
+- [x] 4.2 Lint passes after final changes: `npm run lint`
+- [x] 4.3 Unit tests pass after final changes: `npm run test`
+- [x] 4.4 E2E tests pass after test updates, including the mark-weeded modal smoke path: `npm run test:e2e`
+- [x] 4.5 Production build passes after final changes: `npm run build`
 
 #### Manual
 
-- [ ] 4.6 `/garden` add/delete bed happy path works through the new modal/X UI
-- [ ] 4.7 Priority queue ordering remains correct after adding multiple beds through the modal
-- [ ] 4.8 Bed tabs and bed-level action modals remain visually coherent on desktop and mobile widths
-- [ ] 4.9 No “Panel” link or old Panel page remains visible in normal navigation
+- [x] 4.6 `/garden` add/delete bed happy path works through the new modal/X UI
+- [x] 4.7 Priority queue ordering remains correct after adding multiple beds through the modal
+- [x] 4.8 Bed tabs and bed-level action modals remain visually coherent on desktop and mobile widths
+- [x] 4.9 No “Panel” link or old Panel page remains visible in normal navigation
