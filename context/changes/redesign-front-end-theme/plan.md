@@ -377,31 +377,31 @@ No database, API, or data migration is required. This change is presentation and
 
 #### Automated
 
-- [x] 2.1 Astro sync passes after route/component composition changes: `npx astro sync`
-- [x] 2.2 Lint passes: `npm run lint`
-- [x] 2.3 Unit tests still pass: `npm run test`
+- [x] 2.1 Astro sync passes after route/component composition changes: `npx astro sync` — bced81a
+- [x] 2.2 Lint passes: `npm run lint` — bced81a
+- [x] 2.3 Unit tests still pass: `npm run test` — bced81a
 
 #### Manual
 
-- [x] 2.4 Logged-out `/` shows the light redesigned public landing page with working sign-in/sign-up CTAs
-- [x] 2.5 Logged-in `/` shows the garden experience directly without first showing the public landing
-- [x] 2.6 `/garden` remains accessible and shows the same garden experience for authenticated users
-- [x] 2.7 Topbar text and actions are readable on both public and authenticated light pages
+- [x] 2.4 Logged-out `/` shows the light redesigned public landing page with working sign-in/sign-up CTAs — bced81a
+- [x] 2.5 Logged-in `/` shows the garden experience directly without first showing the public landing — bced81a
+- [x] 2.6 `/garden` remains accessible and shows the same garden experience for authenticated users — bced81a
+- [x] 2.7 Topbar text and actions are readable on both public and authenticated light pages — bced81a
 
 ### Phase 3: Garden Dashboard Layout and Component Restyling
 
 #### Automated
 
-- [ ] 3.1 Lint passes after GardenQueue class/layout changes: `npm run lint`
-- [ ] 3.2 Unit tests still pass: `npm run test`
-- [ ] 3.3 Existing E2E smoke/priority specs pass when auth state and Supabase test environment are available: `npm run test:e2e`
+- [x] 3.1 Lint passes after GardenQueue class/layout changes: `npm run lint`
+- [x] 3.2 Unit tests still pass: `npm run test`
+- [x] 3.3 Existing E2E smoke/priority specs pass when auth state and Supabase test environment are available: `npm run test:e2e`
 
 #### Manual
 
-- [ ] 3.4 `/garden` no longer feels narrow on desktop; content uses a wider `max-w-7xl`-style layout while remaining usable on mobile
-- [ ] 3.5 Adding, deleting, refreshing, marking weeded, adding observations, and adding plants still work through the UI
-- [ ] 3.6 No dark cosmic panels, unreadable white-on-light text, or leftover dark-only controls remain in the garden dashboard
-- [ ] 3.7 Priority badges, validation errors, success messages, and confirmation panels are readable and visually consistent
+- [x] 3.4 `/garden` no longer feels narrow on desktop; content uses a wider `max-w-7xl`-style layout while remaining usable on mobile
+- [x] 3.5 Adding, deleting, refreshing, marking weeded, adding observations, and adding plants still work through the UI
+- [x] 3.6 No dark cosmic panels, unreadable white-on-light text, or leftover dark-only controls remain in the garden dashboard
+- [x] 3.7 Priority badges, validation errors, success messages, and confirmation panels are readable and visually consistent
 
 ### Phase 4: Verification and Visual Regression Pass
 

@@ -143,35 +143,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-@layer utilities {
-  .garden-dashboard-bridge [class~="text-white"],
-  .garden-dashboard-bridge [class*="text-blue-100"],
-  .garden-dashboard-bridge [class*="text-emerald-100"],
-  .garden-dashboard-bridge [class*="text-amber-100"],
-  .garden-dashboard-bridge [class*="text-red-100"] {
-    color: rgb(20 83 45 / 0.92);
-  }
-
-  .garden-dashboard-bridge [class*="text-emerald-200"],
-  .garden-dashboard-bridge [class*="text-purple-300"] {
-    color: rgb(4 120 87 / 0.92);
-  }
-
-  .garden-dashboard-bridge [class*="bg-white/10"],
-  .garden-dashboard-bridge [class*="bg-white/5"],
-  .garden-dashboard-bridge [class*="bg-slate-950"],
-  .garden-dashboard-bridge [class*="bg-blue-950"],
-  .garden-dashboard-bridge [class*="bg-amber-950"],
-  .garden-dashboard-bridge [class*="bg-emerald-950"],
-  .garden-dashboard-bridge [class*="bg-red-950"] {
-    background-color: rgb(255 255 247 / 0.82);
-  }
-
-  .garden-dashboard-bridge [class*="border-white"],
-  .garden-dashboard-bridge [class*="border-blue-300"],
-  .garden-dashboard-bridge [class*="border-amber-300"],
-  .garden-dashboard-bridge [class*="border-emerald-300"] {
-    border-color: rgb(132 165 111 / 0.32);
-  }
-}

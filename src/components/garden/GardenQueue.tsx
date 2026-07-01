@@ -825,16 +825,16 @@ export function GardenQueue() {
   }
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+    <section className="grid gap-6 lg:grid-cols-[minmax(22rem,0.7fr)_minmax(0,1.3fr)]">
       <form
         onSubmit={handleSubmit}
-        className="rounded-2xl border border-white/10 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-xl"
+        className="garden-card rounded-xl border p-6 text-emerald-950 backdrop-blur-md"
         noValidate
       >
         <div className="mb-6 space-y-2">
-          <p className="text-sm font-semibold tracking-[0.3em] text-emerald-200/80 uppercase">Dodaj rabatę</p>
+          <p className="text-sm font-semibold tracking-[0.3em] text-emerald-700 uppercase">Dodaj rabatę</p>
           <h2 className="text-2xl font-bold">Szczegóły rabaty</h2>
-          <p className="text-sm leading-6 text-blue-100/70">
+          <p className="text-sm leading-6 text-emerald-900/65">
             Nazwa i poziom zachwaszczenia są wymagane. Pozostałe pola poprawiają pewność priorytetu, ale mogą zostać
             puste.
           </p>
@@ -854,8 +854,8 @@ export function GardenQueue() {
           />
 
           <div>
-            <label htmlFor="weed_level" className="mb-1 block text-sm text-blue-100/80">
-              Poziom zachwaszczenia <span className="text-emerald-200">*</span>
+            <label htmlFor="weed_level" className="mb-1 block text-sm text-emerald-950/75">
+              Poziom zachwaszczenia <span className="text-emerald-600">*</span>
             </label>
             <select
               id="weed_level"
@@ -863,7 +863,7 @@ export function GardenQueue() {
               onChange={(event) => {
                 updateField("weed_level", event.target.value as WeedLevel);
               }}
-              className="w-full rounded-lg border border-white/20 bg-slate-950/80 px-3 py-2 text-white transition-colors outline-none focus:ring-2 focus:ring-purple-400"
+              className="w-full rounded-lg border border-emerald-200/80 bg-white/90 px-3 py-2 text-emerald-950 transition-colors outline-none focus:ring-2 focus:ring-emerald-300"
             >
               {weedLevelOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -928,7 +928,7 @@ export function GardenQueue() {
 
           <ServerError message={error} />
           {successMessage && (
-            <p className="rounded-lg border border-emerald-400/30 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-100">
+            <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
               {successMessage}
             </p>
           )}
@@ -936,7 +936,7 @@ export function GardenQueue() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-emerald-400 text-slate-950 hover:bg-emerald-300"
+            className="w-full bg-emerald-700 text-white hover:bg-emerald-600"
           >
             {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
             {isSubmitting ? "Dodawanie rabaty..." : "Dodaj do kolejki priorytetów"}
@@ -944,12 +944,12 @@ export function GardenQueue() {
         </div>
       </form>
 
-      <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-xl">
+      <div className="garden-card rounded-xl border p-6 text-emerald-950 backdrop-blur-md">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
-            <p className="text-sm font-semibold tracking-[0.3em] text-emerald-200/80 uppercase">Kolejka priorytetów</p>
+            <p className="text-sm font-semibold tracking-[0.3em] text-emerald-700 uppercase">Kolejka priorytetów</p>
             <h2 className="text-2xl font-bold">Następne rabaty do pielenia</h2>
-            <p className="text-sm text-blue-100/70">
+            <p className="text-sm text-emerald-900/65">
               {queueSummary.total === 0
                 ? "Dodaj pierwszą rabatę, aby zobaczyć kolejkę."
                 : `${queueSummary.total} rabat · pilne: ${queueSummary.urgent} · wkrótce: ${queueSummary.soon}`}
@@ -960,7 +960,7 @@ export function GardenQueue() {
             variant="outline"
             onClick={() => void loadBeds()}
             disabled={isLoading}
-            className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+            className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
           >
             {isLoading && <Loader2 className="size-4 animate-spin" />}
             Odśwież
@@ -968,15 +968,15 @@ export function GardenQueue() {
         </div>
 
         {isLoading ? (
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/30 p-4 text-blue-100/80">
+          <div className="flex items-center gap-3 rounded-xl border border-emerald-200/70 bg-white/72 p-4 text-emerald-950/75">
             <Loader2 className="size-5 animate-spin" />
             Wczytywanie rabat...
           </div>
         ) : beds.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-white/20 bg-slate-950/30 p-6 text-center">
-            <Sprout className="mx-auto mb-3 size-8 text-emerald-200" />
+          <div className="rounded-xl border border-dashed border-emerald-200/80 bg-white/72 p-6 text-center">
+            <Sprout className="mx-auto mb-3 size-8 text-emerald-600" />
             <h3 className="font-semibold">Nie masz jeszcze rabat w kolejce</h3>
-            <p className="mt-2 text-sm text-blue-100/70">
+            <p className="mt-2 text-sm text-emerald-900/65">
               Dodaj rabatę z poziomem zachwaszczenia, aby zacząć budować kolejkę pielenia.
             </p>
           </div>
@@ -1063,8 +1063,8 @@ function TextField({
 }: TextFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1 block text-sm text-blue-100/80">
-        {label} {required && <span className="text-emerald-200">*</span>}
+      <label htmlFor={id} className="mb-1 block text-sm text-emerald-950/75">
+        {label} {required && <span className="text-emerald-600">*</span>}
       </label>
       <input
         id={id}
@@ -1079,12 +1079,12 @@ function TextField({
         }}
         placeholder={placeholder}
         className={cn(
-          "w-full rounded-lg border bg-white/10 px-3 py-2 text-white placeholder-white/40 transition-colors outline-none focus:ring-2",
-          error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400",
+          "w-full rounded-lg border bg-white/80 px-3 py-2 text-emerald-950 placeholder-emerald-900/35 transition-colors outline-none focus:ring-2",
+          error ? "border-red-300 focus:ring-red-300" : "border-emerald-200/80 focus:ring-emerald-300",
         )}
       />
       {error && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+        <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
           <AlertCircle className="size-3" />
           {error}
         </p>
@@ -1115,8 +1115,8 @@ function SelectField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1 block text-sm text-blue-100/80">
-        {label} <span className="text-emerald-200">*</span>
+      <label htmlFor={id} className="mb-1 block text-sm text-emerald-950/75">
+        {label} <span className="text-emerald-600">*</span>
       </label>
       <select
         id={id}
@@ -1125,8 +1125,8 @@ function SelectField({
           onChange(event.target.value);
         }}
         className={cn(
-          "w-full rounded-lg border bg-slate-950/80 px-3 py-2 text-white transition-colors outline-none focus:ring-2",
-          error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400",
+          "w-full rounded-lg border bg-white/90 px-3 py-2 text-emerald-950 transition-colors outline-none focus:ring-2",
+          error ? "border-red-300 focus:ring-red-300" : "border-emerald-200/80 focus:ring-emerald-300",
         )}
       >
         {options.map((option) => (
@@ -1136,7 +1136,7 @@ function SelectField({
         ))}
       </select>
       {error && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+        <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
           <AlertCircle className="size-3" />
           {error}
         </p>
@@ -1208,7 +1208,7 @@ function QueueCard({
     : "Dodaj datę ostatniego pielenia, aby otrzymać sugestię kolejnego terminu.";
   const priorityClass = `rounded-full px-3 py-1 text-sm font-semibold ${priorityClassName(bed.priority)}`;
   const confidenceClass = `rounded-full px-3 py-1 text-xs font-medium ${
-    bed.priority_confidence === "complete" ? "bg-emerald-400/15 text-emerald-100" : "bg-amber-400/15 text-amber-100"
+    bed.priority_confidence === "complete" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
   }`;
   const weedLevel = formatWeedLevel(bed.weed_level);
   const area = formatOptionalNumber(bed.area_m2, "m²");
@@ -1216,16 +1216,16 @@ function QueueCard({
   const mulch = formatOptionalNumber(bed.mulch_depth_cm, "cm");
 
   return (
-    <li className="rounded-xl border border-white/10 bg-slate-950/35 p-4">
+    <li className="rounded-xl border border-emerald-200/70 bg-white/82 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-blue-100">
+            <span className="flex size-7 items-center justify-center rounded-full bg-white/80 text-sm font-semibold text-emerald-900">
               {position}
             </span>
             <h3 className="text-lg font-semibold">{bed.name}</h3>
           </div>
-          <p className="mt-2 flex items-center gap-2 text-sm text-blue-100/70">
+          <p className="mt-2 flex items-center gap-2 text-sm text-emerald-900/65">
             <CalendarDays className="size-4" />
             {suggestedDateText}
           </p>
@@ -1239,7 +1239,7 @@ function QueueCard({
         </div>
       </div>
 
-      <dl className="mt-4 grid gap-3 text-sm text-blue-100/75 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="mt-4 grid gap-3 text-sm text-emerald-900/70 sm:grid-cols-2 lg:grid-cols-4">
         <QueueMetric icon={<Sprout className="size-4" />} label="Poziom zachwaszczenia" value={weedLevel} />
         <QueueMetric icon={<Map className="size-4" />} label="Powierzchnia" value={area} />
         <QueueMetric icon={<Clock className="size-4" />} label="Czas pracy" value={workTime} />
@@ -1247,7 +1247,7 @@ function QueueCard({
       </dl>
 
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1 text-xs text-blue-100/60">
+        <div className="space-y-1 text-xs text-emerald-900/55">
           <p>Wynik priorytetu: {bed.priority_score}</p>
           {bed.observation_count > 0 && (
             <p>
@@ -1260,7 +1260,7 @@ function QueueCard({
             type="button"
             variant="outline"
             onClick={onToggleObservations}
-            className="border-amber-300/30 bg-amber-400/10 text-amber-100 hover:bg-amber-400/20 hover:text-white"
+            className="border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 hover:text-emerald-950"
             aria-expanded={isObservationExpanded}
           >
             <Sprout className="size-4" />
@@ -1270,7 +1270,7 @@ function QueueCard({
             type="button"
             variant="outline"
             onClick={onToggleWeedingHistory}
-            className="border-blue-300/30 bg-blue-400/10 text-blue-100 hover:bg-blue-400/20 hover:text-white"
+            className="border-blue-200 bg-blue-50 text-emerald-900 hover:bg-blue-100 hover:text-emerald-950"
             aria-expanded={isWeedingHistoryExpanded}
           >
             <Clock className="size-4" />
@@ -1280,7 +1280,7 @@ function QueueCard({
             type="button"
             variant="outline"
             onClick={onTogglePlants}
-            className="border-emerald-300/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20 hover:text-white"
+            className="border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 hover:text-emerald-950"
             aria-expanded={isPlantExpanded}
           >
             <Leaf className="size-4" />
@@ -1289,10 +1289,10 @@ function QueueCard({
         </div>
       </div>
 
-      <div className="mt-3 rounded-lg border border-red-300/20 bg-red-950/15 p-3">
+      <div className="mt-3 rounded-lg border border-red-200 bg-red-50/80 p-3">
         {isDeleteConfirming ? (
           <div className="space-y-3">
-            <p className="text-sm text-red-100">
+            <p className="text-sm text-red-700">
               Usunąć <span className="font-semibold">{bed.name}</span>? To usunie też rośliny, obserwacje chwastów i
               historię pielenia. Tej operacji nie można cofnąć.
             </p>
@@ -1302,7 +1302,7 @@ function QueueCard({
                 variant="outline"
                 onClick={onCancelDelete}
                 disabled={isDeleting}
-                className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
               >
                 Anuluj
               </Button>
@@ -1310,7 +1310,7 @@ function QueueCard({
                 type="button"
                 onClick={onConfirmDelete}
                 disabled={isDeleting}
-                className="bg-red-400 text-slate-950 hover:bg-red-300"
+                className="bg-red-600 text-white hover:bg-red-500"
               >
                 {isDeleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
                 {isDeleting ? "Usuwanie..." : "Potwierdź usunięcie"}
@@ -1322,7 +1322,7 @@ function QueueCard({
             type="button"
             variant="outline"
             onClick={onRequestDelete}
-            className="border-red-300/30 bg-red-400/10 text-red-100 hover:bg-red-400/20 hover:text-white"
+            className="border-red-200 bg-red-50 text-red-700 hover:bg-red-100 hover:text-emerald-950"
           >
             <Trash2 className="size-4" />
             Usuń rabatę
@@ -1338,7 +1338,7 @@ function QueueCard({
       />
 
       {bed.observation_reasons.length > 0 && (
-        <p className="mt-3 rounded-lg border border-amber-300/20 bg-amber-950/20 p-3 text-sm text-amber-50">
+        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50/80 p-3 text-sm text-amber-800">
           Przyspieszono: {bed.observation_reasons.join(", ")}.
         </p>
       )}
@@ -1383,10 +1383,10 @@ function WeedingForm({
   onSubmit: (event: { preventDefault: () => void }) => void;
 }) {
   return (
-    <form onSubmit={onSubmit} className="mt-4 rounded-xl border border-blue-300/15 bg-blue-950/20 p-4" noValidate>
+    <form onSubmit={onSubmit} className="mt-4 rounded-xl border border-blue-200 bg-blue-50/80 p-4" noValidate>
       <div className="mb-3">
-        <h4 className="font-semibold text-blue-100">Zapisz wykonane pielenie</h4>
-        <p className="text-xs text-blue-100/60">
+        <h4 className="font-semibold text-emerald-900">Zapisz wykonane pielenie</h4>
+        <p className="text-xs text-emerald-900/55">
           Zapisz, kiedy rabata {bedName} została wypielona, ile to zajęło i opcjonalną notatkę.
         </p>
       </div>
@@ -1430,14 +1430,14 @@ function WeedingForm({
       </div>
       <ServerError message={state.error} />
       {state.successMessage && (
-        <p className="mt-3 rounded-lg border border-emerald-400/30 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-100">
+        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
           {state.successMessage}
         </p>
       )}
       <Button
         type="submit"
         disabled={state.isSubmitting}
-        className="mt-3 w-full bg-blue-300 text-slate-950 hover:bg-blue-200"
+        className="mt-3 w-full bg-blue-600 text-white hover:bg-blue-500"
       >
         {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Clock className="size-4" />}
         {state.isSubmitting ? "Zapisywanie pielenia..." : "Oznacz rabatę jako wypieloną"}
@@ -1456,11 +1456,11 @@ function WeedingHistorySection({
   onRetry: () => void;
 }) {
   return (
-    <div className="mt-4 rounded-xl border border-blue-300/15 bg-blue-950/20 p-4">
+    <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/80 p-4">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h4 className="font-semibold text-blue-100">Historia pielenia rabaty {bedName}</h4>
-          <p className="text-xs text-blue-100/60">
+          <h4 className="font-semibold text-emerald-900">Historia pielenia rabaty {bedName}</h4>
+          <p className="text-xs text-emerald-900/55">
             Wpisy o wykonanych pracach są wczytywane na żądanie dla tej rabaty.
           </p>
         </div>
@@ -1469,7 +1469,7 @@ function WeedingHistorySection({
             type="button"
             variant="outline"
             onClick={onRetry}
-            className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+            className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
           >
             Spróbuj ponownie
           </Button>
@@ -1477,24 +1477,24 @@ function WeedingHistorySection({
       </div>
 
       {state.isLoading ? (
-        <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
+        <div className="flex items-center gap-2 rounded-lg bg-white/72 p-3 text-sm text-emerald-900/70">
           <Loader2 className="size-4 animate-spin" />
           Wczytywanie historii pielenia...
         </div>
       ) : state.error ? (
         <ServerError message={state.error} />
       ) : state.events.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
+        <p className="rounded-lg border border-dashed border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-900/65">
           Nie zapisano jeszcze pielenia dla tej rabaty.
         </p>
       ) : (
         <ul className="space-y-2">
           {state.events.map((event) => (
-            <li key={event.id} className="rounded-lg bg-white/5 p-3">
-              <p className="font-medium text-white">
+            <li key={event.id} className="rounded-lg bg-white/70 p-3">
+              <p className="font-medium text-emerald-950">
                 {formatDisplayDate(event.weeded_at)} · {event.duration_minutes} min
               </p>
-              {event.note && <p className="mt-2 text-xs text-blue-100/70">{event.note}</p>}
+              {event.note && <p className="mt-2 text-xs text-emerald-900/65">{event.note}</p>}
             </li>
           ))}
         </ul>
@@ -1519,11 +1519,11 @@ function ObservationSection({
   onRetry: () => void;
 }) {
   return (
-    <div className="mt-4 rounded-xl border border-amber-300/15 bg-amber-950/20 p-4">
+    <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/80 p-4">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h4 className="font-semibold text-amber-100">Obserwacje chwastów w rabacie {bedName}</h4>
-          <p className="text-xs text-blue-100/60">
+          <h4 className="font-semibold text-amber-800">Obserwacje chwastów w rabacie {bedName}</h4>
+          <p className="text-xs text-emerald-900/55">
             Ostatnie obserwacje mogą przyspieszyć sugerowany termin pielenia i kolejność w kolejce.
           </p>
         </div>
@@ -1532,7 +1532,7 @@ function ObservationSection({
             type="button"
             variant="outline"
             onClick={onRetry}
-            className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+            className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
           >
             Spróbuj ponownie
           </Button>
@@ -1540,40 +1540,40 @@ function ObservationSection({
       </div>
 
       {state.isLoading ? (
-        <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
+        <div className="flex items-center gap-2 rounded-lg bg-white/72 p-3 text-sm text-emerald-900/70">
           <Loader2 className="size-4 animate-spin" />
           Wczytywanie obserwacji chwastów...
         </div>
       ) : state.error ? (
         <ServerError message={state.error} />
       ) : state.observations.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
+        <p className="rounded-lg border border-dashed border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-900/65">
           Brak obserwacji chwastów dla tej rabaty.
         </p>
       ) : (
         <ul className="space-y-2">
           {state.observations.map((observation) => (
-            <li key={observation.id} className="rounded-lg bg-white/5 p-3">
-              <p className="font-medium text-white">
+            <li key={observation.id} className="rounded-lg bg-white/70 p-3">
+              <p className="font-medium text-emerald-950">
                 {observation.weed_name ?? WEED_CATEGORY_LABELS[observation.weed_category]} ·{" "}
                 {formatDisplayDate(observation.observed_at)}
               </p>
-              <p className="mt-1 text-xs text-blue-100/60">{formatObservationDetails(observation)}</p>
-              {observation.note && <p className="mt-2 text-xs text-blue-100/70">{observation.note}</p>}
+              <p className="mt-1 text-xs text-emerald-900/55">{formatObservationDetails(observation)}</p>
+              {observation.note && <p className="mt-2 text-xs text-emerald-900/65">{observation.note}</p>}
             </li>
           ))}
         </ul>
       )}
 
       {state.successMessage && (
-        <p className="mt-3 rounded-lg border border-emerald-400/30 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-100">
+        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
           {state.successMessage}
         </p>
       )}
 
       <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
         <div>
-          <label htmlFor={`weed-catalog-${bedName}`} className="mb-1 block text-sm text-blue-100/80">
+          <label htmlFor={`weed-catalog-${bedName}`} className="mb-1 block text-sm text-emerald-950/75">
             Katalog chwastów
           </label>
           <select
@@ -1582,7 +1582,7 @@ function ObservationSection({
             onChange={(event) => {
               onCatalogSelect(event.target.value);
             }}
-            className="w-full rounded-lg border border-white/20 bg-slate-950/80 px-3 py-2 text-white transition-colors outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full rounded-lg border border-emerald-200/80 bg-white/90 px-3 py-2 text-emerald-950 transition-colors outline-none focus:ring-2 focus:ring-emerald-300"
           >
             <option value="">Własny / wybierz z listy</option>
             {POLISH_WEED_CATALOG.map((entry) => (
@@ -1665,11 +1665,11 @@ function ObservationSection({
           />
         </div>
 
-        <fieldset className="rounded-lg border border-white/15 p-3">
-          <legend className="px-1 text-sm text-blue-100/80">Cechy ryzyka</legend>
+        <fieldset className="rounded-lg border border-emerald-200/70 p-3">
+          <legend className="px-1 text-sm text-emerald-950/75">Cechy ryzyka</legend>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
             {WEED_RISK_TRAITS.map((trait) => (
-              <label key={trait} className="flex items-start gap-2 text-sm text-blue-100/75">
+              <label key={trait} className="flex items-start gap-2 text-sm text-emerald-900/70">
                 <input
                   type="checkbox"
                   checked={state.form[trait]}
@@ -1698,7 +1698,7 @@ function ObservationSection({
         <Button
           type="submit"
           disabled={state.isSubmitting}
-          className="w-full bg-amber-300 text-slate-950 hover:bg-amber-200"
+          className="w-full bg-amber-500 text-amber-950 hover:bg-amber-400"
         >
           {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
           {state.isSubmitting ? "Dodawanie obserwacji..." : "Dodaj obserwację chwastu"}
@@ -1722,11 +1722,11 @@ function PlantSection({
   onRetry: () => void;
 }) {
   return (
-    <div className="mt-4 rounded-xl border border-emerald-300/15 bg-emerald-950/20 p-4">
+    <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50/80 p-4">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h4 className="font-semibold text-emerald-100">Rośliny w rabacie {bedName}</h4>
-          <p className="text-xs text-blue-100/60">
+          <h4 className="font-semibold text-emerald-800">Rośliny w rabacie {bedName}</h4>
+          <p className="text-xs text-emerald-900/55">
             Obecna wysokość i szerokość to wartości wpisane teraz; nie aktualizują się automatycznie.
           </p>
         </div>
@@ -1735,7 +1735,7 @@ function PlantSection({
             type="button"
             variant="outline"
             onClick={onRetry}
-            className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+            className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
           >
             Spróbuj ponownie
           </Button>
@@ -1743,22 +1743,22 @@ function PlantSection({
       </div>
 
       {state.isLoading ? (
-        <div className="flex items-center gap-2 rounded-lg bg-slate-950/30 p-3 text-sm text-blue-100/75">
+        <div className="flex items-center gap-2 rounded-lg bg-white/72 p-3 text-sm text-emerald-900/70">
           <Loader2 className="size-4 animate-spin" />
           Wczytywanie roślin...
         </div>
       ) : state.error ? (
         <ServerError message={state.error} />
       ) : state.plants.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-white/15 bg-slate-950/25 p-3 text-sm text-blue-100/70">
+        <p className="rounded-lg border border-dashed border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-900/65">
           Nie zapisano jeszcze roślin dla tej rabaty.
         </p>
       ) : (
         <ul className="space-y-2">
           {state.plants.map((plant) => (
-            <li key={plant.id} className="rounded-lg bg-white/5 p-3">
-              <p className="font-medium text-white">{plant.name}</p>
-              <p className="mt-1 text-xs text-blue-100/60">{formatPlantDetails(plant)}</p>
+            <li key={plant.id} className="rounded-lg bg-white/70 p-3">
+              <p className="font-medium text-emerald-950">{plant.name}</p>
+              <p className="mt-1 text-xs text-emerald-900/55">{formatPlantDetails(plant)}</p>
             </li>
           ))}
         </ul>
@@ -1834,7 +1834,7 @@ function PlantSection({
         <Button
           type="submit"
           disabled={state.isSubmitting}
-          className="w-full bg-emerald-400 text-slate-950 hover:bg-emerald-300"
+          className="w-full bg-emerald-700 text-white hover:bg-emerald-600"
         >
           {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
           {state.isSubmitting ? "Dodawanie rośliny..." : "Dodaj roślinę"}
@@ -1846,12 +1846,12 @@ function PlantSection({
 
 function QueueMetric({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-white/5 p-3">
-      <dt className="flex items-center gap-2 text-xs text-blue-100/50">
+    <div className="rounded-lg bg-white/70 p-3">
+      <dt className="flex items-center gap-2 text-xs text-emerald-900/50">
         {icon}
         {label}
       </dt>
-      <dd className="mt-1 font-medium text-white">{value}</dd>
+      <dd className="mt-1 font-medium text-emerald-950">{value}</dd>
     </div>
   );
 }
@@ -2077,9 +2077,9 @@ function isPastOrTodayDate(value: string): boolean {
 }
 
 function priorityClassName(priority: GardenBedQueueItem["priority"]): string {
-  if (priority === "urgent") return "bg-red-400/20 text-red-100 ring-1 ring-red-300/30";
-  if (priority === "soon") return "bg-amber-400/20 text-amber-100 ring-1 ring-amber-300/30";
-  return "bg-emerald-400/15 text-emerald-100 ring-1 ring-emerald-300/30";
+  if (priority === "urgent") return "bg-red-100 text-red-700 ring-1 ring-red-300/30";
+  if (priority === "soon") return "bg-amber-100 text-amber-800 ring-1 ring-amber-300/30";
+  return "bg-emerald-100 text-emerald-800 ring-1 ring-emerald-300/30";
 }
 
 function formatOptionalNumber(value: number | null, unit: string): string {
