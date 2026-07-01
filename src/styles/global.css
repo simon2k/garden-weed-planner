@@ -4,38 +4,38 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --radius: 0.5rem;
+  --background: oklch(0.985 0.025 101);
+  --foreground: oklch(0.24 0.045 145);
+  --card: oklch(0.995 0.012 100);
+  --card-foreground: oklch(0.24 0.045 145);
+  --popover: oklch(0.995 0.012 100);
+  --popover-foreground: oklch(0.24 0.045 145);
+  --primary: oklch(0.48 0.12 145);
+  --primary-foreground: oklch(0.99 0.015 100);
+  --secondary: oklch(0.93 0.05 125);
+  --secondary-foreground: oklch(0.28 0.07 145);
+  --muted: oklch(0.94 0.035 105);
+  --muted-foreground: oklch(0.47 0.045 130);
+  --accent: oklch(0.9 0.065 85);
+  --accent-foreground: oklch(0.29 0.06 115);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.86 0.04 115);
+  --input: oklch(0.9 0.035 115);
+  --ring: oklch(0.62 0.11 145);
+  --chart-1: oklch(0.62 0.16 145);
+  --chart-2: oklch(0.72 0.13 85);
+  --chart-3: oklch(0.68 0.12 35);
+  --chart-4: oklch(0.73 0.1 320);
+  --chart-5: oklch(0.7 0.11 190);
+  --sidebar: oklch(0.97 0.025 100);
+  --sidebar-foreground: oklch(0.24 0.045 145);
+  --sidebar-primary: oklch(0.48 0.12 145);
+  --sidebar-primary-foreground: oklch(0.99 0.015 100);
+  --sidebar-accent: oklch(0.93 0.05 125);
+  --sidebar-accent-foreground: oklch(0.28 0.07 145);
+  --sidebar-border: oklch(0.86 0.04 115);
+  --sidebar-ring: oklch(0.62 0.11 145);
 }
 
 .dark {
@@ -112,6 +112,27 @@
 
 @utility bg-cosmic {
   background-image: linear-gradient(to bottom, #0a0e1a, #0f1529, #0a0e1a);
+}
+
+@utility bg-garden {
+  background:
+    radial-gradient(circle at 15% 18%, rgb(253 244 196 / 0.7), transparent 28rem),
+    radial-gradient(circle at 88% 12%, rgb(251 207 232 / 0.35), transparent 24rem),
+    linear-gradient(135deg, #fffbea 0%, #f1f8dc 46%, #dff0cf 100%);
+}
+
+@utility bg-auth-garden {
+  background-image:
+    linear-gradient(120deg, rgb(255 251 235 / 0.45), rgb(236 252 203 / 0.36)),
+    url("/images/garden_login_background.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+@utility garden-card {
+  border-color: rgb(132 165 111 / 0.3);
+  background-color: rgb(255 255 247 / 0.88);
+  box-shadow: 0 24px 70px rgb(63 98 49 / 0.18);
 }
 
 @layer base {
