@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { AlertCircle, CalendarDays, Clock, Leaf, Loader2, Map, Plus, Sprout, Trash2 } from "lucide-react";
+import { AlertCircle, CalendarDays, Clock, Leaf, Loader2, Map, Plus, Sprout, Trash2, X } from "lucide-react";
 import { ServerError } from "@/components/auth/ServerError";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,8 @@ type WeedLevel = "low" | "medium" | "high";
 type BedQueuePriority = "ok" | "soon" | "urgent";
 
 type PriorityConfidence = "complete" | "partial";
+
+type BedDetailTab = "observations" | "weeding" | "plants";
 
 interface GardenBedQueueItem {
   id: string;
@@ -260,9 +262,10 @@ export function GardenQueue() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [isAddBedModalOpen, setIsAddBedModalOpen] = useState(false);
-  const [expandedBedIds, setExpandedBedIds] = useState<Set<string>>(new Set());
-  const [expandedObservationBedIds, setExpandedObservationBedIds] = useState<Set<string>>(new Set());
-  const [expandedWeedingHistoryBedIds, setExpandedWeedingHistoryBedIds] = useState<Set<string>>(new Set());
+  const [activeTabByBedId, setActiveTabByBedId] = useState<Record<string, BedDetailTab | undefined>>({});
+  const [observationModalBedId, setObservationModalBedId] = useState<string | null>(null);
+  const [weedingModalBedId, setWeedingModalBedId] = useState<string | null>(null);
+  const [plantModalBedId, setPlantModalBedId] = useState<string | null>(null);
   const [confirmingDeleteBedId, setConfirmingDeleteBedId] = useState<string | null>(null);
   const [deletingBedId, setDeletingBedId] = useState<string | null>(null);
   const [plantStateByBedId, setPlantStateByBedId] = useState<Record<string, PlantBedState>>({});
@@ -342,20 +345,17 @@ export function GardenQueue() {
     }
   }
 
-  async function togglePlantSection(bedId: string) {
-    const willExpand = !expandedBedIds.has(bedId);
-    setExpandedBedIds((current) => {
-      const next = new Set(current);
-      if (willExpand) {
-        next.add(bedId);
-      } else {
-        next.delete(bedId);
-      }
-      return next;
-    });
+  async function selectBedTab(bedId: string, tab: BedDetailTab) {
+    setActiveTabByBedId((current) => ({ ...current, [bedId]: tab }));
 
-    if (willExpand && !getPlantState(plantStateByBedId, bedId).hasLoaded) {
+    if (tab === "plants" && !getPlantState(plantStateByBedId, bedId).hasLoaded) {
       await loadPlants(bedId);
+    }
+    if (tab === "observations" && !getObservationState(observationStateByBedId, bedId).hasLoaded) {
+      await loadObservations(bedId);
+    }
+    if (tab === "weeding" && !getWeedingState(weedingStateByBedId, bedId).hasLoaded) {
+      await loadWeedingEvents(bedId);
     }
   }
 
@@ -466,6 +466,7 @@ export function GardenQueue() {
           },
         };
       });
+      setPlantModalBedId(null);
     } catch (err) {
       setPlantStateByBedId((current) => ({
         ...current,
@@ -475,23 +476,6 @@ export function GardenQueue() {
           error: err instanceof Error ? err.message : "Nie udało się dodać rośliny do tej rabaty.",
         },
       }));
-    }
-  }
-
-  async function toggleObservationSection(bedId: string) {
-    const willExpand = !expandedObservationBedIds.has(bedId);
-    setExpandedObservationBedIds((current) => {
-      const next = new Set(current);
-      if (willExpand) {
-        next.add(bedId);
-      } else {
-        next.delete(bedId);
-      }
-      return next;
-    });
-
-    if (willExpand && !getObservationState(observationStateByBedId, bedId).hasLoaded) {
-      await loadObservations(bedId);
     }
   }
 
@@ -637,6 +621,7 @@ export function GardenQueue() {
         };
       });
       await loadBeds();
+      setObservationModalBedId(null);
     } catch (err) {
       setObservationStateByBedId((current) => ({
         ...current,
@@ -646,23 +631,6 @@ export function GardenQueue() {
           error: err instanceof Error ? err.message : "Nie udało się dodać obserwacji chwastów dla tej rabaty.",
         },
       }));
-    }
-  }
-
-  async function toggleWeedingHistorySection(bedId: string) {
-    const willExpand = !expandedWeedingHistoryBedIds.has(bedId);
-    setExpandedWeedingHistoryBedIds((current) => {
-      const next = new Set(current);
-      if (willExpand) {
-        next.add(bedId);
-      } else {
-        next.delete(bedId);
-      }
-      return next;
-    });
-
-    if (willExpand && !getWeedingState(weedingStateByBedId, bedId).hasLoaded) {
-      await loadWeedingEvents(bedId);
     }
   }
 
@@ -780,6 +748,7 @@ export function GardenQueue() {
         };
       });
       await loadBeds();
+      setWeedingModalBedId(null);
     } catch (err) {
       setWeedingStateByBedId((current) => ({
         ...current,
@@ -818,9 +787,10 @@ export function GardenQueue() {
   }
 
   function removeDeletedBedState(bedId: string) {
-    setExpandedBedIds((current) => withoutSetValue(current, bedId));
-    setExpandedObservationBedIds((current) => withoutSetValue(current, bedId));
-    setExpandedWeedingHistoryBedIds((current) => withoutSetValue(current, bedId));
+    setActiveTabByBedId((current) => withoutRecordKey(current, bedId));
+    setObservationModalBedId((current) => (current === bedId ? null : current));
+    setWeedingModalBedId((current) => (current === bedId ? null : current));
+    setPlantModalBedId((current) => (current === bedId ? null : current));
     setPlantStateByBedId((current) => withoutRecordKey(current, bedId));
     setObservationStateByBedId((current) => withoutRecordKey(current, bedId));
     setWeedingStateByBedId((current) => withoutRecordKey(current, bedId));
@@ -923,12 +893,13 @@ export function GardenQueue() {
                 key={bed.id}
                 bed={bed}
                 position={index + 1}
-                isPlantExpanded={expandedBedIds.has(bed.id)}
-                isObservationExpanded={expandedObservationBedIds.has(bed.id)}
-                isWeedingHistoryExpanded={expandedWeedingHistoryBedIds.has(bed.id)}
+                activeTab={activeTabByBedId[bed.id]}
                 plantState={getPlantState(plantStateByBedId, bed.id)}
                 observationState={getObservationState(observationStateByBedId, bed.id)}
                 weedingState={getWeedingState(weedingStateByBedId, bed.id)}
+                isObservationModalOpen={observationModalBedId === bed.id}
+                isWeedingModalOpen={weedingModalBedId === bed.id}
+                isPlantModalOpen={plantModalBedId === bed.id}
                 isDeleteConfirming={confirmingDeleteBedId === bed.id}
                 isDeleting={deletingBedId === bed.id}
                 onRequestDelete={() => {
@@ -940,9 +911,27 @@ export function GardenQueue() {
                   setConfirmingDeleteBedId(null);
                 }}
                 onConfirmDelete={() => void deleteBed(bed)}
-                onTogglePlants={() => void togglePlantSection(bed.id)}
-                onToggleObservations={() => void toggleObservationSection(bed.id)}
-                onToggleWeedingHistory={() => void toggleWeedingHistorySection(bed.id)}
+                onSelectTab={(tab) => void selectBedTab(bed.id, tab)}
+                onOpenObservationModal={() => {
+                  setObservationModalBedId(bed.id);
+                }}
+                onCloseObservationModal={() => {
+                  if (!getObservationState(observationStateByBedId, bed.id).isSubmitting) {
+                    setObservationModalBedId(null);
+                  }
+                }}
+                onOpenWeedingModal={() => {
+                  setWeedingModalBedId(bed.id);
+                }}
+                onCloseWeedingModal={() => {
+                  if (!getWeedingState(weedingStateByBedId, bed.id).isSubmitting) setWeedingModalBedId(null);
+                }}
+                onOpenPlantModal={() => {
+                  setPlantModalBedId(bed.id);
+                }}
+                onClosePlantModal={() => {
+                  if (!getPlantState(plantStateByBedId, bed.id).isSubmitting) setPlantModalBedId(null);
+                }}
                 onPlantFieldChange={(field, value) => {
                   updatePlantField(bed.id, field, value);
                 }}
@@ -1313,18 +1302,41 @@ function getFocusableElements(container: HTMLElement | null): HTMLElement[] {
   ).filter((element) => !element.hasAttribute("disabled") && !element.getAttribute("aria-hidden"));
 }
 
+function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <Button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      variant="outline"
+      onClick={onClick}
+      className={cn(
+        "border-emerald-200 bg-white/80 text-emerald-900 hover:bg-emerald-50 hover:text-emerald-950",
+        active && "bg-emerald-700 text-white hover:bg-emerald-600 hover:text-white",
+      )}
+    >
+      {children}
+    </Button>
+  );
+}
+
 function QueueCard({
   bed,
   position,
-  isPlantExpanded,
-  isObservationExpanded,
-  isWeedingHistoryExpanded,
+  activeTab,
   plantState,
   observationState,
   weedingState,
-  onTogglePlants,
-  onToggleObservations,
-  onToggleWeedingHistory,
+  isObservationModalOpen,
+  isWeedingModalOpen,
+  isPlantModalOpen,
+  onSelectTab,
+  onOpenObservationModal,
+  onCloseObservationModal,
+  onOpenWeedingModal,
+  onCloseWeedingModal,
+  onOpenPlantModal,
+  onClosePlantModal,
   onPlantFieldChange,
   onPlantSubmit,
   onPlantRetry,
@@ -1343,20 +1355,25 @@ function QueueCard({
 }: {
   bed: GardenBedQueueItem;
   position: number;
-  isPlantExpanded: boolean;
-  isObservationExpanded: boolean;
-  isWeedingHistoryExpanded: boolean;
+  activeTab: BedDetailTab | undefined;
   plantState: PlantBedState;
   observationState: ObservationBedState;
   weedingState: WeedingBedState;
+  isObservationModalOpen: boolean;
+  isWeedingModalOpen: boolean;
+  isPlantModalOpen: boolean;
   isDeleteConfirming: boolean;
   isDeleting: boolean;
   onRequestDelete: () => void;
   onCancelDelete: () => void;
   onConfirmDelete: () => void;
-  onTogglePlants: () => void;
-  onToggleObservations: () => void;
-  onToggleWeedingHistory: () => void;
+  onSelectTab: (tab: BedDetailTab) => void;
+  onOpenObservationModal: () => void;
+  onCloseObservationModal: () => void;
+  onOpenWeedingModal: () => void;
+  onCloseWeedingModal: () => void;
+  onOpenPlantModal: () => void;
+  onClosePlantModal: () => void;
   onPlantFieldChange: (field: keyof PlantFormState, value: string) => void;
   onPlantSubmit: (event: { preventDefault: () => void }) => void;
   onPlantRetry: () => void;
@@ -1384,8 +1401,53 @@ function QueueCard({
   const mulch = formatOptionalNumber(bed.mulch_depth_cm, "cm");
 
   return (
-    <li className="rounded-xl border border-emerald-200/70 bg-white/82 p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <li className="relative rounded-xl border border-emerald-200/70 bg-white/82 p-4">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onRequestDelete}
+        aria-label={`Usuń rabatę ${bed.name}`}
+        className="absolute top-3 right-3 size-9 border-red-200 bg-red-50 p-0 text-red-700 hover:bg-red-100 hover:text-red-800"
+      >
+        <X className="size-4" />
+      </Button>
+
+      {isDeleteConfirming && (
+        <div
+          role="dialog"
+          aria-modal="false"
+          aria-label={`Potwierdź usunięcie rabaty ${bed.name}`}
+          className="absolute top-14 right-3 z-10 w-[min(20rem,calc(100%-1.5rem))] rounded-xl border border-red-200 bg-red-50 p-3 shadow-xl"
+        >
+          <div className="space-y-3">
+            <p className="text-sm text-red-700">
+              Usunąć <span className="font-semibold">{bed.name}</span>? Tej operacji nie można cofnąć.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancelDelete}
+                disabled={isDeleting}
+                className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
+              >
+                Anuluj
+              </Button>
+              <Button
+                type="button"
+                onClick={onConfirmDelete}
+                disabled={isDeleting}
+                className="bg-red-600 text-white hover:bg-red-500"
+              >
+                {isDeleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                {isDeleting ? "Usuwanie..." : "Potwierdź"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-3 pr-12 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <span className="flex size-7 items-center justify-center rounded-full bg-white/80 text-sm font-semibold text-emerald-900">
@@ -1414,97 +1476,14 @@ function QueueCard({
         <QueueMetric icon={<Sprout className="size-4" />} label="Ściółka" value={mulch} />
       </dl>
 
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1 text-xs text-emerald-900/55">
-          <p>Wynik priorytetu: {bed.priority_score}</p>
-          {bed.observation_count > 0 && (
-            <p>
-              Obserwacje chwastów: {bed.observation_pressure_label} (+{bed.observation_pressure_score})
-            </p>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-2 sm:justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onToggleObservations}
-            className="border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 hover:text-emerald-950"
-            aria-expanded={isObservationExpanded}
-          >
-            <Sprout className="size-4" />
-            {isObservationExpanded ? "Ukryj obserwacje chwastów" : "Pokaż obserwacje chwastów"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onToggleWeedingHistory}
-            className="border-blue-200 bg-blue-50 text-emerald-900 hover:bg-blue-100 hover:text-emerald-950"
-            aria-expanded={isWeedingHistoryExpanded}
-          >
-            <Clock className="size-4" />
-            {isWeedingHistoryExpanded ? "Ukryj historię pielenia" : "Historia pielenia"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onTogglePlants}
-            className="border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 hover:text-emerald-950"
-            aria-expanded={isPlantExpanded}
-          >
-            <Leaf className="size-4" />
-            {isPlantExpanded ? "Ukryj rośliny" : "Pokaż rośliny"}
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-3 rounded-lg border border-red-200 bg-red-50/80 p-3">
-        {isDeleteConfirming ? (
-          <div className="space-y-3">
-            <p className="text-sm text-red-700">
-              Usunąć <span className="font-semibold">{bed.name}</span>? To usunie też rośliny, obserwacje chwastów i
-              historię pielenia. Tej operacji nie można cofnąć.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancelDelete}
-                disabled={isDeleting}
-                className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
-              >
-                Anuluj
-              </Button>
-              <Button
-                type="button"
-                onClick={onConfirmDelete}
-                disabled={isDeleting}
-                className="bg-red-600 text-white hover:bg-red-500"
-              >
-                {isDeleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-                {isDeleting ? "Usuwanie..." : "Potwierdź usunięcie"}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onRequestDelete}
-            className="border-red-200 bg-red-50 text-red-700 hover:bg-red-100 hover:text-emerald-950"
-          >
-            <Trash2 className="size-4" />
-            Usuń rabatę
-          </Button>
+      <div className="mt-3 space-y-1 text-xs text-emerald-900/55">
+        <p>Wynik priorytetu: {bed.priority_score}</p>
+        {bed.observation_count > 0 && (
+          <p>
+            Obserwacje chwastów: {bed.observation_pressure_label} (+{bed.observation_pressure_score})
+          </p>
         )}
       </div>
-
-      <WeedingForm
-        bedId={bed.id}
-        bedName={bed.name}
-        state={weedingState}
-        onFieldChange={onWeedingFieldChange}
-        onSubmit={onWeedingSubmit}
-      />
 
       {bed.observation_reasons.length > 0 && (
         <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50/80 p-3 text-sm text-amber-800">
@@ -1512,33 +1491,171 @@ function QueueCard({
         </p>
       )}
 
-      {isWeedingHistoryExpanded && (
-        <WeedingHistorySection bedName={bed.name} state={weedingState} onRetry={onWeedingRetry} />
-      )}
+      <div className="mt-4 border-t border-emerald-100 pt-4">
+        <div role="tablist" aria-label={`Szczegóły rabaty ${bed.name}`} className="flex flex-wrap gap-2">
+          <TabButton
+            active={activeTab === "observations"}
+            onClick={() => {
+              onSelectTab("observations");
+            }}
+          >
+            <Sprout className="size-4" />
+            Obserwacje
+          </TabButton>
+          <TabButton
+            active={activeTab === "weeding"}
+            onClick={() => {
+              onSelectTab("weeding");
+            }}
+          >
+            <Clock className="size-4" />
+            Historia pielenia
+          </TabButton>
+          <TabButton
+            active={activeTab === "plants"}
+            onClick={() => {
+              onSelectTab("plants");
+            }}
+          >
+            <Leaf className="size-4" />
+            Rośliny
+          </TabButton>
+        </div>
 
-      {isObservationExpanded && (
-        <ObservationSection
+        {activeTab === "weeding" && (
+          <WeedingHistorySection
+            bedName={bed.name}
+            state={weedingState}
+            onRetry={onWeedingRetry}
+            onOpenCreate={onOpenWeedingModal}
+          />
+        )}
+
+        {activeTab === "observations" && (
+          <ObservationSection
+            bedName={bed.name}
+            state={observationState}
+            onRetry={onObservationRetry}
+            onOpenCreate={onOpenObservationModal}
+          />
+        )}
+
+        {activeTab === "plants" && (
+          <PlantSection bedName={bed.name} state={plantState} onRetry={onPlantRetry} onOpenCreate={onOpenPlantModal} />
+        )}
+      </div>
+
+      <GardenModal
+        isOpen={isObservationModalOpen}
+        title={`Dodaj obserwację — ${bed.name}`}
+        description="Zapisz obserwację chwastów, aby kolejka mogła szybciej reagować na presję w rabacie."
+        closeLabel="Zamknij dodawanie obserwacji"
+        onClose={onCloseObservationModal}
+      >
+        <ObservationForm
           bedId={bed.id}
-          bedName={bed.name}
           state={observationState}
           onFieldChange={onObservationFieldChange}
           onCatalogSelect={onObservationCatalogSelect}
           onSubmit={onObservationSubmit}
-          onRetry={onObservationRetry}
         />
-      )}
+      </GardenModal>
 
-      {isPlantExpanded && (
-        <PlantSection
+      <GardenModal
+        isOpen={isWeedingModalOpen}
+        title={`Oznacz rabatę jako wypieloną — ${bed.name}`}
+        description="Zapisz datę i czas pracy dopiero po faktycznym pieleniu rabaty."
+        closeLabel="Zamknij zapisywanie pielenia"
+        onClose={onCloseWeedingModal}
+      >
+        <WeedingForm
           bedId={bed.id}
           bedName={bed.name}
-          state={plantState}
-          onFieldChange={onPlantFieldChange}
-          onSubmit={onPlantSubmit}
-          onRetry={onPlantRetry}
+          state={weedingState}
+          onFieldChange={onWeedingFieldChange}
+          onSubmit={onWeedingSubmit}
         />
-      )}
+      </GardenModal>
+
+      <GardenModal
+        isOpen={isPlantModalOpen}
+        title={`Dodaj roślinę — ${bed.name}`}
+        description="Dodaj roślinę widoczną w tej rabacie."
+        closeLabel="Zamknij dodawanie rośliny"
+        onClose={onClosePlantModal}
+      >
+        <PlantForm bedId={bed.id} state={plantState} onFieldChange={onPlantFieldChange} onSubmit={onPlantSubmit} />
+      </GardenModal>
     </li>
+  );
+}
+function WeedingHistorySection({
+  bedName,
+  state,
+  onRetry,
+  onOpenCreate,
+}: {
+  bedName: string;
+  state: WeedingBedState;
+  onRetry: () => void;
+  onOpenCreate: () => void;
+}) {
+  return (
+    <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/80 p-4">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h4 className="font-semibold text-emerald-900">Historia pielenia rabaty {bedName}</h4>
+          <p className="text-xs text-emerald-900/55">
+            Wpisy o wykonanych pracach są wczytywane na żądanie dla tej rabaty.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" onClick={onOpenCreate} className="bg-emerald-700 text-white hover:bg-emerald-600">
+            <Clock className="size-4" />
+            Oznacz rabatę jako wypieloną
+          </Button>
+          {state.error && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onRetry}
+              className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
+            >
+              Spróbuj ponownie
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {state.isLoading ? (
+        <div className="flex items-center gap-2 rounded-lg bg-white/72 p-3 text-sm text-emerald-900/70">
+          <Loader2 className="size-4 animate-spin" />
+          Wczytywanie historii pielenia...
+        </div>
+      ) : state.error ? (
+        <ServerError message={state.error} />
+      ) : state.events.length === 0 ? (
+        <p className="rounded-lg border border-dashed border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-900/65">
+          Nie zapisano jeszcze pielenia dla tej rabaty.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {state.events.map((event) => (
+            <li key={event.id} className="rounded-lg bg-white/70 p-3">
+              <p className="font-medium text-emerald-950">
+                {formatDisplayDate(event.weeded_at)} · {event.duration_minutes} min
+              </p>
+              {event.note && <p className="mt-2 text-xs text-emerald-900/65">{event.note}</p>}
+            </li>
+          ))}
+        </ul>
+      )}
+      {state.successMessage && (
+        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+          {state.successMessage}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -1556,13 +1673,10 @@ function WeedingForm({
   onSubmit: (event: { preventDefault: () => void }) => void;
 }) {
   return (
-    <form onSubmit={onSubmit} className="mt-4 rounded-xl border border-blue-200 bg-blue-50/80 p-4" noValidate>
-      <div className="mb-3">
-        <h4 className="font-semibold text-emerald-900">Zapisz wykonane pielenie</h4>
-        <p className="text-xs text-emerald-900/55">
-          Zapisz, kiedy rabata {bedName} została wypielona, ile to zajęło i opcjonalną notatkę.
-        </p>
-      </div>
+    <form onSubmit={onSubmit} className="space-y-3" noValidate>
+      <p className="text-xs text-emerald-900/55">
+        Zapisz, kiedy rabata {bedName} została wypielona, ile to zajęło i opcjonalną notatkę.
+      </p>
       <div className="grid gap-3 sm:grid-cols-3">
         <TextField
           id={`weeding-date-${bedId}`}
@@ -1602,15 +1716,10 @@ function WeedingForm({
         />
       </div>
       <ServerError message={state.error} />
-      {state.successMessage && (
-        <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-          {state.successMessage}
-        </p>
-      )}
       <Button
         type="submit"
         disabled={state.isSubmitting}
-        className="mt-3 w-full bg-blue-600 text-white hover:bg-blue-500"
+        className="w-full bg-emerald-700 text-white hover:bg-emerald-600"
       >
         {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Clock className="size-4" />}
         {state.isSubmitting ? "Zapisywanie pielenia..." : "Oznacz rabatę jako wypieloną"}
@@ -1619,79 +1728,16 @@ function WeedingForm({
   );
 }
 
-function WeedingHistorySection({
-  bedName,
-  state,
-  onRetry,
-}: {
-  bedName: string;
-  state: WeedingBedState;
-  onRetry: () => void;
-}) {
-  return (
-    <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/80 p-4">
-      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h4 className="font-semibold text-emerald-900">Historia pielenia rabaty {bedName}</h4>
-          <p className="text-xs text-emerald-900/55">
-            Wpisy o wykonanych pracach są wczytywane na żądanie dla tej rabaty.
-          </p>
-        </div>
-        {state.error && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onRetry}
-            className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
-          >
-            Spróbuj ponownie
-          </Button>
-        )}
-      </div>
-
-      {state.isLoading ? (
-        <div className="flex items-center gap-2 rounded-lg bg-white/72 p-3 text-sm text-emerald-900/70">
-          <Loader2 className="size-4 animate-spin" />
-          Wczytywanie historii pielenia...
-        </div>
-      ) : state.error ? (
-        <ServerError message={state.error} />
-      ) : state.events.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-900/65">
-          Nie zapisano jeszcze pielenia dla tej rabaty.
-        </p>
-      ) : (
-        <ul className="space-y-2">
-          {state.events.map((event) => (
-            <li key={event.id} className="rounded-lg bg-white/70 p-3">
-              <p className="font-medium text-emerald-950">
-                {formatDisplayDate(event.weeded_at)} · {event.duration_minutes} min
-              </p>
-              {event.note && <p className="mt-2 text-xs text-emerald-900/65">{event.note}</p>}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
 function ObservationSection({
-  bedId,
   bedName,
   state,
-  onFieldChange,
-  onCatalogSelect,
-  onSubmit,
   onRetry,
+  onOpenCreate,
 }: {
-  bedId: string;
   bedName: string;
   state: ObservationBedState;
-  onFieldChange: <K extends keyof WeedObservationFormState>(field: K, value: WeedObservationFormState[K]) => void;
-  onCatalogSelect: (slug: string) => void;
-  onSubmit: (event: { preventDefault: () => void }) => void;
   onRetry: () => void;
+  onOpenCreate: () => void;
 }) {
   return (
     <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/80 p-4">
@@ -1702,16 +1748,22 @@ function ObservationSection({
             Ostatnie obserwacje mogą przyspieszyć sugerowany termin pielenia i kolejność w kolejce.
           </p>
         </div>
-        {state.error && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onRetry}
-            className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
-          >
-            Spróbuj ponownie
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" onClick={onOpenCreate} className="bg-amber-500 text-amber-950 hover:bg-amber-400">
+            <Plus className="size-4" />
+            Dodaj obserwację
           </Button>
-        )}
+          {state.error && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onRetry}
+              className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
+            >
+              Spróbuj ponownie
+            </Button>
+          )}
+        </div>
       </div>
 
       {state.isLoading ? (
@@ -1745,158 +1797,171 @@ function ObservationSection({
           {state.successMessage}
         </p>
       )}
-
-      <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
-        <div>
-          <label htmlFor={`weed-catalog-${bedId}`} className="mb-1 block text-sm text-emerald-950/75">
-            Katalog chwastów
-          </label>
-          <select
-            id={`weed-catalog-${bedId}`}
-            value={state.form.weed_catalog_slug}
-            onChange={(event) => {
-              onCatalogSelect(event.target.value);
-            }}
-            className="w-full rounded-lg border border-emerald-200/80 bg-white/90 px-3 py-2 text-emerald-950 transition-colors outline-none focus:ring-2 focus:ring-emerald-300"
-          >
-            <option value="">Własny / wybierz z listy</option>
-            {POLISH_WEED_CATALOG.map((entry) => (
-              <option key={entry.slug} value={entry.slug}>
-                {entry.name} — {entry.helper_text}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2">
-          <TextField
-            id={`weed-name-${bedId}`}
-            label="Nazwa chwastu"
-            value={state.form.weed_name}
-            onChange={(value) => {
-              onFieldChange("weed_name", value);
-            }}
-            placeholder="np. perz albo nie wiem"
-            error={state.fieldErrors.weed_name}
-          />
-          <TextField
-            id={`weed-observed-${bedId}`}
-            label="Data obserwacji"
-            value={state.form.observed_at}
-            onChange={(value) => {
-              onFieldChange("observed_at", value);
-            }}
-            type="date"
-            max={getTodayIsoDate()}
-            error={state.fieldErrors.observed_at}
-            required
-          />
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2">
-          <SelectField
-            id={`weed-category-${bedId}`}
-            label="Kategoria"
-            value={state.form.weed_category}
-            options={weedCategoryOptions}
-            onChange={(value) => {
-              onFieldChange("weed_category", value as WeedCategory);
-            }}
-            error={state.fieldErrors.weed_category}
-          />
-          <SelectField
-            id={`weed-stage-${bedId}`}
-            label="Faza wzrostu"
-            value={state.form.growth_stage}
-            options={growthStageOptions.map(([value, label]) => ({ value, label }))}
-            onChange={(value) => {
-              onFieldChange("growth_stage", value as GrowthStage);
-            }}
-            error={state.fieldErrors.growth_stage}
-          />
-          <SelectField
-            id={`weed-coverage-${bedId}`}
-            label="Pokrycie"
-            value={state.form.coverage}
-            options={coverageOptions.map(([value, label]) => ({ value, label }))}
-            onChange={(value) => {
-              onFieldChange("coverage", value as ObservationCoverage);
-            }}
-            error={state.fieldErrors.coverage}
-          />
-          <TextField
-            id={`weed-severity-${bedId}`}
-            label="Nasilenie 1-5"
-            value={state.form.severity}
-            onChange={(value) => {
-              onFieldChange("severity", value);
-            }}
-            type="number"
-            min="1"
-            max="5"
-            step="1"
-            error={state.fieldErrors.severity}
-            required
-          />
-        </div>
-
-        <fieldset className="rounded-lg border border-emerald-200/70 p-3">
-          <legend className="px-1 text-sm text-emerald-950/75">Cechy ryzyka</legend>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {WEED_RISK_TRAITS.map((trait) => (
-              <label key={trait} className="flex items-start gap-2 text-sm text-emerald-900/70">
-                <input
-                  type="checkbox"
-                  checked={state.form[trait]}
-                  onChange={(event) => {
-                    onFieldChange(trait, event.target.checked);
-                  }}
-                  className="mt-1"
-                />
-                {WEED_RISK_TRAIT_LABELS[trait]}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <TextField
-          id={`weed-note-${bedId}`}
-          label="Notatka"
-          value={state.form.note}
-          onChange={(value) => {
-            onFieldChange("note", value);
-          }}
-          placeholder="opcjonalnie"
-          error={state.fieldErrors.note}
-        />
-
-        <Button
-          type="submit"
-          disabled={state.isSubmitting}
-          className="w-full bg-amber-500 text-amber-950 hover:bg-amber-400"
-        >
-          {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-          {state.isSubmitting ? "Dodawanie obserwacji..." : "Dodaj obserwację chwastu"}
-        </Button>
-      </form>
     </div>
   );
 }
 
-function PlantSection({
+function ObservationForm({
   bedId,
-  bedName,
   state,
   onFieldChange,
+  onCatalogSelect,
   onSubmit,
-  onRetry,
 }: {
   bedId: string;
+  state: ObservationBedState;
+  onFieldChange: <K extends keyof WeedObservationFormState>(field: K, value: WeedObservationFormState[K]) => void;
+  onCatalogSelect: (slug: string) => void;
+  onSubmit: (event: { preventDefault: () => void }) => void;
+}) {
+  return (
+    <form onSubmit={onSubmit} className="space-y-3" noValidate>
+      <div>
+        <label htmlFor={`weed-catalog-${bedId}`} className="mb-1 block text-sm text-emerald-950/75">
+          Katalog chwastów
+        </label>
+        <select
+          id={`weed-catalog-${bedId}`}
+          value={state.form.weed_catalog_slug}
+          onChange={(event) => {
+            onCatalogSelect(event.target.value);
+          }}
+          className="w-full rounded-lg border border-emerald-200/80 bg-white/90 px-3 py-2 text-emerald-950 transition-colors outline-none focus:ring-2 focus:ring-emerald-300"
+        >
+          <option value="">Własny / wybierz z listy</option>
+          {POLISH_WEED_CATALOG.map((entry) => (
+            <option key={entry.slug} value={entry.slug}>
+              {entry.name} — {entry.helper_text}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <TextField
+          id={`weed-name-${bedId}`}
+          label="Nazwa chwastu"
+          value={state.form.weed_name}
+          onChange={(value) => {
+            onFieldChange("weed_name", value);
+          }}
+          placeholder="np. perz albo nie wiem"
+          error={state.fieldErrors.weed_name}
+        />
+        <TextField
+          id={`weed-observed-${bedId}`}
+          label="Data obserwacji"
+          value={state.form.observed_at}
+          onChange={(value) => {
+            onFieldChange("observed_at", value);
+          }}
+          type="date"
+          max={getTodayIsoDate()}
+          error={state.fieldErrors.observed_at}
+          required
+        />
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <SelectField
+          id={`weed-category-${bedId}`}
+          label="Kategoria"
+          value={state.form.weed_category}
+          options={weedCategoryOptions}
+          onChange={(value) => {
+            onFieldChange("weed_category", value as WeedCategory);
+          }}
+          error={state.fieldErrors.weed_category}
+        />
+        <SelectField
+          id={`weed-stage-${bedId}`}
+          label="Faza wzrostu"
+          value={state.form.growth_stage}
+          options={growthStageOptions.map(([value, label]) => ({ value, label }))}
+          onChange={(value) => {
+            onFieldChange("growth_stage", value as GrowthStage);
+          }}
+          error={state.fieldErrors.growth_stage}
+        />
+        <SelectField
+          id={`weed-coverage-${bedId}`}
+          label="Pokrycie"
+          value={state.form.coverage}
+          options={coverageOptions.map(([value, label]) => ({ value, label }))}
+          onChange={(value) => {
+            onFieldChange("coverage", value as ObservationCoverage);
+          }}
+          error={state.fieldErrors.coverage}
+        />
+        <TextField
+          id={`weed-severity-${bedId}`}
+          label="Nasilenie 1-5"
+          value={state.form.severity}
+          onChange={(value) => {
+            onFieldChange("severity", value);
+          }}
+          type="number"
+          min="1"
+          max="5"
+          step="1"
+          error={state.fieldErrors.severity}
+          required
+        />
+      </div>
+
+      <fieldset className="rounded-lg border border-emerald-200/70 p-3">
+        <legend className="px-1 text-sm text-emerald-950/75">Cechy ryzyka</legend>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          {WEED_RISK_TRAITS.map((trait) => (
+            <label key={trait} className="flex items-start gap-2 text-sm text-emerald-900/70">
+              <input
+                type="checkbox"
+                checked={state.form[trait]}
+                onChange={(event) => {
+                  onFieldChange(trait, event.target.checked);
+                }}
+                className="mt-1"
+              />
+              {WEED_RISK_TRAIT_LABELS[trait]}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <TextField
+        id={`weed-note-${bedId}`}
+        label="Notatka"
+        value={state.form.note}
+        onChange={(value) => {
+          onFieldChange("note", value);
+        }}
+        placeholder="opcjonalnie"
+        error={state.fieldErrors.note}
+      />
+
+      <ServerError message={state.error} />
+      <Button
+        type="submit"
+        disabled={state.isSubmitting}
+        className="w-full bg-amber-500 text-amber-950 hover:bg-amber-400"
+      >
+        {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+        {state.isSubmitting ? "Dodawanie obserwacji..." : "Dodaj obserwację chwastu"}
+      </Button>
+    </form>
+  );
+}
+
+function PlantSection({
+  bedName,
+  state,
+  onRetry,
+  onOpenCreate,
+}: {
   bedName: string;
   state: PlantBedState;
-  onFieldChange: (field: keyof PlantFormState, value: string) => void;
-  onSubmit: (event: { preventDefault: () => void }) => void;
   onRetry: () => void;
+  onOpenCreate: () => void;
 }) {
   return (
     <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50/80 p-4">
@@ -1907,16 +1972,22 @@ function PlantSection({
             Obecna wysokość i szerokość to wartości wpisane teraz; nie aktualizują się automatycznie.
           </p>
         </div>
-        {state.error && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onRetry}
-            className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
-          >
-            Spróbuj ponownie
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" onClick={onOpenCreate} className="bg-emerald-700 text-white hover:bg-emerald-600">
+            <Plus className="size-4" />
+            Dodaj roślinę
           </Button>
-        )}
+          {state.error && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onRetry}
+              className="border-emerald-200/80 bg-white/80 text-emerald-950 hover:bg-emerald-50 hover:text-emerald-950"
+            >
+              Spróbuj ponownie
+            </Button>
+          )}
+        </div>
       </div>
 
       {state.isLoading ? (
@@ -1940,84 +2011,99 @@ function PlantSection({
           ))}
         </ul>
       )}
-
-      <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
-        <TextField
-          id={`plant-name-${bedId}`}
-          label="Nazwa rośliny"
-          value={state.form.name}
-          onChange={(value) => {
-            onFieldChange("name", value);
-          }}
-          placeholder="np. lawenda"
-          error={state.fieldErrors.name}
-          required
-        />
-        <div className="grid gap-3 sm:grid-cols-2">
-          <TextField
-            id={`plant-year-${bedId}`}
-            label="Rok posadzenia"
-            value={state.form.planted_year}
-            onChange={(value) => {
-              onFieldChange("planted_year", value);
-            }}
-            type="number"
-            min="1900"
-            max={String(currentYear)}
-            step="1"
-            placeholder={String(currentYear)}
-            error={state.fieldErrors.planted_year}
-          />
-          <TextField
-            id={`plant-quantity-${bedId}`}
-            label="Liczba sztuk"
-            value={state.form.quantity}
-            onChange={(value) => {
-              onFieldChange("quantity", value);
-            }}
-            type="number"
-            min="1"
-            step="1"
-            placeholder="3"
-            error={state.fieldErrors.quantity}
-          />
-          <TextField
-            id={`plant-height-${bedId}`}
-            label="Obecna wysokość (cm)"
-            value={state.form.height_cm}
-            onChange={(value) => {
-              onFieldChange("height_cm", value);
-            }}
-            type="number"
-            min="0.1"
-            step="0.1"
-            placeholder="30"
-            error={state.fieldErrors.height_cm}
-          />
-          <TextField
-            id={`plant-width-${bedId}`}
-            label="Obecna szerokość (cm)"
-            value={state.form.width_cm}
-            onChange={(value) => {
-              onFieldChange("width_cm", value);
-            }}
-            type="number"
-            min="0.1"
-            step="0.1"
-            placeholder="25"
-            error={state.fieldErrors.width_cm}
-          />
-        </div>
-        <Button
-          type="submit"
-          disabled={state.isSubmitting}
-          className="w-full bg-emerald-700 text-white hover:bg-emerald-600"
-        >
-          {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-          {state.isSubmitting ? "Dodawanie rośliny..." : "Dodaj roślinę"}
-        </Button>
-      </form>
     </div>
+  );
+}
+
+function PlantForm({
+  bedId,
+  state,
+  onFieldChange,
+  onSubmit,
+}: {
+  bedId: string;
+  state: PlantBedState;
+  onFieldChange: (field: keyof PlantFormState, value: string) => void;
+  onSubmit: (event: { preventDefault: () => void }) => void;
+}) {
+  return (
+    <form onSubmit={onSubmit} className="space-y-3" noValidate>
+      <TextField
+        id={`plant-name-${bedId}`}
+        label="Nazwa rośliny"
+        value={state.form.name}
+        onChange={(value) => {
+          onFieldChange("name", value);
+        }}
+        placeholder="np. lawenda"
+        error={state.fieldErrors.name}
+        required
+      />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <TextField
+          id={`plant-year-${bedId}`}
+          label="Rok posadzenia"
+          value={state.form.planted_year}
+          onChange={(value) => {
+            onFieldChange("planted_year", value);
+          }}
+          type="number"
+          min="1900"
+          max={String(currentYear)}
+          step="1"
+          placeholder={String(currentYear)}
+          error={state.fieldErrors.planted_year}
+        />
+        <TextField
+          id={`plant-quantity-${bedId}`}
+          label="Liczba sztuk"
+          value={state.form.quantity}
+          onChange={(value) => {
+            onFieldChange("quantity", value);
+          }}
+          type="number"
+          min="1"
+          step="1"
+          placeholder="3"
+          error={state.fieldErrors.quantity}
+        />
+        <TextField
+          id={`plant-height-${bedId}`}
+          label="Obecna wysokość (cm)"
+          value={state.form.height_cm}
+          onChange={(value) => {
+            onFieldChange("height_cm", value);
+          }}
+          type="number"
+          min="0.1"
+          step="0.1"
+          placeholder="30"
+          error={state.fieldErrors.height_cm}
+        />
+        <TextField
+          id={`plant-width-${bedId}`}
+          label="Obecna szerokość (cm)"
+          value={state.form.width_cm}
+          onChange={(value) => {
+            onFieldChange("width_cm", value);
+          }}
+          type="number"
+          min="0.1"
+          step="0.1"
+          placeholder="25"
+          error={state.fieldErrors.width_cm}
+        />
+      </div>
+      <ServerError message={state.error} />
+      <Button
+        type="submit"
+        disabled={state.isSubmitting}
+        className="w-full bg-emerald-700 text-white hover:bg-emerald-600"
+      >
+        {state.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+        {state.isSubmitting ? "Dodawanie rośliny..." : "Dodaj roślinę"}
+      </Button>
+    </form>
   );
 }
 
@@ -2031,12 +2117,6 @@ function QueueMetric({ icon, label, value }: { icon: ReactNode; label: string; v
       <dd className="mt-1 font-medium text-emerald-950">{value}</dd>
     </div>
   );
-}
-
-function withoutSetValue(source: Set<string>, value: string): Set<string> {
-  const next = new Set(source);
-  next.delete(value);
-  return next;
 }
 
 function withoutRecordKey<T>(source: Record<string, T>, key: string): Record<string, T> {

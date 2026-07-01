@@ -359,37 +359,37 @@ No database, API, data, or secret migration is required. Removing `/dashboard` m
 
 #### Automated
 
-- [x] 1.1 Astro sync passes: `npx astro sync`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm run test`
-- [x] 1.4 Production build passes: `npm run build`
+- [x] 1.1 Astro sync passes: `npx astro sync` — 49cea8a
+- [x] 1.2 Lint passes: `npm run lint` — 49cea8a
+- [x] 1.3 Unit tests pass: `npm run test` — 49cea8a
+- [x] 1.4 Production build passes: `npm run build` — 49cea8a
 
 #### Manual
 
-- [x] 1.5 `/garden` shows “Następne rabaty do pielenia” as a full-width queue section
-- [x] 1.6 “Dodaj rabatę” in the queue header opens a modal with the existing add-bed fields
-- [x] 1.7 Empty queue state also offers “Dodaj rabatę” and opens the same modal
-- [x] 1.8 Validation errors keep the add-bed modal open
-- [x] 1.9 Successful add closes the modal, adds the bed to the queue, and shows Polish success feedback
+- [x] 1.5 `/garden` shows “Następne rabaty do pielenia” as a full-width queue section — 49cea8a
+- [x] 1.6 “Dodaj rabatę” in the queue header opens a modal with the existing add-bed fields — 49cea8a
+- [x] 1.7 Empty queue state also offers “Dodaj rabatę” and opens the same modal — 49cea8a
+- [x] 1.8 Validation errors keep the add-bed modal open — 49cea8a
+- [x] 1.9 Successful add closes the modal, adds the bed to the queue, and shows Polish success feedback — 49cea8a
 
 ### Phase 2: Bed Card Tabs, Action Modals, and Delete X
 
 #### Automated
 
-- [ ] 2.1 Astro sync passes after bed-card changes: `npx astro sync`
-- [ ] 2.2 Lint passes after bed-card changes: `npm run lint`
-- [ ] 2.3 Unit tests pass after bed-card changes: `npm run test`
-- [ ] 2.4 Production build passes after bed-card changes: `npm run build`
+- [x] 2.1 Astro sync passes after bed-card changes: `npx astro sync`
+- [x] 2.2 Lint passes after bed-card changes: `npm run lint`
+- [x] 2.3 Unit tests pass after bed-card changes: `npm run test`
+- [x] 2.4 Production build passes after bed-card changes: `npm run build`
 
 #### Manual
 
-- [ ] 2.5 Each bed card has a top-right X/icon button with Polish accessible delete label
-- [ ] 2.6 Delete X opens inline confirmation in the same card; cancel and confirm still work
-- [ ] 2.7 Only one of observations, weeding history, or plants is visible per bed card at a time
-- [ ] 2.8 Selecting each tab lazy-loads its data and preserves retry/error behavior
-- [ ] 2.9 Add observation, mark weeded, and add plant actions open modals and close only after successful submit
-- [ ] 2.10 Failed validation/API calls keep the relevant modal open with Polish errors
-- [ ] 2.11 “Oznacz rabatę jako wypieloną” is green
+- [x] 2.5 Each bed card has a top-right X/icon button with Polish accessible delete label
+- [x] 2.6 Delete X opens inline confirmation in the same card; cancel and confirm still work
+- [x] 2.7 Only one of observations, weeding history, or plants is visible per bed card at a time
+- [x] 2.8 Selecting each tab lazy-loads its data and preserves retry/error behavior
+- [x] 2.9 Add observation, mark weeded, and add plant actions open modals and close only after successful submit
+- [x] 2.10 Failed validation/API calls keep the relevant modal open with Polish errors
+- [x] 2.11 “Oznacz rabatę jako wypieloną” is green
 
 ### Phase 3: Remove Panel Navigation and Route
 
