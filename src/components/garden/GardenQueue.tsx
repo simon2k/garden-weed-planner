@@ -287,19 +287,23 @@ export function GardenQueue() {
     setError(null);
 
     try {
-      const response = await fetch("/api/garden/beds");
-      const payload = (await response.json()) as BedsResponse & ErrorResponse;
-
-      if (!response.ok) {
-        throw new Error(payload.error ?? "Nie udało się wczytać rabat.");
-      }
-
-      setBeds(payload.beds);
+      await refreshBedsInPlace();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Nie udało się wczytać rabat.");
     } finally {
       setIsLoading(false);
     }
+  }
+
+  async function refreshBedsInPlace() {
+    const response = await fetch("/api/garden/beds");
+    const payload = (await response.json()) as BedsResponse & ErrorResponse;
+
+    if (!response.ok) {
+      throw new Error(payload.error ?? "Nie udało się wczytać rabat.");
+    }
+
+    setBeds(payload.beds);
   }
 
   function updateField<K extends keyof FormState>(field: K, value: FormState[K]) {
@@ -620,7 +624,7 @@ export function GardenQueue() {
           },
         };
       });
-      await loadBeds();
+      await refreshBedsInPlace();
       setObservationModalBedId(null);
     } catch (err) {
       setObservationStateByBedId((current) => ({
@@ -747,7 +751,7 @@ export function GardenQueue() {
           },
         };
       });
-      await loadBeds();
+      await refreshBedsInPlace();
       setWeedingModalBedId(null);
     } catch (err) {
       setWeedingStateByBedId((current) => ({

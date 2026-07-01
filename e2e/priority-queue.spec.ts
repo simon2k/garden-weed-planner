@@ -1,10 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-const runId = `priority-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-const urgentBedName = `E2E urgent bindweed ${runId}`;
-const soonBedName = `E2E soon annuals ${runId}`;
-const okBedName = `E2E ok herbs ${runId}`;
-const smokeBedName = `E2E weeded smoke ${runId}`;
 const today = startOfUtcToday(new Date());
 const urgentLastWeededDate = addUtcDays(today, -22);
 const urgentSuggestedDate = formatDisplayDate(addUtcDays(today, -15));
@@ -15,6 +10,11 @@ const okLastWeededDate = addUtcDays(today, -2);
 // Seed pattern: e2e/seed.spec.ts — role locators, state waits, unique data, UI cleanup.
 test.describe("risk #1: priority queue points the user to the right bed", () => {
   test("risk #1: highest-priority bed appears first with its own suggested next-weeding date", async ({ page }) => {
+    const runId = createRunId("priority-order");
+    const urgentBedName = `E2E urgent bindweed ${runId}`;
+    const soonBedName = `E2E soon annuals ${runId}`;
+    const okBedName = `E2E ok herbs ${runId}`;
+
     await page.goto("/garden");
 
     await expect(page.getByRole("heading", { name: "Następne rabaty do pielenia" })).toBeVisible();
@@ -22,7 +22,7 @@ test.describe("risk #1: priority queue points the user to the right bed", () => 
 
     // Teardown-before-setup: remove stale data from interrupted runs of this spec only.
     const staleTestBed = page.getByRole("listitem").filter({
-      has: page.getByRole("heading", { name: /^E2E (urgent bindweed|soon annuals|ok herbs|weeded smoke) priority-/ }),
+      has: page.getByRole("heading", { name: /^E2E (urgent bindweed|soon annuals|ok herbs) priority-order-/ }),
     });
     while ((await staleTestBed.count()) > 0) {
       const bed = staleTestBed.first();
@@ -81,6 +81,9 @@ test.describe("risk #1: priority queue points the user to the right bed", () => 
   });
 
   test("risk #1 smoke: mark-weeded modal closes after saving an event", async ({ page }) => {
+    const runId = createRunId("priority-smoke");
+    const smokeBedName = `E2E weeded smoke ${runId}`;
+
     await page.goto("/garden");
 
     await expect(page.getByRole("heading", { name: "Następne rabaty do pielenia" })).toBeVisible();
@@ -160,6 +163,10 @@ async function deleteBed(bed: Locator, name: string) {
 
 function startOfUtcToday(date: Date): string {
   return date.toISOString().slice(0, 10);
+}
+
+function createRunId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function addUtcDays(isoDate: string, days: number): string {
