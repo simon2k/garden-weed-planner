@@ -359,18 +359,18 @@ No database, API, data, or secret migration is required. Removing `/dashboard` m
 
 #### Automated
 
-- [ ] 1.1 Astro sync passes: `npx astro sync`
-- [ ] 1.2 Lint passes: `npm run lint`
-- [ ] 1.3 Unit tests pass: `npm run test`
-- [ ] 1.4 Production build passes: `npm run build`
+- [x] 1.1 Astro sync passes: `npx astro sync`
+- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.3 Unit tests pass: `npm run test`
+- [x] 1.4 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 1.5 `/garden` shows “Następne rabaty do pielenia” as a full-width queue section
-- [ ] 1.6 “Dodaj rabatę” in the queue header opens a modal with the existing add-bed fields
-- [ ] 1.7 Empty queue state also offers “Dodaj rabatę” and opens the same modal
-- [ ] 1.8 Validation errors keep the add-bed modal open
-- [ ] 1.9 Successful add closes the modal, adds the bed to the queue, and shows Polish success feedback
+- [x] 1.5 `/garden` shows “Następne rabaty do pielenia” as a full-width queue section
+- [x] 1.6 “Dodaj rabatę” in the queue header opens a modal with the existing add-bed fields
+- [x] 1.7 Empty queue state also offers “Dodaj rabatę” and opens the same modal
+- [x] 1.8 Validation errors keep the add-bed modal open
+- [x] 1.9 Successful add closes the modal, adds the bed to the queue, and shows Polish success feedback
 
 ### Phase 2: Bed Card Tabs, Action Modals, and Delete X
 
