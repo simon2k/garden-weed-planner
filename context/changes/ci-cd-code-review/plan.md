@@ -391,23 +391,23 @@ No data migration is required. Repository setup requires an `OPENROUTER_API_KEY`
 
 #### Automated
 
-- [x] 3.1 Workflow YAML is syntactically valid
-- [x] 3.2 Workflow targets `main`, not `master`
-- [x] 3.3 Workflow uses the local action path, not the placeholder external action
-- [x] 3.4 Workflow declares required write permissions for comments and labels
+- [x] 3.1 Workflow YAML is syntactically valid — 27724fe
+- [x] 3.2 Workflow targets `main`, not `master` — 27724fe
+- [x] 3.3 Workflow uses the local action path, not the placeholder external action — 27724fe
+- [x] 3.4 Workflow declares required write permissions for comments and labels — 27724fe
 
 #### Manual
 
-- [x] 3.5 Inspect event gating and confirm adding `ai-cr:passed` or `ai-cr:failed` cannot retrigger review
-- [x] 3.6 Confirm no Supabase or Cloudflare secrets are referenced by the review workflow
+- [x] 3.5 Inspect event gating and confirm adding `ai-cr:passed` or `ai-cr:failed` cannot retrigger review — 27724fe
+- [x] 3.6 Confirm no Supabase or Cloudflare secrets are referenced by the review workflow — 27724fe
 
 ### Phase 4: PR Comment and Label Side Effects
 
 #### Automated
 
-- [ ] 4.1 Comment rendering includes verdict, five scores, and Markdown summary from action output
-- [ ] 4.2 Label sync logic cannot leave both `ai-cr:passed` and `ai-cr:failed` on the PR
-- [ ] 4.3 Retry cleanup removes `ai-cr:review` after a labeled retry completes
+- [x] 4.1 Comment rendering includes verdict, five scores, and Markdown summary from action output
+- [x] 4.2 Label sync logic cannot leave both `ai-cr:passed` and `ai-cr:failed` on the PR
+- [x] 4.3 Retry cleanup removes `ai-cr:review` after a labeled retry completes
 
 #### Manual
 

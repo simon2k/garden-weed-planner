@@ -66,6 +66,7 @@ jobs:
       - name: Run AI review
         if: steps.diff.outputs.has-typescript-diff == 'true'
         id: review
+        continue-on-error: true
         uses: ./.github/actions/ai-review
         with:
           api-key: ${{ secrets.OPENROUTER_API_KEY }}
@@ -75,3 +76,19 @@ jobs:
       - name: Skip AI review when no TypeScript diff exists
         if: steps.diff.outputs.has-typescript-diff == 'false'
         run: echo "No TypeScript changes detected; skipping AI review model call."
+
+      - name: Sync AI review comment and labels
+        if: always()
+        run: node .github/scripts/sync-ai-review-result.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REVIEW_SKIPPED: ${{ steps.diff.outputs.has-typescript-diff == 'false' }}
+          REVIEW_FAILED: ${{ steps.diff.outputs.has-typescript-diff == 'true' && steps.review.outcome == 'failure' }}
+          REVIEW_VERDICT: ${{ steps.review.outputs.verdict }}
+          REVIEW_SUMMARY: ${{ steps.review.outputs.summary }}
+          REVIEW_JSON: ${{ steps.review.outputs.review-json }}
+
+      - name: Fail workflow when AI review fails
+        if: steps.diff.outputs.has-typescript-diff == 'true' && steps.review.outcome == 'failure'
+        run: exit 1
