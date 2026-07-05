@@ -310,23 +310,23 @@ This is an internal package refactor with a preserved JSON review contract. Exis
 
 #### Automated
 
-- [x] 3.1 `npm run typecheck` passes in `packages/code-reviewer`
-- [x] 3.2 `npm run build` passes in `packages/code-reviewer`
-- [x] 3.3 Built declarations include the public reviewer helper and agent exports
+- [x] 3.1 `npm run typecheck` passes in `packages/code-reviewer` — 05f9eb9
+- [x] 3.2 `npm run build` passes in `packages/code-reviewer` — 05f9eb9
+- [x] 3.3 Built declarations include the public reviewer helper and agent exports — 05f9eb9
 
 #### Manual
 
-- [x] 3.4 Human inspection confirms `src/index.ts` is thin and does not re-accumulate schema/prompt/provider implementation details
-- [x] 3.5 Human inspection confirms the CLI still reads stdin and prints the same top-level JSON review shape
+- [x] 3.4 Human inspection confirms `src/index.ts` is thin and does not re-accumulate schema/prompt/provider implementation details — 05f9eb9
+- [x] 3.5 Human inspection confirms the CLI still reads stdin and prints the same top-level JSON review shape — 05f9eb9
 
 ### Phase 4: Final Verification and Scope Guard
 
 #### Automated
 
-- [ ] 4.1 Type checking passes: `npm run typecheck`
-- [ ] 4.2 Build passes: `npm run build`
+- [x] 4.1 Type checking passes: `npm run typecheck`
+- [x] 4.2 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 4.3 Human inspection confirms no promptfoo/eval environment was configured
-- [ ] 4.4 Human inspection confirms the final module layout is understandable and future eval-friendly
+- [x] 4.3 Human inspection confirms no promptfoo/eval environment was configured
+- [x] 4.4 Human inspection confirms the final module layout is understandable and future eval-friendly
