@@ -1,9 +1,9 @@
 import type { DeepPartial, LanguageModel } from "ai";
 import { Output, ToolLoopAgent } from "ai";
 
-import { CODE_REVIEW_SYSTEM_PROMPT } from "./prompts/code-review.js";
-import { getOpenRouterModel } from "./provider.js";
-import { ReviewSchema, type CodeReview } from "./schemas/review.js";
+import { CODE_REVIEW_SYSTEM_PROMPT } from "../prompts/code-review.js";
+import { getOpenRouterModel } from "../providers/openrouter.js";
+import { ReviewSchema, type CodeReview } from "../schemas/review.js";
 
 export interface CreateCodeReviewerAgentOptions {
   model?: LanguageModel;
