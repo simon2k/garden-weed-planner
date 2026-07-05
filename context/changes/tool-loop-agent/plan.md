@@ -323,10 +323,10 @@ This is an internal package refactor with a preserved JSON review contract. Exis
 
 #### Automated
 
-- [x] 4.1 Type checking passes: `npm run typecheck`
-- [x] 4.2 Build passes: `npm run build`
+- [x] 4.1 Type checking passes: `npm run typecheck` — b02c6c4
+- [x] 4.2 Build passes: `npm run build` — b02c6c4
 
 #### Manual
 
-- [x] 4.3 Human inspection confirms no promptfoo/eval environment was configured
-- [x] 4.4 Human inspection confirms the final module layout is understandable and future eval-friendly
+- [x] 4.3 Human inspection confirms no promptfoo/eval environment was configured — b02c6c4
+- [x] 4.4 Human inspection confirms the final module layout is understandable and future eval-friendly — b02c6c4
