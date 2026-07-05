@@ -297,27 +297,27 @@ This is an internal package refactor with a preserved JSON review contract. Exis
 
 #### Automated
 
-- [x] 2.1 `npm run typecheck` passes in `packages/code-reviewer`
-- [x] 2.2 `npm run build` passes in `packages/code-reviewer`
-- [x] 2.3 `src/index.ts` no longer imports `generateText`
+- [x] 2.1 `npm run typecheck` passes in `packages/code-reviewer` — d46cb20
+- [x] 2.2 `npm run build` passes in `packages/code-reviewer` — d46cb20
+- [x] 2.3 `src/index.ts` no longer imports `generateText` — d46cb20
 
 #### Manual
 
-- [x] 2.4 Human inspection confirms `createCodeReviewerAgent` can be used by future eval code without importing CLI-only stdin logic
-- [x] 2.5 Human inspection confirms OpenRouter env names and `DEFAULT_MODEL` remain compatible with `.env.example`
+- [x] 2.4 Human inspection confirms `createCodeReviewerAgent` can be used by future eval code without importing CLI-only stdin logic — d46cb20
+- [x] 2.5 Human inspection confirms OpenRouter env names and `DEFAULT_MODEL` remain compatible with `.env.example` — d46cb20
 
 ### Phase 3: Preserve Public API and CLI Entrypoint
 
 #### Automated
 
-- [ ] 3.1 `npm run typecheck` passes in `packages/code-reviewer`
-- [ ] 3.2 `npm run build` passes in `packages/code-reviewer`
-- [ ] 3.3 Built declarations include the public reviewer helper and agent exports
+- [x] 3.1 `npm run typecheck` passes in `packages/code-reviewer`
+- [x] 3.2 `npm run build` passes in `packages/code-reviewer`
+- [x] 3.3 Built declarations include the public reviewer helper and agent exports
 
 #### Manual
 
-- [ ] 3.4 Human inspection confirms `src/index.ts` is thin and does not re-accumulate schema/prompt/provider implementation details
-- [ ] 3.5 Human inspection confirms the CLI still reads stdin and prints the same top-level JSON review shape
+- [x] 3.4 Human inspection confirms `src/index.ts` is thin and does not re-accumulate schema/prompt/provider implementation details
+- [x] 3.5 Human inspection confirms the CLI still reads stdin and prints the same top-level JSON review shape
 
 ### Phase 4: Final Verification and Scope Guard
 
