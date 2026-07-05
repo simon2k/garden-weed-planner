@@ -1,0 +1,77 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    if: github.event.action != 'labeled' || github.event.label.name == 'ai-cr:review'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            packages/code-reviewer/package-lock.json
+
+      - name: Install app dependencies
+        run: npm ci
+
+      - name: Install reviewer dependencies
+        working-directory: packages/code-reviewer
+        run: npm ci
+
+      - name: Build reviewer package
+        working-directory: packages/code-reviewer
+        run: npm run build
+
+      - name: Collect TypeScript diff
+        id: diff
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+
+          git diff --unified=80 --diff-filter=ACMR "$BASE_SHA" "$HEAD_SHA" -- '*.ts' '*.tsx' > typescript.diff
+
+          if [ -s typescript.diff ]; then
+            echo "has-typescript-diff=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-typescript-diff=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          {
+            echo 'diff<<AI_REVIEW_DIFF'
+            cat typescript.diff
+            echo 'AI_REVIEW_DIFF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run AI review
+        if: steps.diff.outputs.has-typescript-diff == 'true'
+        id: review
+        uses: ./.github/actions/ai-review
+        with:
+          api-key: ${{ secrets.OPENROUTER_API_KEY }}
+          pr-title: ${{ github.event.pull_request.title }}
+          diff: ${{ steps.diff.outputs.diff }}
+
+      - name: Skip AI review when no TypeScript diff exists
+        if: steps.diff.outputs.has-typescript-diff == 'false'
+        run: echo "No TypeScript changes detected; skipping AI review model call."

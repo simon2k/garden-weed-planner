@@ -377,29 +377,29 @@ No data migration is required. Repository setup requires an `OPENROUTER_API_KEY`
 
 #### Automated
 
-- [x] 2.1 Composite action metadata is syntactically valid YAML
-- [x] 2.2 Action no longer references `secrets.*` directly
-- [x] 2.3 Action no longer references nonexistent `.github/actions/ai-review/dist/review.js`
-- [x] 2.4 Code reviewer typecheck/build still pass after action integration
+- [x] 2.1 Composite action metadata is syntactically valid YAML — 480fc87
+- [x] 2.2 Action no longer references `secrets.*` directly — 480fc87
+- [x] 2.3 Action no longer references nonexistent `.github/actions/ai-review/dist/review.js` — 480fc87
+- [x] 2.4 Code reviewer typecheck/build still pass after action integration — 480fc87
 
 #### Manual
 
-- [x] 2.5 Inspect the action contract and confirm it exposes `verdict`, `summary`, and full JSON outputs
-- [x] 2.6 Confirm the action contains no PR comment or label mutation logic
+- [x] 2.5 Inspect the action contract and confirm it exposes `verdict`, `summary`, and full JSON outputs — 480fc87
+- [x] 2.6 Confirm the action contains no PR comment or label mutation logic — 480fc87
 
 ### Phase 3: GitHub Workflow Orchestration
 
 #### Automated
 
-- [ ] 3.1 Workflow YAML is syntactically valid
-- [ ] 3.2 Workflow targets `main`, not `master`
-- [ ] 3.3 Workflow uses the local action path, not the placeholder external action
-- [ ] 3.4 Workflow declares required write permissions for comments and labels
+- [x] 3.1 Workflow YAML is syntactically valid
+- [x] 3.2 Workflow targets `main`, not `master`
+- [x] 3.3 Workflow uses the local action path, not the placeholder external action
+- [x] 3.4 Workflow declares required write permissions for comments and labels
 
 #### Manual
 
-- [ ] 3.5 Inspect event gating and confirm adding `ai-cr:passed` or `ai-cr:failed` cannot retrigger review
-- [ ] 3.6 Confirm no Supabase or Cloudflare secrets are referenced by the review workflow
+- [x] 3.5 Inspect event gating and confirm adding `ai-cr:passed` or `ai-cr:failed` cannot retrigger review
+- [x] 3.6 Confirm no Supabase or Cloudflare secrets are referenced by the review workflow
 
 ### Phase 4: PR Comment and Label Side Effects
 
