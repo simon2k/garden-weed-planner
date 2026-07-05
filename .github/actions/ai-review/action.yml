@@ -1,0 +1,40 @@
+name: AI Reviewer
+description: Run the team's code review agent
+
+branding:
+  icon: terminal
+  color: purple
+
+inputs:
+  api-key:
+    description: OpenRouter API key used by the code review agent.
+    required: true
+  pr-title:
+    description: Pull request title to include in the review prompt.
+    required: true
+  diff:
+    description: TypeScript-only git diff to review.
+    required: true
+
+outputs:
+  verdict:
+    description: Pass/fail verdict from the review agent.
+    value: ${{ steps.review.outputs.verdict }}
+  summary:
+    description: Markdown summary from the review agent.
+    value: ${{ steps.review.outputs.summary }}
+  review-json:
+    description: Full structured JSON review payload.
+    value: ${{ steps.review.outputs.review-json }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run AI code review
+      id: review
+      shell: bash
+      run: node "${{ github.action_path }}/review.mjs"
+      env:
+        OPENROUTER_API_KEY: ${{ inputs.api-key }}
+        REVIEW_PR_TITLE: ${{ inputs.pr-title }}
+        REVIEW_DIFF: ${{ inputs.diff }}

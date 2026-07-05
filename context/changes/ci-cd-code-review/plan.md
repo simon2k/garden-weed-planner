@@ -364,28 +364,28 @@ No data migration is required. Repository setup requires an `OPENROUTER_API_KEY`
 
 #### Automated
 
-- [x] 1.1 Code reviewer typecheck passes: `cd packages/code-reviewer && npm run typecheck`
-- [x] 1.2 Code reviewer build passes: `cd packages/code-reviewer && npm run build`
-- [x] 1.3 Existing direct CLI still returns valid JSON for a small TypeScript diff when `OPENROUTER_API_KEY` is configured
+- [x] 1.1 Code reviewer typecheck passes: `cd packages/code-reviewer && npm run typecheck` — cc4eaed
+- [x] 1.2 Code reviewer build passes: `cd packages/code-reviewer && npm run build` — cc4eaed
+- [x] 1.3 Existing direct CLI still returns valid JSON for a small TypeScript diff when `OPENROUTER_API_KEY` is configured — cc4eaed
 
 #### Manual
 
-- [x] 1.4 Inspect generated prompt behavior and confirm PR title is included while PR body remains excluded
-- [x] 1.5 Confirm the five existing score fields, `verdict`, and `summary` remain in the output contract
+- [x] 1.4 Inspect generated prompt behavior and confirm PR title is included while PR body remains excluded — cc4eaed
+- [x] 1.5 Confirm the five existing score fields, `verdict`, and `summary` remain in the output contract — cc4eaed
 
 ### Phase 2: Composite Action
 
 #### Automated
 
-- [ ] 2.1 Composite action metadata is syntactically valid YAML
-- [ ] 2.2 Action no longer references `secrets.*` directly
-- [ ] 2.3 Action no longer references nonexistent `.github/actions/ai-review/dist/review.js`
-- [ ] 2.4 Code reviewer typecheck/build still pass after action integration
+- [x] 2.1 Composite action metadata is syntactically valid YAML
+- [x] 2.2 Action no longer references `secrets.*` directly
+- [x] 2.3 Action no longer references nonexistent `.github/actions/ai-review/dist/review.js`
+- [x] 2.4 Code reviewer typecheck/build still pass after action integration
 
 #### Manual
 
-- [ ] 2.5 Inspect the action contract and confirm it exposes `verdict`, `summary`, and full JSON outputs
-- [ ] 2.6 Confirm the action contains no PR comment or label mutation logic
+- [x] 2.5 Inspect the action contract and confirm it exposes `verdict`, `summary`, and full JSON outputs
+- [x] 2.6 Confirm the action contains no PR comment or label mutation logic
 
 ### Phase 3: GitHub Workflow Orchestration
 
