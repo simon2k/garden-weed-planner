@@ -1,4 +1,4 @@
-const COMMENT_MARKER = "<!-- ai-code-review:sticky -->";
+const COMMENT_MARKER = "<!-- ai-code-review:run -->";
 
 const LABELS = {
   passed: {
@@ -96,7 +96,7 @@ function scoreRows(review) {
   return `\n| Criterion | Score |\n| --- | ---: |\n| Implementation correctness | ${review.implementationCorrectness}/10 |\n| Idiomaticity | ${review.idiomaticity}/10 |\n| Complexity | ${review.complexity}/10 |\n| Test risk coverage | ${review.testRiskCoverage}/10 |\n| Security/safety | ${review.securitySafety}/10 |\n`;
 }
 
-export function renderReviewComment(state) {
+export function renderReviewComment(state, metadata = {}) {
   const heading = state.skipped
     ? "## AI Code Review: skipped"
     : state.failed
@@ -109,8 +109,10 @@ export function renderReviewComment(state) {
     : state.skipped
       ? "This PR did not include `.ts` or `.tsx` changes."
       : state.summary;
+  const runLine = metadata.runUrl ? `**Run:** ${metadata.runUrl}\n` : "";
+  const commitLine = metadata.headSha ? `**Commit:** \`${metadata.headSha.slice(0, 7)}\`\n` : "";
 
-  return `${COMMENT_MARKER}\n${heading}\n\n**Verdict label:** \`${state.label}\`\n${scores}\n### Summary\n\n${details}\n`;
+  return `${COMMENT_MARKER}\n${heading}\n\n${runLine}${commitLine}**Verdict label:** \`${state.label}\`\n${scores}\n### Summary\n\n${details}\n`;
 }
 
 async function request({ token, method = "GET", path, body }) {
@@ -181,23 +183,7 @@ async function addLabel({ token, owner, repo, issueNumber, labelName }) {
   });
 }
 
-async function upsertComment({ token, owner, repo, issueNumber, body }) {
-  const comments = await request({
-    token,
-    path: `/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=100`,
-  });
-  const existing = comments.find((comment) => comment.user?.type === "Bot" && comment.body?.includes(COMMENT_MARKER));
-
-  if (existing) {
-    await request({
-      token,
-      method: "PATCH",
-      path: `/repos/${owner}/${repo}/issues/comments/${existing.id}`,
-      body: { body },
-    });
-    return;
-  }
-
+async function postComment({ token, owner, repo, issueNumber, body }) {
   await request({
     token,
     method: "POST",
@@ -229,7 +215,16 @@ async function main() {
   await removeLabel({ token, owner, repo, issueNumber, labelName: state.removeLabel });
   await addLabel({ token, owner, repo, issueNumber, labelName: state.label });
   await removeLabel({ token, owner, repo, issueNumber, labelName: LABELS.review.name });
-  await upsertComment({ token, owner, repo, issueNumber, body: renderReviewComment(state) });
+  await postComment({
+    token,
+    owner,
+    repo,
+    issueNumber,
+    body: renderReviewComment(state, {
+      runUrl: optionalEnv("REVIEW_RUN_URL"),
+      headSha: optionalEnv("REVIEW_HEAD_SHA"),
+    }),
+  });
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

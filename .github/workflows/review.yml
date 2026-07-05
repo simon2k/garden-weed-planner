@@ -89,6 +89,8 @@ jobs:
           REVIEW_VERDICT: ${{ steps.review.outputs.verdict }}
           REVIEW_SUMMARY: ${{ steps.review.outputs.summary }}
           REVIEW_JSON: ${{ steps.review.outputs.review-json }}
+          REVIEW_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REVIEW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Fail workflow when AI review fails
         if: steps.diff.outputs.has-typescript-diff == 'true' && steps.review.outcome == 'failure'

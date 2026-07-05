@@ -210,17 +210,17 @@ Replace the draft review workflow with a real `pull_request` workflow targeting 
 
 ### Overview
 
-Implement visible PR side effects: one sticky review comment and mutually exclusive AI review labels.
+Implement visible PR side effects: one new review comment per AI run and mutually exclusive AI review labels.
 
 ### Changes Required:
 
-#### 1. Sticky comment script or workflow step
+#### 1. Traceable review comment script or workflow step
 
-**File**: `.github/workflows/review.yml` or `.github/scripts/upsert-ai-review-comment.mjs`
+**File**: `.github/workflows/review.yml` or `.github/scripts/sync-ai-review-result.mjs`
 
-**Intent**: Keep PR conversation clean by updating one AI review comment instead of posting a new comment on every run.
+**Intent**: Preserve review history by posting a new AI review comment for every run instead of overwriting prior review output.
 
-**Contract**: The implementation must identify an existing bot-authored AI review comment by a stable marker, update it if present, or create it if absent. The rendered comment must include verdict, all five scores, and summary.
+**Contract**: The implementation must create a new bot-authored AI review comment on every review run. The rendered comment must include verdict, all five scores, summary, and traceability metadata such as workflow run URL and commit SHA when available.
 
 #### 2. Label lifecycle script or workflow step
 
@@ -232,11 +232,11 @@ Implement visible PR side effects: one sticky review comment and mutually exclus
 
 #### 3. Failure-path comment behavior
 
-**File**: `.github/workflows/review.yml` or `.github/scripts/upsert-ai-review-comment.mjs`
+**File**: `.github/workflows/review.yml` or `.github/scripts/sync-ai-review-result.mjs`
 
 **Intent**: Make live model/API failures visible to PR authors.
 
-**Contract**: If review generation fails, update the sticky comment with a clear failure message and leave/assign `ai-cr:failed` only when the failure should block merge according to workflow behavior. The plan does not require a diff cap, so oversized-context/model errors should be treated as review-generation failures with an actionable comment.
+**Contract**: If review generation fails, post a new AI review comment with a clear failure message and leave/assign `ai-cr:failed` only when the failure should block merge according to workflow behavior. The plan does not require a diff cap, so oversized-context/model errors should be treated as review-generation failures with an actionable comment.
 
 ### Success Criteria:
 
@@ -248,9 +248,9 @@ Implement visible PR side effects: one sticky review comment and mutually exclus
 
 #### Manual Verification:
 
-- On a test PR, first run creates one AI review comment.
-- Pushing a new commit updates the same comment instead of creating a duplicate.
-- Adding `ai-cr:review` reruns review and removes the retry label afterward.
+- On a test PR, each AI review run creates a new AI review comment.
+- Pushing a new commit creates an additional AI review comment for traceability.
+- Adding `ai-cr:review` reruns review, creates an additional AI review comment, and removes the retry label afterward.
 - Verdict label changes replace the previous verdict label.
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase.
@@ -331,9 +331,9 @@ Verify the complete path locally and through a real PR smoke test with OpenRoute
 
 1. Create or update a PR to `main` with a small `.ts` or `.tsx` change.
 2. Confirm `AI Code Review` runs and uses the local composite action.
-3. Confirm exactly one sticky AI review comment exists and includes verdict, five scores, and summary.
+3. Confirm each AI review run posts a new comment with verdict, five scores, summary, run URL, and commit SHA.
 4. Confirm exactly one of `ai-cr:passed` / `ai-cr:failed` is present.
-5. Add `ai-cr:review`, confirm the workflow reruns, the same comment updates, and `ai-cr:review` is removed.
+5. Add `ai-cr:review`, confirm the workflow reruns, a new AI review comment appears, and `ai-cr:review` is removed.
 6. Push a PR update with no TypeScript diff and confirm the workflow follows the no-TypeScript policy without a model call.
 
 ## Performance Considerations
@@ -411,9 +411,9 @@ No data migration is required. Repository setup requires an `OPENROUTER_API_KEY`
 
 #### Manual
 
-- [ ] 4.4 On a test PR, first run creates one AI review comment
-- [ ] 4.5 Pushing a new commit updates the same comment instead of creating a duplicate
-- [ ] 4.6 Adding `ai-cr:review` reruns review and removes the retry label afterward
+- [ ] 4.4 On a test PR, each AI review run creates a new AI review comment
+- [ ] 4.5 Pushing a new commit creates an additional AI review comment for traceability
+- [ ] 4.6 Adding `ai-cr:review` reruns review, creates an additional AI review comment, and removes the retry label afterward
 - [ ] 4.7 Verdict label changes replace the previous verdict label
 
 ### Phase 5: End-to-End Verification and Documentation
@@ -431,7 +431,7 @@ No data migration is required. Repository setup requires an `OPENROUTER_API_KEY`
 #### Manual
 
 - [ ] 5.8 Test PR to `main` runs `AI Code Review`
-- [ ] 5.9 Workflow posts or updates exactly one sticky AI review comment
+- [ ] 5.9 Workflow posts a new AI review comment for each review run
 - [ ] 5.10 Workflow applies exactly one verdict label
 - [ ] 5.11 Adding `ai-cr:review` triggers retry and the label is removed afterward
 - [ ] 5.12 PRs with no TypeScript diff follow the chosen neutral/pass behavior without calling the model
