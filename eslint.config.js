@@ -37,6 +37,30 @@ const baseConfig = tseslint.config({
   },
 });
 
+const githubAutomationConfig = tseslint.config({
+  files: [".github/**/*.mjs"],
+  extends: [tseslint.configs.disableTypeChecked],
+  languageOptions: {
+    globals: {
+      console: "readonly",
+      fetch: "readonly",
+      process: "readonly",
+    },
+  },
+});
+
+const nestedPackageConfig = tseslint.config({
+  files: ["packages/code-reviewer/**/*.ts"],
+  extends: [tseslint.configs.disableTypeChecked],
+  languageOptions: {
+    globals: {
+      Buffer: "readonly",
+      console: "readonly",
+      process: "readonly",
+    },
+  },
+});
+
 const reactConfig = tseslint.config({
   files: ["**/*.{js,jsx,ts,tsx}"],
   extends: [pluginReact.configs.flat.recommended],
@@ -71,6 +95,8 @@ const astroConfig = tseslint.config({
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   baseConfig,
+  githubAutomationConfig,
+  nestedPackageConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
