@@ -50,8 +50,9 @@ jobs:
           set -euo pipefail
 
           git diff --unified=80 --diff-filter=ACMR "$BASE_SHA" "$HEAD_SHA" -- '*.ts' '*.tsx' > typescript.diff
+          node .github/scripts/redact-ai-review-diff.mjs typescript.diff typescript.redacted.diff
 
-          if [ -s typescript.diff ]; then
+          if [ -s typescript.redacted.diff ]; then
             echo "has-typescript-diff=true" >> "$GITHUB_OUTPUT"
           else
             echo "has-typescript-diff=false" >> "$GITHUB_OUTPUT"
@@ -59,7 +60,7 @@ jobs:
 
           {
             echo 'diff<<AI_REVIEW_DIFF'
-            cat typescript.diff
+            cat typescript.redacted.diff
             echo 'AI_REVIEW_DIFF'
           } >> "$GITHUB_OUTPUT"
 
