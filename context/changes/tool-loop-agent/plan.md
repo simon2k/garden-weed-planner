@@ -284,27 +284,27 @@ This is an internal package refactor with a preserved JSON review contract. Exis
 
 #### Automated
 
-- [x] 1.1 Review schema module exports compile under `npm run typecheck`
-- [x] 1.2 Prompt module exports compile under `npm run typecheck`
-- [x] 1.3 Review schema preserves the existing seven top-level output fields
+- [x] 1.1 Review schema module exports compile under `npm run typecheck` — 749af9a
+- [x] 1.2 Prompt module exports compile under `npm run typecheck` — 749af9a
+- [x] 1.3 Review schema preserves the existing seven top-level output fields — 749af9a
 
 #### Manual
 
-- [x] 1.4 Human inspection confirms the Polish prompt is review-focused and still asks for the five scores, verdict, and Markdown summary
-- [x] 1.5 Human inspection confirms no promptfoo/eval files were added
+- [x] 1.4 Human inspection confirms the Polish prompt is review-focused and still asks for the five scores, verdict, and Markdown summary — 749af9a
+- [x] 1.5 Human inspection confirms no promptfoo/eval files were added — 749af9a
 
 ### Phase 2: Introduce Reusable ToolLoopAgent Module
 
 #### Automated
 
-- [ ] 2.1 `npm run typecheck` passes in `packages/code-reviewer`
-- [ ] 2.2 `npm run build` passes in `packages/code-reviewer`
-- [ ] 2.3 `src/index.ts` no longer imports `generateText`
+- [x] 2.1 `npm run typecheck` passes in `packages/code-reviewer`
+- [x] 2.2 `npm run build` passes in `packages/code-reviewer`
+- [x] 2.3 `src/index.ts` no longer imports `generateText`
 
 #### Manual
 
-- [ ] 2.4 Human inspection confirms `createCodeReviewerAgent` can be used by future eval code without importing CLI-only stdin logic
-- [ ] 2.5 Human inspection confirms OpenRouter env names and `DEFAULT_MODEL` remain compatible with `.env.example`
+- [x] 2.4 Human inspection confirms `createCodeReviewerAgent` can be used by future eval code without importing CLI-only stdin logic
+- [x] 2.5 Human inspection confirms OpenRouter env names and `DEFAULT_MODEL` remain compatible with `.env.example`
 
 ### Phase 3: Preserve Public API and CLI Entrypoint
 

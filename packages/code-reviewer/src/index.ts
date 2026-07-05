@@ -1,27 +1,30 @@
 import "dotenv/config";
 
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { generateText, Output } from "ai";
+import { codeReviewerAgent } from "./agent.js";
+import { createCodeReviewPrompt } from "./prompts/code-review.js";
+import { getOpenRouterApiKey } from "./provider.js";
+import type { CodeReview } from "./schemas/review.js";
 
-import { createCodeReviewPrompt, CODE_REVIEW_SYSTEM_PROMPT } from "./prompts/code-review.js";
-import { ReviewSchema, type CodeReview } from "./schemas/review.js";
+export { codeReviewerAgent, createCodeReviewerAgent } from "./agent.js";
+export type { CreateCodeReviewerAgentOptions } from "./agent.js";
+export { CODE_REVIEW_SYSTEM_PROMPT, createCodeReviewPrompt } from "./prompts/code-review.js";
+export { DEFAULT_MODEL, getOpenRouterApiKey, getOpenRouterModel } from "./provider.js";
+export type { OpenRouterModelOptions } from "./provider.js";
+export { ReviewSchema } from "./schemas/review.js";
+export type { CodeReview } from "./schemas/review.js";
 
-export const DEFAULT_MODEL = "openrouter/auto";
+export interface ReviewCodeDiffOptions {
+  agent?: typeof codeReviewerAgent;
+}
 
-export async function reviewCodeDiff(diff: string): Promise<CodeReview> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing OPENROUTER_API_KEY environment variable.");
+export async function reviewCodeDiff(diff: string, { agent }: ReviewCodeDiffOptions = {}): Promise<CodeReview> {
+  if (!agent) {
+    getOpenRouterApiKey({ required: true });
   }
 
-  const openrouter = createOpenRouter({ apiKey });
-  const modelName = process.env.OPENROUTER_MODEL ?? DEFAULT_MODEL;
-
-  const { output } = await generateText({
-    model: openrouter(modelName),
-    system: CODE_REVIEW_SYSTEM_PROMPT,
+  const reviewer = agent ?? codeReviewerAgent;
+  const { output } = await reviewer.generate({
     prompt: createCodeReviewPrompt(diff),
-    output: Output.object({ schema: ReviewSchema }),
   });
 
   return output;
