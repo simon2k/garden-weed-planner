@@ -23,5 +23,3 @@ export function createCodeReviewerAgent({
     output: Output.object({ schema: ReviewSchema }),
   });
 }
-
-export const codeReviewerAgent: CodeReviewerAgent = createCodeReviewerAgent();

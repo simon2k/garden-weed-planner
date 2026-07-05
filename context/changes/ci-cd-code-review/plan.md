@@ -2,7 +2,7 @@
 
 ## Overview
 
-Implement the first AI-assisted PR code review workflow for this repository. The workflow will run on pull requests to `main`, review TypeScript diffs through the existing `packages/code-reviewer` engine, publish one sticky PR comment, and keep `ai-cr:passed` / `ai-cr:failed` labels in sync, with on-demand retry via `ai-cr:review`.
+Implement the first AI-assisted PR code review workflow for this repository. The workflow will run on pull requests to `main`, review TypeScript diffs through the existing `packages/code-reviewer` engine, publish a new PR comment for each AI review run, and keep `ai-cr:passed` / `ai-cr:failed` labels in sync, with on-demand retry via `ai-cr:review`.
 
 ## Current State Analysis
 
